@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import express, { Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
@@ -7,6 +8,12 @@ import { validateRequest } from '../middleware/validation';
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// Rate limiter for mentorship application (e.g., 5 requests/hour per IP)
+const mentorshipApplyLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // max 5 requests per windowMs
+  message: { error: 'Too many mentorship applications from this IP, please try again later.' }
+});
 // AI Champion Registration Schema
 const AIChampionRegistrationSchema = z.object({
   level: z.enum(['JUNIOR', 'SENIOR', 'LEAD']),
@@ -210,7 +217,7 @@ router.get('/available', async (req: Request, res: Response) => {
 });
 
 // Apply for mentorship
-router.post('/mentorship/apply', authenticate, validateRequest(MentorshipApplicationSchema), async (req: AuthenticatedRequest, res: Response) => {
+router.post('/mentorship/apply', mentorshipApplyLimiter, authenticate, validateRequest(MentorshipApplicationSchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const applicationData = req.body;
     const userId = req.user?.id;
