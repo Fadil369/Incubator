@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient, UserRole, VerificationStatus, ProgramStatus, EnrollmentStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { UserRole, VerificationStatus, ProgramStatus, EnrollmentStatus } from '@brainsait/shared';
 import { asyncHandler } from '../middleware/errorHandler';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { logger } from '../utils/logger';

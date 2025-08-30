@@ -112,32 +112,8 @@ export class LLMService {
       throw new Error('Claude API key not configured');
     }
 
-    const systemPrompt = request.systemPrompt || 
-      'You are a helpful AI assistant for healthcare SMEs in Saudi Arabia.';
-
-    const message = await this.anthropic.messages.create({
-      model: request.model || 'claude-3-opus-20240229',
-      max_tokens: request.maxTokens || 1000,
-      temperature: request.temperature,
-      system: systemPrompt,
-      messages: [
-        {
-          role: 'user',
-          content: request.prompt,
-        },
-      ],
-    });
-
-    return {
-      content: message.content[0].type === 'text' ? message.content[0].text : '',
-      usage: {
-        promptTokens: message.usage.input_tokens,
-        completionTokens: message.usage.output_tokens,
-        totalTokens: message.usage.input_tokens + message.usage.output_tokens,
-      },
-      model: message.model,
-      provider: 'anthropic',
-    };
+    // For now, fallback to OpenAI since Anthropic SDK has compatibility issues
+    return this.generateOpenAICompletion(request);
   }
 
   async generateClaimsAnalysis(claimData: any): Promise<string> {
@@ -159,6 +135,7 @@ export class LLMService {
       systemPrompt: 'You are an expert in Saudi Arabian healthcare insurance claims processing and NPHIES compliance.',
       feature: 'claims_analysis',
       userId: claimData.userId || 'system',
+      provider: 'openai',
       maxTokens: 1500,
       temperature: 0.3,
     });
@@ -185,6 +162,7 @@ export class LLMService {
       systemPrompt: 'You are a Saudi Arabian healthcare compliance expert specializing in MOH and NPHIES regulations.',
       feature: 'compliance_report',
       userId: complianceData.userId || 'system',
+      provider: 'openai',
       maxTokens: 2000,
       temperature: 0.4,
     });
@@ -215,6 +193,7 @@ export class LLMService {
       systemPrompt: 'You are a healthcare communication specialist experienced in patient interaction documentation.',
       feature: 'contact_summary',
       userId: context.userId || 'system',
+      provider: 'openai',
       maxTokens: 1000,
       temperature: 0.5,
     });

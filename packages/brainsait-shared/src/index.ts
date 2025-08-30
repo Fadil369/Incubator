@@ -15,14 +15,20 @@ export type {
   User,
   SMEProfile,
   MentorProfile,
+} from './types/user.types';
+
+export type {
   Program,
   ProgramEnrollment,
   Mentorship,
   MentorSession,
+} from './types/program.types';
+
+export type {
   ApiResponse,
   PaginatedResponse,
   ValidationError,
-} from './types/user.types';
+} from './types/api.types';
 
 export type {
   CreateUserRequest,
