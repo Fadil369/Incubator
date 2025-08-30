@@ -1,5 +1,8 @@
 name: Deploy to Cloudflare
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main, production]
