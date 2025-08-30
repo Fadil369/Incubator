@@ -1,6 +1,6 @@
 name = "brainsait-backend"
-main = "dist/server.js"
-compatibility_date = "2024-01-01"
+main = "dist/worker.js"
+compatibility_date = "2024-08-30"
 compatibility_flags = ["nodejs_compat"]
 
 [env.staging]

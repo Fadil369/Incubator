@@ -1,7 +1,7 @@
 # Cloudflare Workers Configuration for BrainSAIT Platform
 
-name = "brainsait-platform"
-main = "packages/brainsait-backend/dist/server.js"
+name = "brainsait-backend"
+main = "packages/brainsait-backend/dist/worker.js"
 compatibility_date = "2024-08-30"
 compatibility_flags = ["nodejs_compat"]
 

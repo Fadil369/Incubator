@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next out node_modules"
+    "clean": "rm -rf .next out node_modules",
+    "deploy:frontend": "npm run build && wrangler pages deploy out --project-name brainsait-frontend",
+    "preview:frontend": "wrangler pages deploy out --project-name brainsait-frontend-preview"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20250830.0",

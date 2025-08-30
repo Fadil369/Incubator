@@ -27,7 +27,10 @@
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
-    "clean": "npm run clean --workspaces && rm -rf node_modules"
+    "clean": "npm run clean --workspaces && rm -rf node_modules",
+    "deploy": "npm run deploy:frontend && npm run deploy:backend",
+    "deploy:frontend": "npm run deploy:frontend --workspace=brainsait-frontend",
+    "deploy:backend": "npm run deploy:backend --workspace=brainsait-backend"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",

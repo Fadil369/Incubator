@@ -14,10 +14,13 @@
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "npx prisma generate",
     "db:seed": "ts-node src/database/seeders/index.ts",
-    "clean": "rm -rf dist node_modules"
+    "clean": "rm -rf dist node_modules",
+    "deploy:backend": "npm run build && wrangler deploy",
+    "preview:backend": "npm run build && wrangler deploy --env preview"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.60.0",
+    "@cloudflare/workers-types": "^4.20250830.0",
     "@prisma/client": "^5.22.0",
     "@types/validator": "^13.15.2",
     "bcryptjs": "^2.4.3",
@@ -29,6 +32,7 @@
     "express-rate-limit": "^7.5.1",
     "express-validator": "^7.2.1",
     "helmet": "^7.2.0",
+    "hono": "^4.9.5",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
