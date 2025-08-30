@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { z } from 'zod';
 import { aiChampionsService } from './services/aiChampionsService';
 import { llmService } from './services/llmService';
+import aiRoutes from './routes/aiRoutes';
 import { logger } from './utils/logger';
 
 const app = express();
@@ -58,6 +59,9 @@ app.get('/health', (req, res) => {
 
   res.json(healthStatus);
 });
+
+// Add new AI service routes
+app.use('/api/ai', aiRoutes);
 
 // AI Chat/Completion endpoint
 app.post('/api/ai/chat', async (req, res) => {
