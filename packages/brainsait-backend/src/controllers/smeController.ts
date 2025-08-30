@@ -1,8 +1,8 @@
+import { PrismaClient, VerificationStatus } from '@prisma/client';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { PrismaClient, SMEType, IndustryFocus, VerificationStatus } from '@prisma/client';
-import { asyncHandler } from '../middleware/errorHandler';
 import { AuthenticatedRequest } from '../middleware/auth';
+import { asyncHandler } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
@@ -75,7 +75,7 @@ export const getSMEs = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const [smes, total] = await Promise.all([
-    prisma.smeProfile.findMany({
+    prisma.sMEProfile.findMany({
       where,
       skip,
       take: limit,
@@ -114,7 +114,7 @@ export const getSMEs = asyncHandler(async (req: Request, res: Response) => {
         },
       },
     }),
-    prisma.smeProfile.count({ where }),
+    prisma.sMEProfile.count({ where }),
   ]);
 
   const totalPages = Math.ceil(total / limit);
@@ -141,7 +141,7 @@ export const getSMEs = asyncHandler(async (req: Request, res: Response) => {
 export const getSMEById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const sme = await prisma.smeProfile.findUnique({
+  const sme = await prisma.sMEProfile.findUnique({
     where: { id },
     include: {
       user: {
@@ -241,7 +241,7 @@ export const createSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
   }
 
   // Check if user already has an SME profile
-  const existingProfile = await prisma.smeProfile.findUnique({
+  const existingProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 
@@ -266,7 +266,7 @@ export const createSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
     address,
   } = req.body;
 
-  const smeProfile = await prisma.smeProfile.create({
+  const smeProfile = await prisma.sMEProfile.create({
     data: {
       userId: req.user.id,
       companyName,
@@ -336,7 +336,7 @@ export const updateSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
   }
 
   // Check if SME profile exists and user owns it (or is admin)
-  const existingProfile = await prisma.smeProfile.findUnique({
+  const existingProfile = await prisma.sMEProfile.findUnique({
     where: { id },
     include: {
       user: {
@@ -379,7 +379,7 @@ export const updateSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
     address,
   } = req.body;
 
-  const updatedProfile = await prisma.smeProfile.update({
+  const updatedProfile = await prisma.sMEProfile.update({
     where: { id },
     data: {
       companyName,
@@ -442,7 +442,7 @@ export const deleteSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
   const { id } = req.params;
 
   // Check if SME profile exists and user owns it (or is admin)
-  const existingProfile = await prisma.smeProfile.findUnique({
+  const existingProfile = await prisma.sMEProfile.findUnique({
     where: { id },
     include: {
       user: {
@@ -474,7 +474,7 @@ export const deleteSMEProfile = asyncHandler(async (req: AuthenticatedRequest, r
   }
 
   // Delete the profile (cascade will handle related records)
-  await prisma.smeProfile.delete({
+  await prisma.sMEProfile.delete({
     where: { id },
   });
 
@@ -502,7 +502,7 @@ export const getMySMEProfile = asyncHandler(async (req: AuthenticatedRequest, re
     });
   }
 
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
     include: {
       user: {
@@ -598,17 +598,27 @@ export const updateSMEVerificationStatus = asyncHandler(async (req: Authenticate
     });
   }
 
-  const smeProfile = await prisma.smeProfile.update({
+  // Prepare the update data
+  const updateData: any = {
+    verificationStatus,
+  };
+
+  // Add rejection reason if rejected
+  if (verificationStatus === VerificationStatus.REJECTED && rejectionReason) {
+    // First get the current profile to access documents
+    const currentProfile = await prisma.sMEProfile.findUnique({
+      where: { id }
+    });
+    
+    updateData.documents = {
+      ...(typeof currentProfile?.documents === 'object' ? currentProfile.documents : {}),
+      rejectionReason,
+    };
+  }
+
+  const smeProfile = await prisma.sMEProfile.update({
     where: { id },
-    data: {
-      verificationStatus,
-      ...(verificationStatus === VerificationStatus.REJECTED && rejectionReason && {
-        documents: {
-          ...(typeof smeProfile.documents === 'object' ? smeProfile.documents : {}),
-          rejectionReason,
-        },
-      }),
-    },
+    data: updateData,
     include: {
       user: {
         select: {
@@ -651,7 +661,7 @@ export const uploadSMEDocuments = asyncHandler(async (req: AuthenticatedRequest,
   const { documents } = req.body;
 
   // Check if SME profile exists and user owns it
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { id },
   });
 
@@ -673,7 +683,7 @@ export const uploadSMEDocuments = asyncHandler(async (req: AuthenticatedRequest,
     });
   }
 
-  const updatedProfile = await prisma.smeProfile.update({
+  const updatedProfile = await prisma.sMEProfile.update({
     where: { id },
     data: {
       documents,
@@ -717,23 +727,23 @@ export const getSMEStatistics = asyncHandler(async (req: AuthenticatedRequest, r
     smesByType,
     smesByIndustry,
   ] = await Promise.all([
-    prisma.smeProfile.count(),
-    prisma.smeProfile.count({
+    prisma.sMEProfile.count(),
+    prisma.sMEProfile.count({
       where: { verificationStatus: VerificationStatus.VERIFIED },
     }),
-    prisma.smeProfile.count({
+    prisma.sMEProfile.count({
       where: { verificationStatus: VerificationStatus.PENDING },
     }),
-    prisma.smeProfile.count({
+    prisma.sMEProfile.count({
       where: { verificationStatus: VerificationStatus.REJECTED },
     }),
-    prisma.smeProfile.groupBy({
+    prisma.sMEProfile.groupBy({
       by: ['companyType'],
       _count: {
         companyType: true,
       },
     }),
-    prisma.smeProfile.findMany({
+    prisma.sMEProfile.findMany({
       select: {
         industryFocus: true,
       },

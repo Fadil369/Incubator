@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { z } from 'zod';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
@@ -140,7 +140,7 @@ const OnboardingSurveySchema = z.object({
 });
 
 // Register healthcare SME
-router.post('/register', validateRequest(HealthcareSMESchema), async (req: Request, res: Response) => {
+router.post('/register', validateRequest(HealthcareSMESchema), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const smeData = req.body;
     const userId = req.user?.id;
@@ -176,10 +176,11 @@ router.post('/register', validateRequest(HealthcareSMESchema), async (req: Reque
 
     // Create AI Champion profile if applicable
     if (smeData.aiExperienceLevel === 'ADVANCED' || smeData.aiExperienceLevel === 'EXPERT') {
-      await prisma.aiChampion.create({
+      await prisma.aIChampion.create({
         data: {
           userId,
           healthcareSMEId: sme.id,
+          department: smeData.specialization,
           level: smeData.aiExperienceLevel === 'EXPERT' ? 'SENIOR' : 'JUNIOR',
           mentorshipCapacity: smeData.availabilityForMentoring ? 5 : 0,
           specializations: smeData.interestedAIApplications
@@ -266,11 +267,10 @@ router.get('/profile', authenticate, async (req: AuthenticatedRequest, res: Resp
             profilePicture: true
           }
         },
-        onboardingSurvey: true,
+        onboardingSurveys: true,
         aiChampion: true,
         learningProgress: true,
-        casesShared: true,
-        mentorships: true
+        casesShared: true
       }
     });
 
@@ -321,7 +321,7 @@ router.get('/learning-recommendations', authenticate, async (req: AuthenticatedR
     const sme = await prisma.healthcareSME.findUnique({
       where: { userId },
       include: {
-        onboardingSurvey: true,
+        onboardingSurveys: true,
         learningProgress: true
       }
     });

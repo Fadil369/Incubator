@@ -1,11 +1,11 @@
-import { PrismaClient, SaudiRegion, CRStatus, VATStatus, MOCIStatus } from '@prisma/client';
-import { 
-  validateCRNumber, 
-  validateVATNumber, 
-  validateSaudiAddress,
-  SaudiAddress 
-} from '../utils/saudiValidation';
+import { CRStatus, MOCIStatus, PrismaClient, SaudiRegion, VATStatus } from '@prisma/client';
 import { logger } from '../utils/logger';
+import {
+    SaudiAddress,
+    validateCRNumber,
+    validateSaudiAddress,
+    validateVATNumber
+} from '../utils/saudiValidation';
 
 const prisma = new PrismaClient();
 
@@ -412,8 +412,8 @@ export class SaudiComplianceService {
           smeId,
           apiEndpoint: apiEndpoint || 'INTERNAL',
           requestType,
-          requestData: requestData ? JSON.stringify(requestData) : null,
-          responseData: null, // Would contain actual response data
+          requestData: requestData ? JSON.stringify(requestData) : undefined,
+          responseData: undefined, // Would contain actual response data
           status: status as any,
           responseTime,
           errorMessage

@@ -6,16 +6,15 @@
  * @version 2.0.0
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import cors from 'cors';
+import crypto from 'crypto';
+import { NextFunction, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
-import cors from 'cors';
-import morgan from 'morgan';
-import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import validator from 'validator';
-import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -174,6 +173,20 @@ export const authRateLimiter = rateLimit({
  * JWT Token Generation with refresh token support
  */
 export const generateTokens = (user: any) => {
+  const jwtSecret = SECURITY_CONFIG.JWT_SECRET as string;
+  const jwtRefreshSecret = SECURITY_CONFIG.JWT_REFRESH_SECRET as string;
+  
+  const accessTokenOptions: SignOptions = {
+    expiresIn: SECURITY_CONFIG.JWT_EXPIRES_IN as any,
+    issuer: 'brainsait-platform',
+    audience: 'saudi-healthcare-sme',
+  };
+  
+  const refreshTokenOptions: SignOptions = {
+    expiresIn: SECURITY_CONFIG.JWT_REFRESH_EXPIRES_IN as any,
+    issuer: 'brainsait-platform',
+  };
+  
   const accessToken = jwt.sign(
     {
       id: user.id,
@@ -181,12 +194,8 @@ export const generateTokens = (user: any) => {
       role: user.role,
       smeId: user.smeId,
     },
-    SECURITY_CONFIG.JWT_SECRET,
-    {
-      expiresIn: SECURITY_CONFIG.JWT_EXPIRES_IN,
-      issuer: 'brainsait-platform',
-      audience: 'saudi-healthcare-sme',
-    }
+    jwtSecret,
+    accessTokenOptions
   );
 
   const refreshToken = jwt.sign(
@@ -194,11 +203,8 @@ export const generateTokens = (user: any) => {
       id: user.id,
       tokenVersion: user.tokenVersion || 0,
     },
-    SECURITY_CONFIG.JWT_REFRESH_SECRET,
-    {
-      expiresIn: SECURITY_CONFIG.JWT_REFRESH_EXPIRES_IN,
-      issuer: 'brainsait-platform',
-    }
+    jwtRefreshSecret,
+    refreshTokenOptions
   );
 
   return { accessToken, refreshToken };
@@ -578,7 +584,7 @@ export const logSecurityEvent = async (event: SecurityAuditLog) => {
         data: {
           userId: event.userId,
           action: event.action,
-          resource: event.resource,
+          resourceType: event.resource || 'UNKNOWN',
           ipAddress: event.ipAddress,
           userAgent: event.userAgent,
           status: event.status,
@@ -614,20 +620,20 @@ export const getClientIp = (req: Request): string => {
  */
 const getUserPermissions = async (userId: string): Promise<string[]> => {
   try {
-    const userRoles = await prisma.userRole.findMany({
+    const userRoles = await prisma.userRoleAssignment.findMany({
       where: { userId },
-      include: {
-        role: {
-          include: {
-            permissions: true,
-          },
-        },
-      },
     });
     
     const permissions = new Set<string>();
-    userRoles.forEach(userRole => {
-      userRole.role.permissions.forEach(permission => {
+    userRoles.forEach((userRole: any) => {
+      // Extract permissions from the JSON field
+      const rolePermissions = Array.isArray(userRole.permissions) 
+        ? userRole.permissions 
+        : typeof userRole.permissions === 'object' && userRole.permissions
+        ? Object.values(userRole.permissions as any)
+        : [];
+      
+      rolePermissions.forEach((permission: any) => {
         permissions.add(permission.name);
       });
     });

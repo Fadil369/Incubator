@@ -39,8 +39,8 @@ export const getDashboardAnalytics = asyncHandler(async (req: AuthenticatedReque
     ] = await Promise.all([
       // Basic counts
       prisma.user.count(),
-      prisma.smeProfile.count(),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count(),
+      prisma.sMEProfile.count({
         where: { verificationStatus: VerificationStatus.VERIFIED },
       }),
       prisma.program.count(),
@@ -69,7 +69,7 @@ export const getDashboardAnalytics = asyncHandler(async (req: AuthenticatedReque
           createdAt: true,
         },
       }),
-      prisma.smeProfile.findMany({
+      prisma.sMEProfile.findMany({
         take: 10,
         orderBy: { createdAt: 'desc' },
         select: {
@@ -129,15 +129,15 @@ export const getDashboardAnalytics = asyncHandler(async (req: AuthenticatedReque
         smes: recentSMEs,
       },
       distributions: {
-        programsByType: programsByType.map(item => ({
+        programsByType: programsByType.map((item: any) => ({
           type: item.type,
           count: item._count.type,
         })),
-        enrollmentsByStatus: enrollmentsByStatus.map(item => ({
+        enrollmentsByStatus: enrollmentsByStatus.map((item: any) => ({
           status: item.status,
           count: item._count.status,
         })),
-        usersByRole: usersByRole.map(item => ({
+        usersByRole: usersByRole.map((item: any) => ({
           role: item.role,
           count: item._count.role,
         })),
@@ -181,14 +181,14 @@ export const getSMEAnalytics = asyncHandler(async (req: AuthenticatedRequest, re
       smesByFoundedYear,
       smesByEmployeeCount,
     ] = await Promise.all([
-      prisma.smeProfile.groupBy({
+      prisma.sMEProfile.groupBy({
         by: ['companyType'],
         _count: {
           companyType: true,
         },
       }),
       getSMEsByIndustry(),
-      prisma.smeProfile.groupBy({
+      prisma.sMEProfile.groupBy({
         by: ['verificationStatus'],
         _count: {
           verificationStatus: true,
@@ -376,7 +376,7 @@ export const getMyAnalytics = asyncHandler(async (req: AuthenticatedRequest, res
   }
 
   // Get user's SME profile
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 
@@ -450,7 +450,7 @@ async function getMonthlyGrowthData() {
           },
         },
       }),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count({
         where: {
           createdAt: {
             gte: startOfMonth,
@@ -480,7 +480,7 @@ async function getMonthlyGrowthData() {
 }
 
 async function getSMEsByIndustry() {
-  const smes = await prisma.smeProfile.findMany({
+  const smes = await prisma.sMEProfile.findMany({
     select: { industryFocus: true },
   });
 
@@ -498,7 +498,7 @@ async function getSMEsByIndustry() {
 }
 
 async function getSMEsByFoundedYear() {
-  const smes = await prisma.smeProfile.findMany({
+  const smes = await prisma.sMEProfile.findMany({
     where: { foundedYear: { not: null } },
     select: { foundedYear: true },
   });
@@ -518,7 +518,7 @@ async function getSMEsByFoundedYear() {
 }
 
 async function getSMEsByEmployeeCount() {
-  const smes = await prisma.smeProfile.findMany({
+  const smes = await prisma.sMEProfile.findMany({
     where: { employeeCount: { not: null } },
     select: { employeeCount: true },
   });
@@ -625,7 +625,7 @@ async function exportUsersData() {
 }
 
 async function exportSMEsData() {
-  return prisma.smeProfile.findMany({
+  return prisma.sMEProfile.findMany({
     include: {
       user: {
         select: {

@@ -102,11 +102,11 @@ router.post('/apply', authenticate, validateRequest(AIChampionApplicationSchema)
     }
 
     // Check if already applied or is champion
-    const existingApplication = await prisma.aiChampionApplication.findUnique({
+    const existingApplication = await prisma.aIChampionApplication.findFirst({
       where: { userId }
     });
 
-    const existingChampion = await prisma.aiChampion.findUnique({
+    const existingChampion = await prisma.aIChampion.findUnique({
       where: { userId }
     });
 
@@ -115,11 +115,11 @@ router.post('/apply', authenticate, validateRequest(AIChampionApplicationSchema)
     }
 
     // Create application
-    const application = await prisma.aiChampionApplication.create({
+    const application = await prisma.aIChampionApplication.create({
       data: {
         userId,
-        healthcareSMEId: sme.id,
-        ...applicationData,
+        championId: sme.id, // Link to the champion, not healthcare SME
+        applicationData: applicationData,
         status: 'PENDING',
         submittedAt: new Date()
       }
@@ -145,7 +145,7 @@ router.get('/status', authenticate, async (req: AuthenticatedRequest, res: Respo
   try {
     const userId = req.user?.id;
 
-    const champion = await prisma.aiChampion.findUnique({
+    const champion = await prisma.aIChampion.findUnique({
       where: { userId },
       include: {
         healthcareSME: {
@@ -167,19 +167,19 @@ router.get('/status', authenticate, async (req: AuthenticatedRequest, res: Respo
                 lastName: true,
                 email: true
               }
+            },
+            sessions: {
+              orderBy: { scheduledAt: 'desc' },
+              take: 5
             }
           }
-        },
-        sessions: {
-          orderBy: { scheduledAt: 'desc' },
-          take: 5
         }
       }
     });
 
     if (!champion) {
       // Check for pending application
-      const application = await prisma.aiChampionApplication.findUnique({
+      const application = await prisma.aIChampionApplication.findFirst({
         where: { userId }
       });
 
@@ -212,7 +212,7 @@ router.post('/sessions/schedule', authenticate, validateRequest(MentorshipSessio
     const userId = req.user?.id;
 
     // Verify user is an AI Champion
-    const champion = await prisma.aiChampion.findUnique({
+    const champion = await prisma.aIChampion.findUnique({
       where: { userId },
       include: { mentorships: true }
     });
@@ -228,7 +228,7 @@ router.post('/sessions/schedule', authenticate, validateRequest(MentorshipSessio
     }
 
     // Check for scheduling conflicts
-    const conflict = await prisma.mentorshipSession.findFirst({
+    const conflict = await prisma.mentorSession.findFirst({
       where: {
         mentorId: champion.id,
         scheduledAt: {
@@ -244,16 +244,15 @@ router.post('/sessions/schedule', authenticate, validateRequest(MentorshipSessio
     }
 
     // Create session
-    const session = await prisma.mentorshipSession.create({
+    const session = await prisma.mentorSession.create({
       data: {
+        mentorshipId: mentorship.id,
         mentorId: champion.id,
         menteeId: sessionData.menteeId,
         scheduledAt: sessionData.scheduledAt,
         duration: sessionData.duration,
         topic: sessionData.topic,
-        objectives: sessionData.objectives,
-        format: sessionData.format,
-        preparationMaterials: sessionData.preparationMaterials || [],
+        objectivesMet: false, // Will be updated after session completion
         status: 'SCHEDULED'
       }
     });
@@ -280,10 +279,12 @@ router.post('/sessions/:sessionId/feedback', authenticate, validateRequest(Sessi
     const userId = req.user?.id;
 
     // Verify session exists and user is the mentor
-    const session = await prisma.mentorshipSession.findFirst({
+    const session = await prisma.mentorSession.findFirst({
       where: {
         id: sessionId,
-        mentor: { userId }
+        mentorship: {
+          championId: userId
+        }
       }
     });
 
@@ -296,21 +297,19 @@ router.post('/sessions/:sessionId/feedback', authenticate, validateRequest(Sessi
     }
 
     // Update session with feedback
-    const updatedSession = await prisma.mentorshipSession.update({
+    const updatedSession = await prisma.mentorSession.update({
       where: { id: sessionId },
       data: {
         mentorRating: feedbackData.rating,
         mentorFeedback: feedbackData.feedback,
-        objectivesMet: feedbackData.objectives_met,
-        followUpNeeded: feedbackData.follow_up_needed,
-        nextSessionTopics: feedbackData.next_session_topics || [],
-        mentorNotes: feedbackData.mentor_notes,
-        feedbackSubmittedAt: new Date()
+        objectivesMet: feedbackData.objectives_met
       }
     });
 
     // Update champion statistics
-    await updateChampionStats(session.mentorId);
+    if (session.mentorId) {
+      await updateChampionStats(session.mentorId);
+    }
 
     res.json({
       message: 'Feedback submitted successfully',
@@ -343,7 +342,7 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
         dateFilter = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     }
 
-    const champions = await prisma.aiChampion.findMany({
+    const champions = await prisma.aIChampion.findMany({
       where: {
         status: 'ACTIVE'
       },
@@ -359,15 +358,17 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
             }
           }
         },
-        sessions: {
-          where: {
-            scheduledAt: { gte: dateFilter },
-            status: 'COMPLETED'
-          }
-        },
         mentorships: {
           where: {
             createdAt: { gte: dateFilter }
+          },
+          include: {
+            sessions: {
+              where: {
+                scheduledAt: { gte: dateFilter },
+                status: 'COMPLETED'
+              }
+            }
           }
         }
       },
@@ -376,15 +377,16 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
 
     const leaderboard = champions.map(champion => ({
       id: champion.id,
-      name: `${champion.healthcareSME.user.firstName} ${champion.healthcareSME.user.lastName}`,
-      profilePicture: champion.healthcareSME.user.profilePicture,
+      name: champion.healthcareSME ? `${champion.healthcareSME.user.firstName} ${champion.healthcareSME.user.lastName}` : 'Unknown',
+      profilePicture: champion.healthcareSME?.user.profilePicture || null,
       level: champion.level,
       specializations: champion.specializations,
       stats: {
-        sessionsCompleted: champion.sessions.length,
+        sessionsCompleted: champion.mentorships.reduce((total, mentorship) => total + mentorship.sessions.length, 0),
         menteesActive: champion.mentorships.length,
         averageRating: champion.averageRating,
-        totalHours: champion.sessions.reduce((sum, session) => sum + session.duration, 0) / 60
+        totalHours: champion.mentorships.reduce((total, mentorship) => 
+          total + mentorship.sessions.reduce((sum: number, session: any) => sum + session.duration, 0), 0) / 60
       }
     })).sort((a, b) => {
       // Sort by weighted score: sessions * 2 + mentees * 3 + rating * 10
@@ -421,7 +423,7 @@ router.get('/find-mentors', authenticate, async (req: AuthenticatedRequest, res:
       filters.level = level;
     }
 
-    const mentors = await prisma.aiChampion.findMany({
+    const mentors = await prisma.aIChampion.findMany({
       where: filters,
       include: {
         healthcareSME: {
@@ -443,16 +445,16 @@ router.get('/find-mentors', authenticate, async (req: AuthenticatedRequest, res:
     });
 
     const availableMentors = mentors.filter(mentor => 
-      mentor.mentorships.length < mentor.mentorshipCapacity
+      mentor.mentorshipCapacity && mentor.mentorships.length < mentor.mentorshipCapacity
     ).map(mentor => ({
       id: mentor.id,
-      name: `${mentor.healthcareSME.user.firstName} ${mentor.healthcareSME.user.lastName}`,
-      profilePicture: mentor.healthcareSME.user.profilePicture,
-      specialization: mentor.healthcareSME.specialization,
+      name: mentor.healthcareSME ? `${mentor.healthcareSME.user.firstName} ${mentor.healthcareSME.user.lastName}` : 'Unknown',
+      profilePicture: mentor.healthcareSME?.user.profilePicture || null,
+      specialization: mentor.healthcareSME?.specialization || null,
       aiSpecializations: mentor.specializations,
       level: mentor.level,
       rating: mentor.averageRating,
-      availableSlots: mentor.mentorshipCapacity - mentor.mentorships.length,
+      availableSlots: (mentor.mentorshipCapacity || 0) - mentor.mentorships.length,
       totalMentees: mentor.totalMentees,
       totalSessions: mentor.totalSessions
     }));
@@ -472,7 +474,7 @@ async function notifyAdminsNewApplication(application: any) {
 }
 
 async function getChampionStats(championId: string) {
-  const sessions = await prisma.mentorshipSession.count({
+  const sessions = await prisma.mentorSession.count({
     where: { mentorId: championId, status: 'COMPLETED' }
   });
 
@@ -480,7 +482,7 @@ async function getChampionStats(championId: string) {
     where: { mentorId: championId, status: 'ACTIVE' }
   });
 
-  const averageRating = await prisma.mentorshipSession.aggregate({
+  const averageRating = await prisma.mentorSession.aggregate({
     where: { mentorId: championId, mentorRating: { not: null } },
     _avg: { mentorRating: true }
   });
@@ -490,7 +492,7 @@ async function getChampionStats(championId: string) {
     activeMentees: mentees,
     averageRating: averageRating._avg.mentorRating || 0,
     thisMonth: {
-      sessions: await prisma.mentorshipSession.count({
+      sessions: await prisma.mentorSession.count({
         where: {
           mentorId: championId,
           status: 'COMPLETED',
@@ -509,7 +511,7 @@ async function sendSessionNotifications(session: any) {
 async function updateChampionStats(championId: string) {
   const stats = await getChampionStats(championId);
   
-  await prisma.aiChampion.update({
+  await prisma.aIChampion.update({
     where: { id: championId },
     data: {
       totalSessions: stats.totalSessions,

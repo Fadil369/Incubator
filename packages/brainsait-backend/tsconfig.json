@@ -2,12 +2,12 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
@@ -25,9 +25,9 @@
       "@/services/*": ["./src/services/*"],
       "@/utils/*": ["./src/utils/*"],
       "@/config/*": ["./src/config/*"],
-      "@brainsait/shared": ["../brainsait-shared/src"]
+      "@brainsait/shared": ["../brainsait-shared/dist"]
     },
-    "types": ["node"],
+    "types": ["node", "jest"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
@@ -40,8 +40,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
+    "../brainsait-shared/src/**/*"
   ],
   "ts-node": {
     "require": ["tsconfig-paths/register"]

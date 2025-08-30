@@ -34,7 +34,7 @@ const logFormat = winston.format.combine(
 );
 
 // Define transports
-const transports = [
+const transports: winston.transport[] = [
   new winston.transports.Console(),
 ];
 

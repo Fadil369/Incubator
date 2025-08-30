@@ -110,7 +110,7 @@ export class SMEService {
     }
 
     const [smes, total] = await Promise.all([
-      prisma.smeProfile.findMany({
+      prisma.sMEProfile.findMany({
         where,
         skip,
         take: safeLimit,
@@ -149,7 +149,7 @@ export class SMEService {
           },
         },
       }),
-      prisma.smeProfile.count({ where }),
+      prisma.sMEProfile.count({ where }),
     ]);
 
     const totalPages = Math.ceil(total / safeLimit);
@@ -171,7 +171,7 @@ export class SMEService {
    * Get SME by ID with full details
    */
   static async getSMEById(id: string) {
-    const sme = await prisma.smeProfile.findUnique({
+    const sme = await prisma.sMEProfile.findUnique({
       where: { id },
       include: {
         user: {
@@ -238,7 +238,7 @@ export class SMEService {
    */
   static async createSMEProfile(data: CreateSMEProfileData) {
     // Check if user already has an SME profile
-    const existingProfile = await prisma.smeProfile.findUnique({
+    const existingProfile = await prisma.sMEProfile.findUnique({
       where: { userId: data.userId },
     });
 
@@ -246,7 +246,7 @@ export class SMEService {
       throw new Error('SME profile already exists for this user');
     }
 
-    const smeProfile = await prisma.smeProfile.create({
+    const smeProfile = await prisma.sMEProfile.create({
       data: {
         ...data,
         verificationStatus: VerificationStatus.PENDING,
@@ -276,7 +276,7 @@ export class SMEService {
    * Update SME profile
    */
   static async updateSMEProfile(id: string, data: UpdateSMEProfileData, userId?: string) {
-    const existingProfile = await prisma.smeProfile.findUnique({
+    const existingProfile = await prisma.sMEProfile.findUnique({
       where: { id },
       include: {
         user: {
@@ -305,7 +305,7 @@ export class SMEService {
       updateData.verificationStatus = VerificationStatus.PENDING;
     }
 
-    const updatedProfile = await prisma.smeProfile.update({
+    const updatedProfile = await prisma.sMEProfile.update({
       where: { id },
       data: updateData,
       include: {
@@ -334,7 +334,7 @@ export class SMEService {
    * Delete SME profile
    */
   static async deleteSMEProfile(id: string) {
-    const existingProfile = await prisma.smeProfile.findUnique({
+    const existingProfile = await prisma.sMEProfile.findUnique({
       where: { id },
       select: {
         id: true,
@@ -347,7 +347,7 @@ export class SMEService {
       throw new Error('SME profile not found');
     }
 
-    await prisma.smeProfile.delete({
+    await prisma.sMEProfile.delete({
       where: { id },
     });
 
@@ -363,7 +363,7 @@ export class SMEService {
    * Get SME profile by user ID
    */
   static async getSMEProfileByUserId(userId: string) {
-    const smeProfile = await prisma.smeProfile.findUnique({
+    const smeProfile = await prisma.sMEProfile.findUnique({
       where: { userId },
       include: {
         user: {
@@ -432,7 +432,7 @@ export class SMEService {
     verificationStatus: VerificationStatus,
     rejectionReason?: string
   ) {
-    const smeProfile = await prisma.smeProfile.findUnique({
+    const smeProfile = await prisma.sMEProfile.findUnique({
       where: { id },
     });
 
@@ -451,7 +451,7 @@ export class SMEService {
       };
     }
 
-    const updatedProfile = await prisma.smeProfile.update({
+    const updatedProfile = await prisma.sMEProfile.update({
       where: { id },
       data: updateData,
       include: {
@@ -477,7 +477,7 @@ export class SMEService {
    * Upload documents for SME
    */
   static async uploadDocuments(id: string, documents: any) {
-    const smeProfile = await prisma.smeProfile.findUnique({
+    const smeProfile = await prisma.sMEProfile.findUnique({
       where: { id },
     });
 
@@ -485,7 +485,7 @@ export class SMEService {
       throw new Error('SME profile not found');
     }
 
-    const updatedProfile = await prisma.smeProfile.update({
+    const updatedProfile = await prisma.sMEProfile.update({
       where: { id },
       data: {
         documents,
@@ -515,31 +515,31 @@ export class SMEService {
       smesByIndustry,
       recentSMEs,
     ] = await Promise.all([
-      prisma.smeProfile.count(),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count(),
+      prisma.sMEProfile.count({
         where: { verificationStatus: VerificationStatus.VERIFIED },
       }),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count({
         where: { verificationStatus: VerificationStatus.PENDING },
       }),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count({
         where: { verificationStatus: VerificationStatus.REJECTED },
       }),
-      prisma.smeProfile.count({
+      prisma.sMEProfile.count({
         where: { verificationStatus: VerificationStatus.IN_REVIEW },
       }),
-      prisma.smeProfile.groupBy({
+      prisma.sMEProfile.groupBy({
         by: ['companyType'],
         _count: {
           companyType: true,
         },
       }),
-      prisma.smeProfile.findMany({
+      prisma.sMEProfile.findMany({
         select: {
           industryFocus: true,
         },
       }),
-      prisma.smeProfile.findMany({
+      prisma.sMEProfile.findMany({
         take: 10,
         orderBy: {
           createdAt: 'desc',
@@ -594,7 +594,7 @@ export class SMEService {
    * Search SMEs by company name or description
    */
   static async searchSMEs(query: string, limit: number = 10) {
-    const smes = await prisma.smeProfile.findMany({
+    const smes = await prisma.sMEProfile.findMany({
       where: {
         OR: [
           {
@@ -638,7 +638,7 @@ export class SMEService {
    * Get SMEs by industry focus
    */
   static async getSMEsByIndustry(industryFocus: IndustryFocus) {
-    const smes = await prisma.smeProfile.findMany({
+    const smes = await prisma.sMEProfile.findMany({
       where: {
         industryFocus: {
           has: industryFocus,

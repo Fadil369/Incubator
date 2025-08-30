@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { PrismaClient, UserRole } from '@prisma/client';
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import { config } from '../config/environment';
-import { logger } from '../utils/logger';
 import { redisClient } from '../server';
+import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
 
@@ -227,3 +227,6 @@ export const optionalAuth = async (
     next();
   }
 };
+
+// Export authenticate as auth for backward compatibility
+export const auth = authenticate;

@@ -6,9 +6,8 @@
  * @version 1.0.0
  */
 
-import crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { DataEncryption } from '../middleware/security';
 
 const prisma = new PrismaClient();
@@ -36,8 +35,8 @@ const PDPL_CONFIG = {
   // Saudi-specific data localization requirements
   DATA_LOCALIZATION: {
     requireLocalStorage: true,
-    allowedRegions: ['saudi-arabia', 'gcc'],
-    prohibitedRegions: [],
+    allowedRegions: ['saudi-arabia', 'gcc'] as string[],
+    prohibitedRegions: [] as string[],
   },
   
   // Consent management
@@ -265,11 +264,12 @@ export class DataProtectionService {
     const userData = await prisma.user.findUnique({
       where: { id: request.userId },
       include: {
-        sme: true,
+        smeProfile: true,
         documents: true,
-        auditLogs: {
+        consents: true,
+        dataAccessLogs: {
           take: 100,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { timestamp: 'desc' },
         },
       },
     });
@@ -287,11 +287,11 @@ export class DataProtectionService {
         phone: userData.phone,
         createdAt: userData.createdAt,
       },
-      businessInformation: userData.sme ? {
-        companyName: userData.sme.name,
-        crNumber: userData.sme.crNumber,
-        vatNumber: userData.sme.vatNumber,
-        address: userData.sme.address,
+      businessInformation: userData.smeProfile ? {
+        companyName: userData.smeProfile.companyName,
+        crNumber: userData.smeProfile.commercialRegistrationNumber,
+        vatNumber: userData.smeProfile.vatRegistrationNumber,
+        address: userData.smeProfile.address,
       } : null,
       documents: userData.documents.map(doc => ({
         id: doc.id,
@@ -299,7 +299,7 @@ export class DataProtectionService {
         type: doc.type,
         createdAt: doc.createdAt,
       })),
-      activityLog: userData.auditLogs.map(log => ({
+      activityLog: userData.dataAccessLogs.map((log: any) => ({
         action: log.action,
         timestamp: log.createdAt,
         ipAddress: log.ipAddress,
@@ -465,7 +465,8 @@ export class DataProtectionService {
     await prisma.dataObjection.create({
       data: {
         userId,
-        objectionTo: objectionTo,
+        objectionType: objectionTo, // Required field
+        objectionTo: objectionTo,   // Optional field
         reason: details.reason,
         timestamp: new Date(),
       },
@@ -488,14 +489,14 @@ export class DataProtectionService {
     await prisma.consent.create({
       data: {
         userId: consent.userId,
+        consentType: consent.type || 'general',
         type: consent.type,
+        isGranted: consent.granted,
         granted: consent.granted,
         purpose: consent.purpose,
-        scope: consent.scope,
+        scope: Array.isArray(consent.scope) ? consent.scope.join(',') : consent.scope,
         expiryDate: consent.expiryDate,
         withdrawable: consent.withdrawable,
-        ipAddress: consent.ipAddress,
-        version: consent.version,
       },
     });
   }
@@ -552,9 +553,12 @@ export class DataProtectionService {
     // Log the breach
     const breachRecord = await prisma.dataBreach.create({
       data: {
+        breachType: 'unauthorized_access',
         severity: breach.severity,
-        affectedUsersCount: breach.affectedUsers.length,
+        affectedDataTypes: breach.dataTypes,
         dataTypes: breach.dataTypes,
+        affectedUsersCount: breach.affectedUsers.length,
+        incidentDate: breach.discoveredAt,
         discoveredAt: breach.discoveredAt,
         description: breach.description,
         reportedAt: new Date(),
@@ -618,8 +622,8 @@ export class DataProtectionService {
       assessmentDate: new Date(),
       dataTypes,
       processingActivities,
-      risks: [],
-      mitigations: [],
+      risks: [] as any[],
+      mitigations: [] as any[],
       complianceScore: 0,
     };
     
@@ -683,6 +687,8 @@ export class DataProtectionService {
     await prisma.dataAccessLog.create({
       data: {
         userId,
+        resourceId: userId, // Default to user ID as resource
+        resourceType: 'user_data',
         action,
         details: JSON.stringify(details),
         timestamp: new Date(),
@@ -800,6 +806,7 @@ export class DataProtectionService {
     await prisma.scheduledDeletion.create({
       data: {
         userId,
+        dataType: 'user_profile',
         scheduledFor: deletionDate,
         status: 'pending',
       },
@@ -810,7 +817,7 @@ export class DataProtectionService {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        sme: true,
+        smeProfile: true,
         documents: true,
         consents: true,
       },
@@ -823,7 +830,7 @@ export class DataProtectionService {
         name: user?.name,
         phone: user?.phone,
       },
-      businessData: user?.sme,
+      businessData: user?.smeProfile,
       documents: user?.documents,
       consents: user?.consents,
       exportDate: new Date(),
@@ -994,10 +1001,7 @@ export class DataProtectionService {
     for (const objection of objectionTo) {
       await prisma.userProcessingPreferences.upsert({
         where: {
-          userId_processingType: {
-            userId,
-            processingType: objection,
-          },
+          userId: userId,
         },
         update: {
           allowed: false,
@@ -1006,6 +1010,7 @@ export class DataProtectionService {
         create: {
           userId,
           processingType: objection,
+          preferences: { objections: [objection] },
           allowed: false,
           objectedAt: new Date(),
         },

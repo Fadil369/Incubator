@@ -100,7 +100,7 @@ export class PDFService {
         size: pdfBuffer.length,
       });
 
-      return pdfBuffer;
+      return Buffer.from(pdfBuffer);
     } catch (error) {
       logger.error('Failed to generate PDF', {
         template: options.template,

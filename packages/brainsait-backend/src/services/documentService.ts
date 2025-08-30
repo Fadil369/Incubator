@@ -103,7 +103,7 @@ export class DocumentService {
     downloadUrl: string;
   }> {
     try {
-      const smeProfile = await prisma.smeProfile.findUnique({
+      const smeProfile = await prisma.sMEProfile.findUnique({
         where: { id: data.smeId },
         include: {
           user: {

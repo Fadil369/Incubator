@@ -15,22 +15,41 @@ model User {
   email       String   @unique
   firstName   String
   lastName    String
+  name        String?   // Full name field that some code expects
   password    String
   role        UserRole @default(SME_OWNER)
   isActive    Boolean  @default(true)
   isVerified  Boolean  @default(false)
   avatar      String?
+  profilePicture String? // Profile picture field expected by some code
   phoneNumber String?
+  phone       String?   // Alternative phone field that some code expects
+  smeId       String?   // Direct SME ID reference expected by some code
+  processingRestrictions Json? // Data processing restrictions
+  restrictedAt DateTime? // Restriction timestamp
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
-  smeProfile     SMEProfile?
-  mentorProfile  MentorProfile?
-  sessions       Session[]
-  passwordResets PasswordReset[]
-  aiChampion     AIChampion?
-  aiUsageLogs    AIUsageLog[]
+  smeProfile            SMEProfile?           @relation("UserToSMEProfile")
+  mentorProfile         MentorProfile?
+  sessions              Session[]
+  passwordResets        PasswordReset[]
+  aiChampion            AIChampion?
+  aiChampionApplications AIChampionApplication[]
+  aiUsageLogs           AIUsageLog[]
+  healthcareSME         HealthcareSME?
+  consents              Consent[]
+  dataObjections        DataObjection[]
+  dataAccessLogs        DataAccessLog[]
+  documents             Document[]
+  scheduledDeletions    ScheduledDeletion[]
+  dataProcessing        DataProcessing[]
+  userProcessingPreferences UserProcessingPreferences?
+  mentorships           Mentorship[]          // Mentorships as mentee
+  mentorshipApplications MentorshipApplication[]
+  auditLogs             AuditLog[]
+  userRoles             UserRoleAssignment[]
 
   @@map("users")
 }
@@ -65,7 +84,7 @@ model SMEProfile {
   updatedAt       DateTime          @updatedAt
 
   // Relations
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User              @relation("UserToSMEProfile", fields: [userId], references: [id], onDelete: Cascade)
   programEnrollments ProgramEnrollment[]
   mentorships     Mentorship[]
   assessmentResponses AssessmentResponse[]
@@ -151,20 +170,27 @@ model ProgramEnrollment {
 }
 
 model Mentorship {
-  id          String          @id @default(cuid())
-  smeId       String
-  mentorId    String
-  status      MentorshipStatus @default(PENDING)
-  startDate   DateTime?
-  endDate     DateTime?
-  sessionCount Int            @default(0)
-  notes       String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id              String            @id @default(cuid())
+  smeId           String
+  mentorId        String
+  championId      String?           // Champion ID field expected by some code
+  menteeId        String?           // Mentee ID field
+  status          MentorshipStatus  @default(PENDING)
+  startDate       DateTime?
+  endDate         DateTime?
+  expectedEndDate DateTime?         // Expected end date
+  sessionCount    Int               @default(0)
+  notes           String?
+  goals           String?           // Mentorship goals
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   // Relations
   sme         SMEProfile      @relation(fields: [smeId], references: [id], onDelete: Cascade)
   mentor      MentorProfile   @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  champion    AIChampion?     @relation("MentorMentorships", fields: [championId], references: [id], map: "mentorships_mentor_champion_fkey")
+  activeMentor AIChampion?    @relation("ActiveMentorships", fields: [championId], references: [id], map: "mentorships_active_champion_fkey")
+  mentee      User?           @relation(fields: [menteeId], references: [id])
   sessions    MentorSession[]
 
   @@map("mentorships")
@@ -173,12 +199,18 @@ model Mentorship {
 model MentorSession {
   id            String      @id @default(cuid())
   mentorshipId  String
+  mentorId      String?
+  menteeId      String?     // Add menteeId field
   scheduledAt   DateTime
   duration      Int         // Duration in minutes
   status        SessionStatus @default(SCHEDULED)
   notes         String?
   feedback      String?
+  mentorFeedback String?    // Additional mentor feedback field
   rating        Int?
+  mentorRating  Int?        // Additional rating field
+  topic         String?     // Session topic
+  objectivesMet Boolean?    // Whether objectives were met
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -878,22 +910,36 @@ enum APICallStatus {
 // AI Adoption Models
 
 model AIChampion {
-  id                String            @id @default(cuid())
-  userId            String            @unique
-  department        String
-  proficiencyScore  Float             @default(0)
-  useCasesDelivered Int               @default(0)
-  lastActivity      DateTime?
-  status            ChampionStatus    @default(TRAINING)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id                    String            @id @default(cuid())
+  userId                String            @unique
+  healthcareSMEId       String?           @unique // Make this unique for one-to-one relation
+  department            String
+  proficiencyScore      Float             @default(0)
+  useCasesDelivered     Int               @default(0)
+  lastActivity          DateTime?
+  status                ChampionStatus    @default(TRAINING)
+  mentorshipCapacity    Int?              @default(5)
+  totalSessions         Int               @default(0)
+  availableMenteeSlots  Int?              @default(5)
+  specializations       Json?             // AI specializations
+  level                 String?           // Champion level
+  averageRating         Float?            @default(0)
+  totalMentees          Int?              @default(0)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
   
   // Relations
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  aiUsageLogs       AIUsageLog[]
-  pilotProjects     AIPilotProject[]
-  tasks             ChampionTask[]
-  assessments       ProficiencyAssessment[]
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  healthcareSME         HealthcareSME?    @relation(fields: [healthcareSMEId], references: [id])
+  aiUsageLogs           AIUsageLog[]
+  pilotProjects         AIPilotProject[]
+  tasks                 ChampionTask[]
+  assessments           ProficiencyAssessment[]
+  championMetrics       ChampionMetrics[]
+  mentorshipApplications MentorshipApplication[]
+  aiChampionApplications AIChampionApplication[]
+  mentorships           Mentorship[]      @relation("MentorMentorships")
+  activeMentorships     Mentorship[]      @relation("ActiveMentorships")
   
   @@map("ai_champions")
 }
@@ -1015,4 +1061,311 @@ enum TaskStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+// Additional models required by the backend code
+
+model HealthcareSME {
+  id                    String            @id @default(cuid())
+  userId                String            @unique
+  companyName           String
+  licenseNumber         String?
+  contactEmail          String
+  contactPhone          String?
+  address               String?
+  specializations       Json?
+  specialization        String?           // Singular specialization field
+  status                String?           // Status field expected by some code
+  aiExperienceLevel     String?           // AI experience level expected by some code
+  onboardingCompletedAt DateTime?         // Onboarding completion timestamp
+  isActive              Boolean           @default(true)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  onboardingSurveys OnboardingSurvey[]
+  aiChampion        AIChampion?       // One-to-one relation with AIChampion
+  learningProgress  LearningProgress[]
+  casesShared       CaseStudy[]       // Related case studies
+  
+  @@map("healthcare_smes")
+}
+
+model OnboardingSurvey {
+  id                String            @id @default(cuid())
+  healthcareSMEId   String
+  surveyData        Json
+  completedAt       DateTime          @default(now())
+  
+  // Relations
+  healthcareSME     HealthcareSME     @relation(fields: [healthcareSMEId], references: [id], onDelete: Cascade)
+  
+  @@map("onboarding_surveys")
+}
+
+model Consent {
+  id                String            @id @default(cuid())
+  userId            String
+  consentType       String
+  type              String?           // Alternative field name expected by some code
+  purpose           String?           // Consent purpose
+  scope             String?           // Consent scope
+  isGranted         Boolean
+  granted           Boolean?          // Alternative field name expected by some code
+  withdrawable      Boolean?          @default(true)
+  grantedAt         DateTime?
+  revokedAt         DateTime?
+  withdrawnAt       DateTime?         // When consent was withdrawn
+  expiryDate        DateTime?         // Required by some consent code
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("consents")
+}
+
+model DataObjection {
+  id                String            @id @default(cuid())
+  userId            String
+  objectionType     String            // Also supports objectionTo field
+  objectionTo       String?           // Alternative field name expected by some code
+  reason            String
+  status            String            @default("PENDING")
+  timestamp         DateTime          @default(now())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("data_objections")
+}
+
+model DataBreach {
+  id                    String            @id @default(cuid())
+  breachType            String
+  severity              String
+  affectedDataTypes     Json
+  dataTypes             Json?             // Alternative field name
+  affectedUsersCount    Int?              // Expected by breach reporting code
+  incidentDate          DateTime
+  discoveredAt          DateTime?         // When breach was discovered
+  reportedAt            DateTime          @default(now())
+  status                String            @default("REPORTED")
+  description           String?
+  
+  @@map("data_breaches")
+}
+
+model DataAccessLog {
+  id                String            @id @default(cuid())
+  userId            String?
+  resourceId        String
+  resourceType      String
+  action            String
+  details           String?           // Expected by access logging code
+  timestamp         DateTime          @default(now())
+  ipAddress         String?
+  userAgent         String?
+  
+  // Relations
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("data_access_logs")
+}
+
+model Document {
+  id                String            @id @default(cuid())
+  userId            String
+  fileName          String
+  fileType          String
+  category          String?
+  type              String?           // Expected by document filtering code
+  title             String?           // Document title
+  isPrivate         Boolean           @default(true)
+  uploadedAt        DateTime          @default(now())
+  createdAt         DateTime          @default(now())
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("documents")
+}
+
+model ScheduledDeletion {
+  id                String            @id @default(cuid())
+  userId            String
+  dataType          String
+  scheduledFor      DateTime
+  reason            String?
+  status            String            @default("SCHEDULED")
+  createdAt         DateTime          @default(now())
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("scheduled_deletions")
+}
+
+model DataProcessing {
+  id                String            @id @default(cuid())
+  userId            String?
+  processingType    String
+  type              String?           // Alternative field name expected by some code
+  purpose           String
+  legalBasis        String
+  dataCategories    Json
+  status            String?           // Expected by processing update code
+  isActive          Boolean           @default(true)
+  stoppedAt         DateTime?         // When processing was stopped
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("data_processing")
+}
+
+model UserProcessingPreferences {
+  id                    String            @id @default(cuid())
+  userId                String            @unique
+  preferences           Json
+  processingType        String?           // Expected by some upsert operations
+  allowed               Boolean?          // Expected by preference update code
+  userId_processingType String?           // Compound key field expected by some code
+  objectedAt            DateTime?         // When user objected to processing
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  
+  // Relations
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_processing_preferences")
+}
+
+model ChampionMetrics {
+  id                    String            @id @default(cuid())
+  championId            String
+  metricType            String
+  value                 Float
+  recordedAt            DateTime          @default(now())
+  menteesHelped         Int?              @default(0)
+  averageRating         Float?            @default(0)
+  sessionsCompleted     Int?              @default(0)
+  totalHoursContributed Float?            @default(0)
+  
+  // Relations
+  champion          AIChampion        @relation(fields: [championId], references: [id], onDelete: Cascade)
+  
+  @@map("champion_metrics")
+}
+
+model MentorshipApplication {
+  id                String            @id @default(cuid())
+  championId        String
+  mentorId          String?
+  menteeId          String?
+  status            String            @default("PENDING")
+  appliedAt         DateTime          @default(now())
+  reviewedAt        DateTime?
+  expectedDuration  Int?              // Expected duration in weeks
+  goals             String?           // Mentorship goals
+  reviewMessage     String?           // Review feedback message
+  currentLevel      String?           // Current skill level
+  timeCommitment    String?           // Time commitment expected
+  preferredLanguage String?           // Preferred communication language
+  
+  // Relations
+  champion          AIChampion        @relation(fields: [championId], references: [id], onDelete: Cascade)
+  mentee            User?             @relation(fields: [menteeId], references: [id])
+  
+  @@map("mentorship_applications")
+}
+
+model LearningProgress {
+  id                String            @id @default(cuid())
+  healthcareSMEId   String
+  courseId          String?
+  moduleId          String?
+  progressPercent   Float             @default(0)
+  completedAt       DateTime?
+  lastAccessed      DateTime          @default(now())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  healthcareSME     HealthcareSME     @relation(fields: [healthcareSMEId], references: [id], onDelete: Cascade)
+  
+  @@map("learning_progress")
+}
+
+model CaseStudy {
+  id                String            @id @default(cuid())
+  healthcareSMEId   String
+  title             String
+  description       String?
+  category          String?
+  status            String            @default("DRAFT")
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  healthcareSME     HealthcareSME     @relation(fields: [healthcareSMEId], references: [id], onDelete: Cascade)
+  
+  @@map("case_studies")
+}
+
+model AIChampionApplication {
+  id                String            @id @default(cuid())
+  userId            String
+  championId        String
+  applicationData   Json
+  status            String            @default("PENDING")
+  submittedAt       DateTime?
+  reviewedAt        DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  champion          AIChampion        @relation(fields: [championId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, championId])
+  @@map("ai_champion_applications")
+}
+
+model AuditLog {
+  id                String            @id @default(cuid())
+  userId            String?
+  action            String
+  resourceType      String
+  resourceId        String?
+  status            String?
+  details           Json?
+  ipAddress         String?
+  userAgent         String?
+  timestamp         DateTime          @default(now())
+  
+  // Relations
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("audit_logs")
+}
+
+model UserRoleAssignment {
+  id                String            @id @default(cuid())
+  userId            String
+  roleName          String
+  permissions       Json
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_role_assignments")
 }

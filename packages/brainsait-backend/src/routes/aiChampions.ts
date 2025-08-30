@@ -93,7 +93,7 @@ router.post('/register', authenticate, validateRequest(AIChampionRegistrationSch
     }
 
     // Check if already registered as champion
-    const existingChampion = await prisma.aiChampion.findUnique({
+    const existingChampion = await prisma.aIChampion.findUnique({
       where: { healthcareSMEId: sme.id }
     });
 
@@ -106,7 +106,7 @@ router.post('/register', authenticate, validateRequest(AIChampionRegistrationSch
       return res.status(400).json({ error: 'Beginners can only register as Junior champions' });
     }
 
-    const champion = await prisma.aiChampion.create({
+    const champion = await prisma.aIChampion.create({
       data: {
         healthcareSMEId: sme.id,
         userId,
@@ -116,10 +116,12 @@ router.post('/register', authenticate, validateRequest(AIChampionRegistrationSch
       }
     });
 
-    // Create initial champion metrics
+    // Create initial champion metrics  
     await prisma.championMetrics.create({
       data: {
         championId: champion.id,
+        metricType: 'INITIAL_REGISTRATION',
+        value: 0,
         menteesHelped: 0,
         sessionsCompleted: 0,
         averageRating: 0,
@@ -161,7 +163,7 @@ router.get('/available', async (req: Request, res: Response) => {
       where.preferredMenteeLevel = { has: level };
     }
 
-    const champions = await prisma.aiChampion.findMany({
+    const champions = await prisma.aIChampion.findMany({
       where,
       include: {
         healthcareSME: {
@@ -176,29 +178,17 @@ router.get('/available', async (req: Request, res: Response) => {
             }
           }
         },
-        metrics: true,
-        reviews: {
-          take: 3,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            reviewer: {
-              select: {
-                firstName: true,
-                lastName: true
-              }
-            }
-          }
-        }
+        championMetrics: true
       },
       skip: (Number(page) - 1) * Number(limit),
       take: Number(limit),
       orderBy: [
-        { metrics: { averageRating: 'desc' } },
-        { metrics: { sessionsCompleted: 'desc' } }
+        { averageRating: 'desc' },
+        { totalSessions: 'desc' }
       ]
     });
 
-    const total = await prisma.aiChampion.count({ where });
+    const total = await prisma.aIChampion.count({ where });
 
     res.json({
       champions,
@@ -236,16 +226,16 @@ router.post('/mentorship/apply', mentorshipApplyLimiter, authenticate, validateR
     }
 
     // Check if champion exists and is available
-    const champion = await prisma.aiChampion.findUnique({
+    const champion = await prisma.aIChampion.findUnique({
       where: { id: applicationData.championId },
-      include: { metrics: true }
+      include: { championMetrics: true }
     });
 
     if (!champion || champion.status !== 'ACTIVE') {
       return res.status(404).json({ error: 'Champion not available' });
     }
 
-    if (champion.availableMenteeSlots <= 0) {
+    if ((champion.availableMenteeSlots || 0) <= 0) {
       return res.status(400).json({ error: 'Champion has no available mentee slots' });
     }
 
@@ -270,8 +260,6 @@ router.post('/mentorship/apply', mentorshipApplyLimiter, authenticate, validateR
         currentLevel: applicationData.currentLevel,
         timeCommitment: applicationData.timeCommitment,
         preferredLanguage: applicationData.preferredLanguage,
-        previousExperience: applicationData.previousExperience,
-        specificInterests: applicationData.specificInterests,
         expectedDuration: applicationData.expectedDuration,
         status: 'PENDING',
         appliedAt: new Date()
@@ -301,7 +289,7 @@ router.get('/mentorship/applications', authenticate, async (req: AuthenticatedRe
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const champion = await prisma.aiChampion.findUnique({
+    const champion = await prisma.aIChampion.findUnique({
       where: { userId }
     });
 
@@ -315,19 +303,7 @@ router.get('/mentorship/applications', authenticate, async (req: AuthenticatedRe
         status: 'PENDING'
       },
       include: {
-        mentee: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                profilePicture: true
-              }
-            }
-          }
-        }
+        mentee: true
       },
       orderBy: { appliedAt: 'desc' }
     });
@@ -359,11 +335,7 @@ router.put('/mentorship/applications/:applicationId', authenticate, async (req: 
       where: { id: applicationId },
       include: {
         champion: true,
-        mentee: {
-          include: {
-            user: true
-          }
-        }
+        mentee: true
       }
     });
 
@@ -371,7 +343,7 @@ router.put('/mentorship/applications/:applicationId', authenticate, async (req: 
       return res.status(404).json({ error: 'Application not found' });
     }
 
-    if (application.champion.userId !== userId) {
+    if (application.championId !== userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -392,17 +364,19 @@ router.put('/mentorship/applications/:applicationId', authenticate, async (req: 
       // Create mentorship relationship
       const mentorship = await prisma.mentorship.create({
         data: {
+          smeId: application.menteeId || '', // SME applying for mentorship
+          mentorId: application.championId, // Champion becoming mentor
           championId: application.championId,
           menteeId: application.menteeId,
           startDate: new Date(),
-          expectedEndDate: calculateEndDate(application.expectedDuration),
+          expectedEndDate: application.expectedDuration ? calculateEndDate(application.expectedDuration.toString()) : new Date(),
           goals: application.goals,
           status: 'ACTIVE'
         }
       });
 
       // Update champion's available slots
-      await prisma.aiChampion.update({
+      await prisma.aIChampion.update({
         where: { id: application.championId },
         data: {
           availableMenteeSlots: { decrement: 1 }
@@ -414,7 +388,9 @@ router.put('/mentorship/applications/:applicationId', authenticate, async (req: 
     }
 
     // Send notification to mentee
-    await sendApplicationStatusNotification(application.mentee.user, status, message);
+    if (application.mentee) {
+      await sendApplicationStatusNotification(application.mentee, status, message);
+    }
 
     res.json({
       message: `Application ${status.toLowerCase()} successfully`,
@@ -436,43 +412,25 @@ router.get('/dashboard', authenticate, async (req: AuthenticatedRequest, res: Re
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const champion = await prisma.aiChampion.findUnique({
+    const champion = await prisma.aIChampion.findUnique({
       where: { userId },
       include: {
-        metrics: true,
+        championMetrics: true,
         activeMentorships: {
           include: {
-            mentee: {
-              include: {
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                    profilePicture: true
-                  }
-                }
-              }
-            },
+            mentee: true,
             sessions: {
               take: 5,
               orderBy: { scheduledAt: 'desc' }
             }
           }
         },
-        pendingApplications: {
+        mentorshipApplications: {
+          where: { status: 'PENDING' },
           take: 5,
           orderBy: { appliedAt: 'desc' },
           include: {
-            mentee: {
-              include: {
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true
-                  }
-                }
-              }
-            }
+            mentee: true
           }
         }
       }
@@ -483,29 +441,14 @@ router.get('/dashboard', authenticate, async (req: AuthenticatedRequest, res: Re
     }
 
     // Get recent activity
-    const recentSessions = await prisma.mentorshipSession.findMany({
+    const recentSessions = await prisma.mentorSession.findMany({
       where: {
-        mentorship: {
-          championId: champion.id
-        }
+        mentorId: champion.id
       },
       take: 10,
       orderBy: { scheduledAt: 'desc' },
       include: {
-        mentorship: {
-          include: {
-            mentee: {
-              include: {
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true
-                  }
-                }
-              }
-            }
-          }
-        }
+        mentorship: true
       }
     });
 
@@ -513,11 +456,11 @@ router.get('/dashboard', authenticate, async (req: AuthenticatedRequest, res: Re
       champion,
       recentSessions,
       stats: {
-        totalMentorships: champion.metrics?.menteesHelped || 0,
+        totalMentorships: champion.championMetrics[0]?.menteesHelped || 0,
         activeMentorships: champion.activeMentorships.length,
-        pendingApplications: champion.pendingApplications.length,
-        averageRating: champion.metrics?.averageRating || 0,
-        totalHours: champion.metrics?.totalHoursContributed || 0
+        pendingApplications: champion.mentorshipApplications.length,
+        averageRating: champion.championMetrics[0]?.averageRating || 0,
+        totalHours: champion.championMetrics[0]?.totalHoursContributed || 0
       }
     });
 

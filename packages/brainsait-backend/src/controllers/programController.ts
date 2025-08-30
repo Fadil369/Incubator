@@ -394,7 +394,7 @@ export const enrollInProgram = asyncHandler(async (req: AuthenticatedRequest, re
   const { id } = req.params; // Program ID
 
   // Get user's SME profile
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 
@@ -530,7 +530,7 @@ export const getMyEnrollments = asyncHandler(async (req: AuthenticatedRequest, r
   }
 
   // Get user's SME profile
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 

@@ -35,7 +35,7 @@ export const generateFeasibilityStudy = asyncHandler(async (req: AuthenticatedRe
   }
 
   // Get user's SME profile
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 
@@ -126,7 +126,7 @@ export const generateBusinessPlan = asyncHandler(async (req: AuthenticatedReques
   }
 
   // Get user's SME profile
-  const smeProfile = await prisma.smeProfile.findUnique({
+  const smeProfile = await prisma.sMEProfile.findUnique({
     where: { userId: req.user.id },
   });
 

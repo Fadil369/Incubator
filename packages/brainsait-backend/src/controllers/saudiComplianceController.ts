@@ -32,7 +32,7 @@ export const createOrUpdateCompliance = asyncHandler(async (req: AuthenticatedRe
   const complianceData = req.body;
 
   // Verify SME ownership or admin privileges
-  const sme = await prisma.smeProfile.findUnique({
+  const sme = await prisma.sMEProfile.findUnique({
     where: { id: smeId }
   });
 
@@ -98,7 +98,7 @@ export const getCompliance = asyncHandler(async (req: AuthenticatedRequest, res:
   const { smeId } = req.params;
 
   // Verify SME ownership or admin privileges
-  const sme = await prisma.smeProfile.findUnique({
+  const sme = await prisma.sMEProfile.findUnique({
     where: { id: smeId }
   });
 
@@ -167,7 +167,7 @@ export const getComplianceSummary = asyncHandler(async (req: AuthenticatedReques
   const { smeId } = req.params;
 
   // Verify SME ownership or admin privileges
-  const sme = await prisma.smeProfile.findUnique({
+  const sme = await prisma.sMEProfile.findUnique({
     where: { id: smeId }
   });
 
@@ -303,7 +303,7 @@ export const getComplianceStatistics = asyncHandler(async (req: AuthenticatedReq
     regionStats,
     recentAPILogs
   ] = await Promise.all([
-    prisma.smeProfile.count(),
+    prisma.sMEProfile.count(),
     prisma.saudiRegulatoryCompliance.count(),
     prisma.saudiRegulatoryCompliance.count({
       where: { overallComplianceScore: { gte: 80 } }
