@@ -1,4 +1,6 @@
 name: Deploy to Cloudflare
+permissions:
+  contents: read
 
 on:
   push:
