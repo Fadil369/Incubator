@@ -16,7 +16,7 @@ export = DocumentController;
  * @version 2.0.0
  */
 declare class DocumentController {
-    browser: any;
+    browser: puppeteer.Browser | null;
     templateCache: Map<any, any>;
     partialCache: Map<any, any>;
     governmentDataCache: Map<any, any>;
@@ -244,4 +244,5 @@ declare class DocumentController {
      */
     cleanup(): Promise<void>;
 }
+import puppeteer = require("puppeteer");
 //# sourceMappingURL=documentController.d.ts.map

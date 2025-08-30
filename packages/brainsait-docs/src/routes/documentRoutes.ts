@@ -67,7 +67,7 @@ const upload = multer({
     if (file.mimetype.startsWith('image/') || file.mimetype === 'application/json') {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type'), false);
+      cb(null, false);
     }
   }
 });

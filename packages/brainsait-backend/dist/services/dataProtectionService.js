@@ -303,8 +303,7 @@ class DataProtectionService {
         // Perform data erasure or anonymization
         const erasureResult = await this.performDataErasure(userId, details);
         // Schedule permanent deletion after retention period
-        await this.schedulePermanen;
-        tDeletion(userId, PDPL_CONFIG.RETENTION_PERIODS.DELETED_DATA);
+        await this.schedulePermanentDeletion(userId, PDPL_CONFIG.RETENTION_PERIODS.DELETED_DATA);
         return erasureResult;
     }
     /**

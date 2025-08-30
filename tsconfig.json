@@ -21,11 +21,11 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/*/src/*"],
       "@brainsait/shared": ["./packages/brainsait-shared/src"],
       "@brainsait/frontend/*": ["./packages/brainsait-frontend/src/*"],
       "@brainsait/backend/*": ["./packages/brainsait-backend/src/*"],
-      "@brainsait/docs/*": ["./packages/brainsait-docs/src/*"]
+      "@brainsait/docs/*": ["./packages/brainsait-docs/src/*"],
+      "@brainsait/ai/*": ["./packages/brainsait-ai/src/*"]
     }
   },
   "include": ["packages/*/src/**/*", "packages/*/*.ts", "packages/*/*.tsx"],

@@ -147,7 +147,7 @@ class PDFService {
         });
         // Conditional helper
         handlebars_1.default.registerHelper('ifEquals', function (arg1, arg2, options) {
-            return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+            return arg1 === arg2 ? options.fn(options) : options.inverse(options);
         });
         // Loop helper with index
         handlebars_1.default.registerHelper('eachWithIndex', function (array, options) {

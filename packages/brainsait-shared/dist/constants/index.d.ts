@@ -2,8 +2,8 @@
  * Application constants for BrainSAIT platform
  */
 export declare const API_CONFIG: {
-    readonly BASE_URL: any;
-    readonly DOCS_URL: any;
+    readonly BASE_URL: string;
+    readonly DOCS_URL: string;
     readonly TIMEOUT: 30000;
     readonly RETRY_ATTEMPTS: 3;
 };

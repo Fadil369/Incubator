@@ -1,30 +1,30 @@
 export declare const config: {
     server: {
         port: number;
-        nodeEnv: any;
+        nodeEnv: string;
     };
     database: {
-        url: any;
+        url: string;
     };
     redis: {
-        url: any;
+        url: string;
     };
     jwt: {
-        secret: any;
-        expiresIn: any;
+        secret: string;
+        expiresIn: string;
     };
     cors: {
-        allowedOrigins: any;
+        allowedOrigins: string[];
     };
     email: {
         smtp: {
-            host: any;
+            host: string;
             port: number;
             secure: boolean;
-            user: any;
-            pass: any;
+            user: string;
+            pass: string;
         };
-        from: any;
+        from: string;
     };
     uploads: {
         maxFileSize: number;

@@ -1,24 +1,24 @@
 export declare const config: {
     server: {
         port: number;
-        nodeEnv: any;
+        nodeEnv: string;
     };
     cors: {
-        allowedOrigins: any;
+        allowedOrigins: string[];
     };
     puppeteer: {
         headless: boolean;
-        executablePath: any;
+        executablePath: string | undefined;
         args: string[];
     };
     templates: {
-        basePath: any;
+        basePath: string;
         defaultLanguage: string;
         supportedLanguages: string[];
     };
     storage: {
-        outputPath: any;
-        tempPath: any;
+        outputPath: string;
+        tempPath: string;
         maxFileSize: number;
         cleanupInterval: number;
     };

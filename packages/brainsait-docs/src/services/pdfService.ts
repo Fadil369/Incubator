@@ -186,7 +186,7 @@ export class PDFService {
 
     // Conditional helper
     handlebars.registerHelper('ifEquals', function (arg1: any, arg2: any, options: any) {
-      return arg1 === arg2 ? options.fn(this) : options.inverse(this);
+      return arg1 === arg2 ? options.fn(options) : options.inverse(options);
     });
 
     // Loop helper with index

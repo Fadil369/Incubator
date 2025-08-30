@@ -12,6 +12,6 @@
  * @author BrainSAIT Development Team
  * @version 2.0.0
  */
-declare const router: any;
+declare const router: import("express-serve-static-core").Router;
 export default router;
 //# sourceMappingURL=documentRoutes.d.ts.map

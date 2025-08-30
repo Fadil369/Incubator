@@ -36,7 +36,7 @@ export declare const revokeAllUserSessions: (userId: string) => Promise<void>;
  * Get active sessions for a user
  */
 export declare const getUserSessions: (userId: string) => Promise<{
-    sessionId: any;
+    sessionId: string;
     createdAt: any;
     lastAccessed: any;
 }[]>;

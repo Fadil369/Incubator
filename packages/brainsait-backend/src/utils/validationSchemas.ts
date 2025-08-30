@@ -1,5 +1,5 @@
 import { body, query, param } from 'express-validator';
-import { SMEType, IndustryFocus, UserRole, ProgramType, ProgramStatus, EnrollmentStatus, VerificationStatus } from '@prisma/client';
+import { SMEType, IndustryFocus, UserRole, ProgramType, ProgramStatus, EnrollmentStatus, VerificationStatus } from '@brainsait/shared';
 
 // Common validation rules
 export const commonValidation = {
