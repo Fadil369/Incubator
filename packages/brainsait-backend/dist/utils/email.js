@@ -1,57 +1,49 @@
-import nodemailer from 'nodemailer';
-import { config } from '../config/environment';
-import { logger } from './logger';
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendWelcomeEmail = exports.sendPasswordResetEmail = exports.sendVerificationEmail = exports.sendEmail = void 0;
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const environment_1 = require("../config/environment");
+const logger_1 = require("./logger");
 // Create transporter
-const transporter = nodemailer.createTransport({
-  host: config.email.smtp.host,
-  port: config.email.smtp.port,
-  secure: config.email.smtp.secure,
-  auth: {
-    user: config.email.smtp.user,
-    pass: config.email.smtp.pass,
-  },
+const transporter = nodemailer_1.default.createTransporter({
+    host: environment_1.config.email.smtp.host,
+    port: environment_1.config.email.smtp.port,
+    secure: environment_1.config.email.smtp.secure,
+    auth: {
+        user: environment_1.config.email.smtp.user,
+        pass: environment_1.config.email.smtp.pass,
+    },
 });
-
-export interface EmailOptions {
-  to: string;
-  subject: string;
-  html: string;
-  text?: string;
-}
-
 /**
  * Send email using configured SMTP
  */
-export const sendEmail = async (options: EmailOptions): Promise<void> => {
-  try {
-    const mailOptions = {
-      from: config.email.from,
-      to: options.to,
-      subject: options.subject,
-      html: options.html,
-      text: options.text,
-    };
-
-    await transporter.sendMail(mailOptions);
-    logger.info(`Email sent successfully to: ${options.to}`);
-  } catch (error) {
-    logger.error('Error sending email:', error);
-    throw new Error('Failed to send email');
-  }
+const sendEmail = async (options) => {
+    try {
+        const mailOptions = {
+            from: environment_1.config.email.from,
+            to: options.to,
+            subject: options.subject,
+            html: options.html,
+            text: options.text,
+        };
+        await transporter.sendMail(mailOptions);
+        logger_1.logger.info(`Email sent successfully to: ${options.to}`);
+    }
+    catch (error) {
+        logger_1.logger.error('Error sending email:', error);
+        throw new Error('Failed to send email');
+    }
 };
-
+exports.sendEmail = sendEmail;
 /**
  * Send email verification email
  */
-export const sendVerificationEmail = async (
-  email: string,
-  firstName: string,
-  verificationToken: string
-): Promise<void> => {
-  const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
-
-  const html = `
+const sendVerificationEmail = async (email, firstName, verificationToken) => {
+    const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -105,8 +97,7 @@ export const sendVerificationEmail = async (
     </body>
     </html>
   `;
-
-  const text = `
+    const text = `
     Welcome to BrainSAIT!
     
     Hello ${firstName},
@@ -123,26 +114,20 @@ export const sendVerificationEmail = async (
     Best regards,
     The BrainSAIT Team
   `;
-
-  await sendEmail({
-    to: email,
-    subject: 'Verify Your Email - Welcome to BrainSAIT!',
-    html,
-    text,
-  });
+    await (0, exports.sendEmail)({
+        to: email,
+        subject: 'Verify Your Email - Welcome to BrainSAIT!',
+        html,
+        text,
+    });
 };
-
+exports.sendVerificationEmail = sendVerificationEmail;
 /**
  * Send password reset email
  */
-export const sendPasswordResetEmail = async (
-  email: string,
-  firstName: string,
-  resetToken: string
-): Promise<void> => {
-  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
-
-  const html = `
+const sendPasswordResetEmail = async (email, firstName, resetToken) => {
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -195,8 +180,7 @@ export const sendPasswordResetEmail = async (
     </body>
     </html>
   `;
-
-  const text = `
+    const text = `
     Password Reset Request - BrainSAIT
     
     Hello ${firstName},
@@ -216,25 +200,20 @@ export const sendPasswordResetEmail = async (
     Best regards,
     The BrainSAIT Team
   `;
-
-  await sendEmail({
-    to: email,
-    subject: 'Reset Your Password - BrainSAIT',
-    html,
-    text,
-  });
+    await (0, exports.sendEmail)({
+        to: email,
+        subject: 'Reset Your Password - BrainSAIT',
+        html,
+        text,
+    });
 };
-
+exports.sendPasswordResetEmail = sendPasswordResetEmail;
 /**
  * Send welcome email after successful verification
  */
-export const sendWelcomeEmail = async (
-  email: string,
-  firstName: string
-): Promise<void> => {
-  const dashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard`;
-
-  const html = `
+const sendWelcomeEmail = async (email, firstName) => {
+    const dashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard`;
+    const html = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -295,10 +274,11 @@ export const sendWelcomeEmail = async (
     </body>
     </html>
   `;
-
-  await sendEmail({
-    to: email,
-    subject: '🎉 Welcome to BrainSAIT - Let\'s Innovate Healthcare Together!',
-    html,
-  });
+    await (0, exports.sendEmail)({
+        to: email,
+        subject: '🎉 Welcome to BrainSAIT - Let\'s Innovate Healthcare Together!',
+        html,
+    });
 };
+exports.sendWelcomeEmail = sendWelcomeEmail;
+//# sourceMappingURL=email.js.map

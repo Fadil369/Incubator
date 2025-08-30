@@ -1,13 +1,13 @@
+import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { PrismaClient } from '@prisma/client';
-import { hashPassword, comparePassword, validatePasswordStrength, generateSecureToken } from '../utils/password';
-import { generateTokenPair, refreshAccessToken, revokeSession, revokeAllUserSessions } from '../utils/jwt';
-import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from '../utils/email';
-import { asyncHandler } from '../middleware/errorHandler';
 import { AuthenticatedRequest } from '../middleware/auth';
-import { logger } from '../utils/logger';
+import { asyncHandler } from '../middleware/errorHandler';
 import { redisClient } from '../server';
+import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from '../utils/email';
+import { generateTokenPair, refreshAccessToken, revokeAllUserSessions, revokeSession } from '../utils/jwt';
+import { logger } from '../utils/logger';
+import { comparePassword, generateSecureToken, hashPassword, validatePasswordStrength } from '../utils/password';
 
 const prisma = new PrismaClient();
 
@@ -87,7 +87,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // Store verification token in Redis
-  await redisClient.setex(
+  await redisClient.setEx(
     `email_verification:${verificationToken}`,
     24 * 60 * 60, // 24 hours
     JSON.stringify({

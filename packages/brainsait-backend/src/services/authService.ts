@@ -1,9 +1,9 @@
-import { PrismaClient, User, UserRole } from '@prisma/client';
-import { generateTokenPair, revokeAllUserSessions, getUserSessions } from '../utils/jwt';
-import { hashPassword, comparePassword, validatePasswordStrength, generateSecureToken } from '../utils/password';
-import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from '../utils/email';
-import { logger } from '../utils/logger';
+import { PrismaClient, UserRole } from '@prisma/client';
 import { redisClient } from '../server';
+import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from '../utils/email';
+import { generateTokenPair, getUserSessions, revokeAllUserSessions } from '../utils/jwt';
+import { logger } from '../utils/logger';
+import { comparePassword, generateSecureToken, hashPassword, validatePasswordStrength } from '../utils/password';
 
 const prisma = new PrismaClient();
 
@@ -84,7 +84,7 @@ export class AuthService {
     const verificationToken = generateSecureToken(32);
     
     // Store verification token in Redis (24 hours expiry)
-    await redisClient.setex(
+    await redisClient.setEx(
       `email_verification:${verificationToken}`,
       24 * 60 * 60,
       JSON.stringify({
@@ -492,7 +492,7 @@ export class AuthService {
     const verificationToken = generateSecureToken(32);
     
     // Store verification token in Redis (24 hours expiry)
-    await redisClient.setex(
+    await redisClient.setEx(
       `email_verification:${verificationToken}`,
       24 * 60 * 60,
       JSON.stringify({

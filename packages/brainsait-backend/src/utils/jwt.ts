@@ -64,7 +64,7 @@ export const generateTokenPair = async (
   };
 
   const sessionKey = `session:${sessionId}`;
-  await redisClient.setex(
+  await redisClient.setEx(
     sessionKey,
     7 * 24 * 60 * 60, // 7 days in seconds
     JSON.stringify(sessionData)
@@ -72,7 +72,7 @@ export const generateTokenPair = async (
 
   // Store refresh token mapping
   const refreshKey = `refresh:${sessionId}`;
-  await redisClient.setex(
+  await redisClient.setEx(
     refreshKey,
     7 * 24 * 60 * 60, // 7 days in seconds
     refreshToken
@@ -138,7 +138,7 @@ export const refreshAccessToken = async (
 
     // Update last accessed time
     session.lastAccessed = new Date().toISOString();
-    await redisClient.setex(
+    await redisClient.setEx(
       sessionKey,
       7 * 24 * 60 * 60,
       JSON.stringify(session)
