@@ -9,6 +9,10 @@
   "transform": {
     "^.+\\.ts$": "ts-jest"
   },
+  "moduleNameMapper": {
+    "^@brainsait/shared$": "<rootDir>/../brainsait-shared/dist",
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
   "collectCoverageFrom": [
     "src/**/*.ts",
     "!src/**/*.d.ts",
