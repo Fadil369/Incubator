@@ -10,7 +10,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from 'react-hot-toast';
 
 // Environment configuration
-const DOCS_API_BASE_URL = process.env.NEXT_PUBLIC_DOCS_API_URL || 'http://localhost:3002/api';
+const DOCS_API_BASE_URL = process.env.NEXT_PUBLIC_DOCS_API_URL || 'http://localhost:5002/api';
 
 // Types for document generation
 export interface DocumentRequestBase {
