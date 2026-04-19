@@ -280,10 +280,10 @@ jobs:
           SLUG: ${{ needs.resolve-inputs.outputs.startup_slug }}
         run: |
           REPO="${SLUG}-platform"
-          echo "Dispatching initial CI on ${GITHUB_ORG}/${REPO}..."
-          gh api "repos/${GITHUB_ORG}/${REPO}/actions/workflows" --jq '.workflows[0].id' 2>/dev/null | \
-          xargs -I{} gh api "repos/${GITHUB_ORG}/${REPO}/actions/workflows/{}/dispatches" \
-            -X POST -f ref=main 2>/dev/null && echo "✅ CI dispatched" || echo "ℹ️ No workflows to dispatch yet"
+          TARGET_WORKFLOW_FILE="ci.yml"
+          echo "Dispatching initial CI on ${GITHUB_ORG}/${REPO} using ${TARGET_WORKFLOW_FILE}..."
+          gh api "repos/${GITHUB_ORG}/${REPO}/actions/workflows/${TARGET_WORKFLOW_FILE}/dispatches" \
+            -X POST -f ref=main 2>/dev/null && echo "✅ CI dispatched" || echo "ℹ️ Target workflow not found or not ready yet"
 
   # ─────────────────────────────────────────────────────────────
   # Notify team and update dashboard
