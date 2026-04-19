@@ -1,4 +1,6 @@
 # Cloudflare Workers Configuration for BrainSAIT Platform
+# Root-level wrangler config (used for local dev from monorepo root).
+# The authoritative deploy config is packages/brainsait-backend/wrangler.toml.
 
 name = "brainsait-backend"
 main = "packages/brainsait-backend/dist/worker.js"
@@ -8,9 +10,9 @@ compatibility_flags = ["nodejs_compat"]
 account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 workers_dev = true
 
-[env.production.routes]
-patterns = ["api.brainsait.org/*"]
-zone_name = "brainsait.org"
+[env.production]
+name = "brainsait-backend-production"
+route = { pattern = "api.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.production.vars]
 NODE_ENV = "production"
@@ -19,9 +21,9 @@ FRONTEND_URL = "https://brainsait.org"
 AI_SERVICE_URL = "https://ai.brainsait.org"
 DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
+CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
-# GITHUB_REPO must be provided via environment-specific production configuration
-# and should point to an org-owned repo hosting partner-provision.yml.
+# GITHUB_REPO: set at deploy time to the org-owned repo hosting partner-provision.yml (e.g. "Fadil369/Incubator")
 
 # KV Namespaces
 [[kv_namespaces]]
@@ -29,21 +31,45 @@ binding = "SESSIONS"
 id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
-binding = "AI_CACHE"
-id = "9201cf6a9b1143d8822250dc24e8c8ba"
+binding = "CACHE"
+id = "079016c359c348e180724cdd76f29129"
 
 [[kv_namespaces]]
-binding = "RATE_LIMIT_STORE"
+binding = "RATE_LIMIT"
 id = "8c0682e8e21b4703b46fd1c1a3487ec0"
+
+[[kv_namespaces]]
+binding = "CONFIG"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[kv_namespaces]]
+binding = "FEATURE_FLAGS"
+id = "7e559b5bf3f84271b679db018f59e6d9"
+
+[[kv_namespaces]]
+binding = "STARTUP_REGISTRY"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
+
+[[kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+id = "b8fd4c2e1097531fae2d56c32a9b77cf"
 
 # Durable Objects
 [[durable_objects.bindings]]
-name = "AI_USAGE_TRACKER"
-class_name = "AIUsageTracker"
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
 
 [[durable_objects.bindings]]
 name = "CHAT_ROOMS"
 class_name = "ChatRoom"
+
+[[durable_objects.bindings]]
+name = "USAGE_TRACKER"
+class_name = "AIUsageTracker"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiter", "ChatRoom", "AIUsageTracker"]
 
 # R2 Storage
 [[r2_buckets]]
@@ -55,7 +81,7 @@ binding = "UPLOADS"
 bucket_name = "brainsait-files"
 
 [[r2_buckets]]
-binding = "BACKUPS"
+binding = "DATA_CONTRACTS"
 bucket_name = "brainsait-storage"
 
 # D1 Database
@@ -64,14 +90,23 @@ binding = "DB"
 database_name = "brainsait-unified-api"
 database_id = "925780db-b119-42f2-a3ca-2aea98712168"
 
+[[d1_databases]]
+binding = "AUDIT_LOG"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
 # Analytics Engine
 [[analytics_engine_datasets]]
-binding = "AI_ANALYTICS"
-dataset = "brainsait_ai_usage"
+binding = "API_ANALYTICS"
+dataset = "brainsait_api_usage"
+
+# AI Gateway
+[ai]
+binding = "AI"
 
 [build]
-command = "npm run build"
-watch_paths = ["packages/**/*.ts", "packages/**/*.tsx"]
+command = "npm run build:backend"
+watch_paths = ["packages/brainsait-backend/src/**/*.ts"]
 
 [env.development.vars]
 NODE_ENV = "development"
@@ -81,6 +116,10 @@ AI_SERVICE_URL = "http://localhost:5001"
 DOCS_SERVICE_URL = "http://localhost:5002"
 ENABLE_DEBUG = "true"
 
+[env.staging]
+name = "brainsait-backend-staging"
+route = { pattern = "staging-api.brainsait.org/*", zone_name = "brainsait.org" }
+
 [env.staging.vars]
 NODE_ENV = "staging"
 API_BASE_URL = "https://staging-api.brainsait.org"
@@ -88,6 +127,11 @@ FRONTEND_URL = "https://staging.brainsait.org"
 AI_SERVICE_URL = "https://staging-ai.brainsait.org"
 DOCS_SERVICE_URL = "https://staging-docs.brainsait.org"
 ENABLE_DEBUG = "false"
+GITHUB_ORG = "brainsait-incubator"
+
+[env.preview]
+name = "brainsait-backend-preview"
+workers_dev = true
 
 [env.preview.vars]
 NODE_ENV = "preview"

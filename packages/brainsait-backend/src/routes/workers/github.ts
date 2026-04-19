@@ -13,13 +13,31 @@ interface Env {
   GITHUB_TOKEN: string;
   GITHUB_ORG: string;
   GITHUB_APP_ID?: string;
-  AUTH_JWT_SECRET: string;
+  JWT_SECRET: string;
   DB: D1Database;
 }
 
 const GITHUB_API = 'https://api.github.com';
 
 const github = new Hono<{ Bindings: Env }>();
+
+// ── Router-level JWT auth middleware (protects all routes) ────────────────────
+github.use('*', async (c, next) => {
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  const token = authHeader.slice('Bearer '.length).trim();
+  if (!token) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  try {
+    await jwtVerify(token, new TextEncoder().encode(c.env.JWT_SECRET));
+  } catch {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  await next();
+});
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -61,7 +79,7 @@ async function requireGithubOrgAccess(c: any): Promise<Response | null> {
   try {
     const verified = await jwtVerify(
       token,
-      new TextEncoder().encode(c.env.AUTH_JWT_SECRET)
+      new TextEncoder().encode(c.env.JWT_SECRET)
     );
     payload = verified.payload as GithubAuthClaims;
   } catch {

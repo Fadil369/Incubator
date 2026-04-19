@@ -37,7 +37,7 @@ permissions:
 
 env:
   GITHUB_ORG: ${{ secrets.GITHUB_ORG || 'brainsait-incubator' }}
-  GH_TOKEN: ${{ secrets.INCUBATOR_GITHUB_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_PAT }}
 
 jobs:
   # ─────────────────────────────────────────────────────────────
@@ -342,7 +342,7 @@ jobs:
             --title "🚀 Onboarding: ${ORG} (${SLUG})" \
             --body "$BODY" \
             --label "type:feature" \
-            2>/dev/null || echo "⚠️ Could not create issue (check INCUBATOR_GITHUB_TOKEN permissions)"
+            2>/dev/null || echo "⚠️ Could not create issue (check GH_PAT permissions)"
 
       - name: Notify via Slack / Communication Hub
         env:

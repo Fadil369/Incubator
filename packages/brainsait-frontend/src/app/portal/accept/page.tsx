@@ -25,6 +25,7 @@ import {
   Rocket,
   Business,
   ArrowForward,
+  GitHub,
 } from '@mui/icons-material';
 import {
   validateInviteToken,
@@ -33,6 +34,7 @@ import {
 } from '@/services/partnersService';
 
 const PARTNER_TYPE_LABELS: Record<string, string> = {
+  sme: 'Healthcare SME Startup',
   tech: 'Technology Partner',
   health: 'Healthcare Provider',
   dist: 'Distribution Partner',
@@ -51,11 +53,11 @@ function PortalAcceptContent() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Extra profile fields
   const [timezone, setTimezone] = useState(
     typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : ''
   );
   const [linkedIn, setLinkedIn] = useState('');
+  const [githubRepo, setGithubRepo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token || !appId) {
@@ -72,6 +74,7 @@ function PortalAcceptContent() {
           router.replace(`/portal/${app.startupSlug}`);
         } else {
           setStep('onboarding');
+          if (app.githubRepo) setGithubRepo(app.githubRepo);
         }
       })
       .catch((err: Error) => {
@@ -134,10 +137,25 @@ function PortalAcceptContent() {
             <CheckCircle sx={{ fontSize: 48 }} />
           </Avatar>
           <Typography variant="h4" fontWeight={700} gutterBottom>Welcome aboard! 🎉</Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
             Your incubator portal is ready. Redirecting you now…
           </Typography>
-          <CircularProgress size={32} />
+          {githubRepo && (
+            <Button
+              variant="outlined"
+              startIcon={<GitHub />}
+              href={`https://github.com/${githubRepo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open GitHub repository ${githubRepo} (opens in new window)`}
+              sx={{ mb: 3 }}
+            >
+              Open Your GitHub Repo
+            </Button>
+          )}
+          <Box>
+            <CircularProgress size={32} />
+          </Box>
         </Box>
       </Container>
     );
@@ -270,10 +288,25 @@ function PortalAcceptContent() {
                     gap: 1.5,
                   }}>
                     <Rocket sx={{ mt: 0.25, flexShrink: 0 }} />
-                    <Typography variant="body2">
-                      After submitting, you&apos;ll land on your personalised incubator dashboard with your
-                      GitHub repos, CI/CD pipelines, program milestones, and mentor schedule.
-                    </Typography>
+                    <Box>
+                      <Typography variant="body2">
+                        After submitting, you&apos;ll land on your personalised incubator dashboard with your
+                        GitHub repos, CI/CD pipelines, program milestones, and mentor schedule.
+                      </Typography>
+                      {githubRepo && (
+                        <Button
+                          size="small"
+                          startIcon={<GitHub />}
+                          href={`https://github.com/${githubRepo}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Open GitHub repository ${githubRepo} (opens in new window)`}
+                          sx={{ mt: 1, px: 0 }}
+                        >
+                          {githubRepo}
+                        </Button>
+                      )}
+                    </Box>
                   </Box>
 
                   <Button
