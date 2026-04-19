@@ -130,8 +130,10 @@ PLATFORM_VERSION = "2.0.0"
 NODE_ENV = "production"
 LOG_LEVEL = "info"
 CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org"
+GITHUB_ORG = "brainsait-incubator"
 
 [env.staging.vars]
 NODE_ENV = "staging"
 LOG_LEVEL = "debug"
 CORS_ORIGINS = "https://staging.brainsait.org,http://localhost:3000"
+GITHUB_ORG = "brainsait-incubator"

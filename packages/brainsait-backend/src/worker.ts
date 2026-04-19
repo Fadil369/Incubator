@@ -13,6 +13,7 @@ import { secureHeaders } from 'hono/secure-headers';
 // Import our route handlers (Workers-compatible versions)
 import authRoutes from './routes/workers/auth';
 import healthRoutes from './routes/workers/health';
+import githubRoutes from './routes/workers/github';
 
 interface Env {
   // Cloudflare KV Namespaces
@@ -47,6 +48,12 @@ interface Env {
   OPENAI_API_KEY: string;
   ANTHROPIC_API_KEY: string;
   SENDGRID_API_KEY: string;
+
+  // GitHub Integration
+  GITHUB_TOKEN: string;
+  GITHUB_ORG: string;
+  GITHUB_APP_ID: string;
+  GITHUB_APP_PRIVATE_KEY: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -72,6 +79,7 @@ app.route('/api/v1', healthRoutes);
 
 // API routes
 app.route('/api/v1/auth', authRoutes);
+app.route('/api/v1/github', githubRoutes);
 
 // Placeholder routes for other services (to be implemented)
 app.get('/api/v1/users/profile', (c) => {
