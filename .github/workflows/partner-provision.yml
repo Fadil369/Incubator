@@ -101,7 +101,7 @@ jobs:
         env:
           SLUG: ${{ needs.resolve-inputs.outputs.startup_slug }}
         run: |
-          EXISTS=$(gh api "orgs/${GITHUB_ORG}/repos" --jq '[.[] | select(.name | startswith("'"$SLUG"'"))] | length' 2>/dev/null || echo "0")
+          EXISTS=$(gh api --paginate "orgs/${GITHUB_ORG}/repos" --jq '[.[] | select(.name | startswith("'"$SLUG"'"))] | length' 2>/dev/null || echo "0")
           echo "existing_count=$EXISTS" >> $GITHUB_OUTPUT
           if [ "$EXISTS" -gt "0" ]; then
             echo "Repos already exist for $SLUG ($EXISTS repos). Skipping creation."
