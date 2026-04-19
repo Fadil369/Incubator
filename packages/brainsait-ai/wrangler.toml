@@ -1,60 +1,56 @@
-# ============================================================
 # BrainSAIT AI — Cloudflare Workers Configuration
-# AI/ML inference service with Workers AI, Vectorize, Durable Objects
-# ============================================================
 name = "brainsait-ai"
 main = "packages/brainsait-ai/dist/index.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-account_id = "87a79e73521fc85dab488b2c700554e3"
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
-# ── Routes ──
 [env.production]
 name = "brainsait-ai-production"
-route = { pattern = "ai.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "ai.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.staging]
 name = "brainsait-ai-staging"
-route = { pattern = "staging-ai.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "staging-ai.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.preview]
 name = "brainsait-ai-preview"
 workers_dev = true
 
-# ── KV Namespaces ──
+# ── KV ──
 [[kv_namespaces]]
 binding = "AI_CACHE"
-id = "AI_CACHE_KV_ID"
+id = "9201cf6a9b1143d8822250dc24e8c8ba"
 
 [[kv_namespaces]]
 binding = "MODEL_REGISTRY"
-id = "MODEL_REGISTRY_KV_ID"
+id = "96d5b2ec726244f88d99153c308351eb"
 
 [[kv_namespaces]]
 binding = "PROMPT_TEMPLATES"
-id = "PROMPT_TEMPLATES_KV_ID"
+id = "3955e252772c4e3faa0f34f14217eb52"
 
-# ── R2 Buckets ──
+# ── R2 ──
 [[r2_buckets]]
 binding = "AI_OUTPUTS"
-bucket_name = "brainsait-ai-outputs"
+bucket_name = "brainsait-healthcare-files"
 
 [[r2_buckets]]
 binding = "MODEL_STORE"
-bucket_name = "brainsait-models"
+bucket_name = "brainsait-storage"
 
 [[r2_buckets]]
 binding = "TRAINING_DATA"
-bucket_name = "brainsait-training-data"
+bucket_name = "brainsait-healthcare-media"
 
 # ── Queues ──
 [[queues.producers]]
 binding = "INFERENCE_QUEUE"
-queue = "brainsait-inference"
+queue = "brainsait-claims"
 
 [[queues.producers]]
-binding = "TRAINING_QUEUE"
-queue = "brainsait-training"
+binding = "NOTIFICATION_QUEUE"
+queue = "brainsait-notifications"
 
 # ── Durable Objects ──
 [[durable_objects.bindings]]
@@ -74,11 +70,11 @@ index_name = "brainsait-embeddings"
 binding = "KNOWLEDGE_GRAPH"
 index_name = "brainsait-knowledge-graph"
 
-# ── AI Gateway ──
+# ── AI ──
 [ai]
 binding = "AI"
 
-# ── Analytics Engine ──
+# ── Analytics ──
 [[analytics_engine_datasets]]
 binding = "AI_ANALYTICS"
 dataset = "brainsait_ai_usage"
@@ -98,4 +94,3 @@ EMBEDDING_MODEL = "@cf/baai/bge-base-en-v1.5"
 [env.staging.vars]
 ENVIRONMENT = "staging"
 LOG_LEVEL = "debug"
-EMBEDDING_MODEL = "@cf/baai/bge-base-en-v1.5"

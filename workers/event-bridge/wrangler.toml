@@ -1,54 +1,46 @@
-# ============================================================
-# BrainSAIT Event Bridge — GitHub Webhooks → CF Queues → NATS
-# Receives GitHub webhooks and routes to internal queues
-# ============================================================
+# BrainSAIT Event Bridge — GitHub Webhooks → CF Queues
 name = "brainsait-event-bridge"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
-account_id = "87a79e73521fc85dab488b2c700554e3"
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-event-bridge-prod"
-route = { pattern = "events.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "events.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.staging]
 name = "brainsait-event-bridge-staging"
 workers_dev = true
 
-# ── KV ──
 [[kv_namespaces]]
 binding = "WEBHOOK_SECRETS"
-id = "WEBHOOK_SECRETS_KV_ID"
+id = "07ea6ec79f2f46ebbc8076a2000fcfa9"
 
 [[kv_namespaces]]
 binding = "EVENT_LOG"
-id = "EVENT_LOG_KV_ID"
+id = "079016c359c348e180724cdd76f29129"
 
-# ── Queues ──
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-unified-api"
+database_id = "925780db-b119-42f2-a3ca-2aea98712168"
+
 [[queues.producers]]
 binding = "GITHUB_EVENTS"
-queue = "brainsait-github-events"
+queue = "brainsait-notifications"
 
 [[queues.producers]]
 binding = "PIPELINE_EVENTS"
-queue = "brainsait-pipeline-events"
+queue = "brainsait-claims"
 
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
 queue = "brainsait-notifications"
 
-# ── D1 ──
-[[d1_databases]]
-binding = "DB"
-database_name = "brainsait-events"
-database_id = "EVENTS_D1_ID"
-
-# ── Analytics ──
 [[analytics_engine_datasets]]
 binding = "EVENT_ANALYTICS"
 dataset = "brainsait_events"
 
-# ── Variables ──
 [vars]
 ALLOWED_REPOS = "brainsait-incubator"
 EVENT_TTL_SECONDS = "604800"

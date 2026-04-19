@@ -1,52 +1,45 @@
-# ============================================================
-# BrainSAIT Auth Gateway — JWT verification + Keycloak proxy
-# ============================================================
+# BrainSAIT Auth Gateway — JWT + Keycloak proxy
 name = "brainsait-auth-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-account_id = "87a79e73521fc85dab488b2c700554e3"
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-auth-gateway-prod"
-route = { pattern = "auth.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "auth.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.staging]
 name = "brainsait-auth-gateway-staging"
 workers_dev = true
 
-# ── KV ──
 [[kv_namespaces]]
 binding = "JWKS_CACHE"
-id = "JWKS_CACHE_KV_ID"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[kv_namespaces]]
 binding = "SESSION_STORE"
-id = "SESSION_STORE_KV_ID"
+id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
 binding = "STARTUP_ROLES"
-id = "STARTUP_ROLES_KV_ID"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
 
-# ── D1 ──
 [[d1_databases]]
 binding = "DB"
-database_name = "brainsait-auth"
-database_id = "AUTH_D1_ID"
+database_name = "brainsait-stripe-identity"
+database_id = "1f1ae60a-3e0c-49d8-af2a-d15823bda8d3"
 
-# ── Durable Objects ──
 [[durable_objects.bindings]]
 name = "SESSION_MANAGER"
 class_name = "SessionManager"
 
-# ── Analytics ──
 [[analytics_engine_datasets]]
 binding = "AUTH_ANALYTICS"
 dataset = "brainsait_auth"
 
-# ── Variables ──
 [vars]
-KEYCLOAK_URL = "https://keycloak.brainsait.com"
+KEYCLOAK_URL = "https://keycloak.brainsait.org"
 REALM = "brainsait"
 CLIENT_ID = "brainsait-platform"
 TOKEN_TTL = "3600"

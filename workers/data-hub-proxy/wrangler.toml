@@ -1,64 +1,56 @@
-# ============================================================
-# BrainSAIT Data Hub Proxy — GraphQL proxy for Hasura + caching
-# ============================================================
+# BrainSAIT Data Hub Proxy — GraphQL + contract management
 name = "brainsait-data-hub-proxy"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-account_id = "87a79e73521fc85dab488b2c700554e3"
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-data-hub-prod"
-route = { pattern = "data-hub.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "data-hub.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.staging]
 name = "brainsait-data-hub-staging"
 workers_dev = true
 
-# ── KV ──
 [[kv_namespaces]]
 binding = "SCHEMA_CACHE"
-id = "SCHEMA_CACHE_KV_ID"
+id = "079016c359c348e180724cdd76f29129"
 
 [[kv_namespaces]]
 binding = "CONTRACT_REGISTRY"
-id = "CONTRACT_REGISTRY_KV_ID"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
 
 [[kv_namespaces]]
 binding = "SUBSCRIPTION_MAP"
-id = "SUBSCRIPTION_MAP_KV_ID"
+id = "7e559b5bf3f84271b679db018f59e6d9"
 
-# ── D1 ──
 [[d1_databases]]
 binding = "DB"
-database_name = "brainsait-data-hub"
-database_id = "DATA_HUB_D1_ID"
+database_name = "brainsait-healthcare-d1"
+database_id = "0def24ea-658c-446a-bb05-61856eb5f3de"
 
-# ── R2 ──
 [[r2_buckets]]
 binding = "DATA_STORE"
-bucket_name = "brainsait-data-store"
+bucket_name = "brainsait-storage"
 
 [[r2_buckets]]
 binding = "CONTRACT_FILES"
-bucket_name = "brainsait-contracts"
+bucket_name = "brainsait-documents"
 
-# ── Queues ──
 [[queues.producers]]
 binding = "DATA_SYNC_QUEUE"
-queue = "brainsait-data-sync"
+queue = "brainsait-claims"
 
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
 queue = "brainsait-notifications"
 
-# ── Analytics ──
 [[analytics_engine_datasets]]
 binding = "DATA_ANALYTICS"
 dataset = "brainsait_data_usage"
 
-# ── Variables ──
 [vars]
-HASURA_URL = "https://hasura.brainsait.com"
+HASURA_URL = "https://hasura.brainsait.org"
 CACHE_TTL = "300"
 MAX_QUERY_DEPTH = "10"

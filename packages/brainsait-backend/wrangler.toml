@@ -1,87 +1,88 @@
-# ============================================================
-# BrainSAIT Backend — Cloudflare Workers Configuration
-# Main API gateway worker with full CF resource bindings
-# ============================================================
+# Cloudflare Workers Configuration for BrainSAIT Platform
+
 name = "brainsait-backend"
 main = "packages/brainsait-backend/dist/worker.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-account_id = "87a79e73521fc85dab488b2c700554e3"
 
-# ── Routes ──
+# Account and route configuration
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
+workers_dev = true
+
+# Custom domains for production
 [env.production]
 name = "brainsait-backend-production"
-route = { pattern = "api.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "api.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.staging]
 name = "brainsait-backend-staging"
-route = { pattern = "staging-api.brainsait.com/*", zone_name = "brainsait.com" }
+route = { pattern = "staging-api.brainsait.org/*", zone_name = "brainsait.org" }
 
 [env.preview]
 name = "brainsait-backend-preview"
 workers_dev = true
 
-# ── KV Namespaces ──
+# ── KV Namespaces (reusing existing) ──
 [[kv_namespaces]]
 binding = "SESSIONS"
-id = "394268b352c24c28868a33aad89f991c"
+id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "b2f1b780fc1b4388aa9fd2b27ca58bf1"
+id = "079016c359c348e180724cdd76f29129"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "1d749622e39241ca8129407a96e1e111"
+id = "8c0682e8e21b4703b46fd1c1a3487ec0"
 
 [[kv_namespaces]]
 binding = "CONFIG"
-id = "4acc7168b5cc492da85b93bdde4f4b32"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "FEATURE_FLAGS_KV_ID"
+id = "7e559b5bf3f84271b679db018f59e6d9"
 
 [[kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "STARTUP_REGISTRY_KV_ID"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
 
-# ── D1 Databases ──
+# ── D1 Databases (reusing existing) ──
 [[d1_databases]]
 binding = "DB"
-database_name = "brainsait-prod"
-database_id = "D1_DATABASE_ID"
+database_name = "brainsait-unified-api"
+database_id = "925780db-b119-42f2-a3ca-2aea98712168"
 
 [[d1_databases]]
 binding = "AUDIT_LOG"
-database_name = "brainsait-audit"
-database_id = "D1_AUDIT_DATABASE_ID"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
 
-# ── R2 Buckets ──
+# ── R2 Buckets (reusing existing) ──
 [[r2_buckets]]
 binding = "DOCUMENTS"
 bucket_name = "brainsait-documents"
 
 [[r2_buckets]]
 binding = "UPLOADS"
-bucket_name = "brainsait-uploads"
+bucket_name = "brainsait-files"
 
 [[r2_buckets]]
 binding = "DATA_CONTRACTS"
-bucket_name = "brainsait-data-contracts"
+bucket_name = "brainsait-storage"
 
-# ── Queues ──
+# ── Queues (reusing existing) ──
 [[queues.producers]]
 binding = "EVENT_QUEUE"
-queue = "brainsait-events"
+queue = "brainsait-notifications"
 
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
 queue = "brainsait-notifications"
 
 [[queues.producers]]
-binding = "DATA_SYNC_QUEUE"
-queue = "brainsait-data-sync"
+binding = "CLAIMS_QUEUE"
+queue = "brainsait-claims"
 
 # ── Durable Objects ──
 [[durable_objects.bindings]]
@@ -110,18 +111,23 @@ index_name = "brainsait-knowledge"
 [ai]
 binding = "AI"
 
+# ── Build ──
+[build]
+command = "npm run build"
+watch_paths = ["packages/**/*.ts", "packages/**/*.tsx"]
+
 # ── Environment Variables ──
 [vars]
 SERVICE_NAME = "brainsait-backend"
-DOMAIN = "brainsait.com"
+DOMAIN = "brainsait.org"
 PLATFORM_VERSION = "2.0.0"
 
 [env.production.vars]
 NODE_ENV = "production"
 LOG_LEVEL = "info"
-CORS_ORIGINS = "https://brainsait.com,https://dashboard.brainsait.com,https://docs.brainsait.com"
+CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org"
 
 [env.staging.vars]
 NODE_ENV = "staging"
 LOG_LEVEL = "debug"
-CORS_ORIGINS = "https://staging.brainsait.com,http://localhost:3000"
+CORS_ORIGINS = "https://staging.brainsait.org,http://localhost:3000"

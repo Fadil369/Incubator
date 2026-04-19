@@ -1,74 +1,28 @@
-# ============================================================
-# BrainSAIT Queue Consumers — Processes all CF Queues
-# ============================================================
+# BrainSAIT Queue Consumers
 name = "brainsait-queue-consumers"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-account_id = "87a79e73521fc85dab488b2c700554e3"
+account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-queue-consumers-prod"
 
-# ── Queue Consumers ──
 [[queues.consumers]]
-queue = "brainsait-events"
-max_batch_size = 25
-max_batch_timeout = 5
-max_retries = 3
-
-[[queues.consumers]]
-queue = "brainsait-github-events"
+queue = "brainsait-claims"
 max_batch_size = 10
 max_batch_timeout = 5
 max_retries = 3
 
-[[queues.consumers]]
-queue = "brainsait-pipeline-events"
-max_batch_size = 10
-max_batch_timeout = 5
-max_retries = 3
-
-[[queues.consumers]]
-queue = "brainsait-data-sync"
-max_batch_size = 5
-max_batch_timeout = 10
-max_retries = 5
-
-[[queues.consumers]]
-queue = "brainsait-inference"
-max_batch_size = 3
-max_batch_timeout = 30
-max_retries = 2
-
-[[queues.consumers]]
-queue = "brainsait-training"
-max_batch_size = 1
-max_batch_timeout = 60
-max_retries = 1
-
-[[queues.consumers]]
-queue = "brainsait-notification-retries"
-max_batch_size = 10
-max_batch_timeout = 10
-max_retries = 2
-
-# ── D1 ──
-[[d1_databases]]
-binding = "DB"
-database_name = "brainsait-queue-logs"
-database_id = "QUEUE_LOGS_D1_ID"
-
-# ── KV ──
-[[kv_namespaces]]
-binding = "DEAD_LETTER"
-id = "DEAD_LETTER_KV_ID"
-
-# ── Producers for re-queue ──
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
 queue = "brainsait-notifications"
 
-[[queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
+[[kv_namespaces]]
+binding = "DEAD_LETTER"
+id = "8c0682e8e21b4703b46fd1c1a3487ec0"

@@ -1,50 +1,41 @@
-# ============================================================
 # BrainSAIT Dashboard — Cloudflare Pages (Next.js)
-# ============================================================
 name = "brainsait-dashboard"
 compatibility_date = "2024-12-01"
 pages_build_output_dir = "packages/brainsait-frontend/.next"
 
-# ── Build config for Cloudflare Pages ──
 [build]
 command = "cd packages/brainsait-frontend && npm run build"
 cwd = "."
 
-# ── Environment Variables ──
 [vars]
-NEXT_PUBLIC_API_URL = "https://api.brainsait.com"
-NEXT_PUBLIC_AUTH_URL = "https://auth.brainsait.com"
-NEXT_PUBLIC_DATA_HUB_URL = "https://data-hub.brainsait.com"
-NEXT_PUBLIC_ML_URL = "https://ml.brainsait.com"
-NEXT_PUBLIC_WS_URL = "wss://notifications.brainsait.com/ws"
+NEXT_PUBLIC_API_URL = "https://api.brainsait.org"
+NEXT_PUBLIC_AUTH_URL = "https://auth.brainsait.org"
+NEXT_PUBLIC_DATA_HUB_URL = "https://data-hub.brainsait.org"
+NEXT_PUBLIC_ML_URL = "https://ml.brainsait.org"
+NEXT_PUBLIC_WS_URL = "wss://notifications.brainsait.org/ws"
 NEXT_PUBLIC_APP_NAME = "BrainSAIT Incubator"
 NEXT_PUBLIC_DEFAULT_LOCALE = "en"
 
-# ── KV for ISR / Edge caching ──
 [[kv_namespaces]]
 binding = "ISR_CACHE"
-id = "ISR_CACHE_KV_ID"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
-# ── D1 for session data ──
 [[d1_databases]]
 binding = "DB"
-database_name = "brainsait-dashboard"
-database_id = "DASHBOARD_D1_ID"
+database_name = "brainsait-portal-db"
+database_id = "999c96a4-b140-461b-8b00-90cff0ab489f"
 
-# ── R2 for static assets ──
 [[r2_buckets]]
 binding = "ASSETS"
-bucket_name = "brainsait-dashboard-assets"
+bucket_name = "brainsait-files"
 
-# ── Production env ──
 [env.production]
-route = "brainsait.com"
+route = "brainsait.org"
 [env.production.vars]
 NODE_ENV = "production"
-NEXT_PUBLIC_API_URL = "https://api.brainsait.com"
+NEXT_PUBLIC_API_URL = "https://api.brainsait.org"
 
-# ── Preview env ──
 [env.preview]
 [env.preview.vars]
 NODE_ENV = "preview"
-NEXT_PUBLIC_API_URL = "https://staging-api.brainsait.com"
+NEXT_PUBLIC_API_URL = "https://staging-api.brainsait.org"
