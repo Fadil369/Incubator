@@ -298,7 +298,10 @@ const TemplateIntelligence: React.FC<TemplateIntelligenceProps> = ({
                     {isRTL ? 'ابدأ بالقالب' : 'Start with template'}
                   </Button>
                   <Tooltip title={isRTL ? 'اقتراح محسّن بالذكاء الاصطناعي' : 'AI-enhanced suggestion'}>
-                    <IconButton color="secondary">
+                    <IconButton
+                      color="secondary"
+                      aria-label={isRTL ? 'اقتراح محسّن بالذكاء الاصطناعي' : 'AI-enhanced suggestion'}
+                    >
                       <AutoAwesome />
                     </IconButton>
                   </Tooltip>
