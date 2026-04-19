@@ -1,0 +1,50 @@
+# ============================================================
+# BrainSAIT Schema Registry — Data contract versioning & validation
+# ============================================================
+name = "brainsait-schema-registry"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "87a79e73521fc85dab488b2c700554e3"
+
+[env.production]
+name = "brainsait-schema-registry-prod"
+route = { pattern = "schemas.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.staging]
+name = "brainsait-schema-registry-staging"
+workers_dev = true
+
+# ── KV ──
+[[kv_namespaces]]
+binding = "SCHEMAS"
+id = "SCHEMA_REGISTRY_KV_ID"
+
+[[kv_namespaces]]
+binding = "VERSION_HISTORY"
+id = "VERSION_HISTORY_KV_ID"
+
+# ── D1 ──
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-schemas"
+database_id = "SCHEMA_D1_ID"
+
+# ── R2 ──
+[[r2_buckets]]
+binding = "SCHEMA_FILES"
+bucket_name = "brainsait-schema-files"
+
+# ── Queues ──
+[[queues.producers]]
+binding = "NOTIFICATION_QUEUE"
+queue = "brainsait-notifications"
+
+[[queues.producers]]
+binding = "DATA_SYNC_QUEUE"
+queue = "brainsait-data-sync"
+
+# ── Variables ──
+[vars]
+ALLOWED_FORMATS = "json,yaml,yml"
+MAX_SCHEMA_SIZE_KB = "100"
+REQUIRE_HIPAA_EXTENSION = "true"

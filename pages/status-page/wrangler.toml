@@ -1,0 +1,33 @@
+# ============================================================
+# BrainSAIT Status Page — Cloudflare Pages
+# ============================================================
+name = "brainsait-status"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "out"
+
+[build]
+command = "npm run build"
+cwd = "pages/status-page"
+
+[vars]
+SERVICES = "api,auth,data-hub,ml,dashboard,docs,notifications"
+CHECK_INTERVAL_SECONDS = "60"
+BRAND_NAME = "BrainSAIT Incubator"
+BRAND_COLOR = "#6366f1"
+
+[[kv_namespaces]]
+binding = "STATUS_DATA"
+id = "STATUS_DATA_KV_ID"
+
+[[kv_namespaces]]
+binding = "UPTIME_HISTORY"
+id = "UPTIME_HISTORY_KV_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-status"
+database_id = "STATUS_D1_ID"
+
+[[analytics_engine_datasets]]
+binding = "STATUS_ANALYTICS"
+dataset = "brainsait_status"

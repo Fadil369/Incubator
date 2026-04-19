@@ -1,0 +1,53 @@
+# ============================================================
+# BrainSAIT Auth Gateway — JWT verification + Keycloak proxy
+# ============================================================
+name = "brainsait-auth-gateway"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+account_id = "87a79e73521fc85dab488b2c700554e3"
+
+[env.production]
+name = "brainsait-auth-gateway-prod"
+route = { pattern = "auth.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.staging]
+name = "brainsait-auth-gateway-staging"
+workers_dev = true
+
+# ── KV ──
+[[kv_namespaces]]
+binding = "JWKS_CACHE"
+id = "JWKS_CACHE_KV_ID"
+
+[[kv_namespaces]]
+binding = "SESSION_STORE"
+id = "SESSION_STORE_KV_ID"
+
+[[kv_namespaces]]
+binding = "STARTUP_ROLES"
+id = "STARTUP_ROLES_KV_ID"
+
+# ── D1 ──
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-auth"
+database_id = "AUTH_D1_ID"
+
+# ── Durable Objects ──
+[[durable_objects.bindings]]
+name = "SESSION_MANAGER"
+class_name = "SessionManager"
+
+# ── Analytics ──
+[[analytics_engine_datasets]]
+binding = "AUTH_ANALYTICS"
+dataset = "brainsait_auth"
+
+# ── Variables ──
+[vars]
+KEYCLOAK_URL = "https://keycloak.brainsait.com"
+REALM = "brainsait"
+CLIENT_ID = "brainsait-platform"
+TOKEN_TTL = "3600"
+REFRESH_TTL = "86400"

@@ -1,55 +1,101 @@
-# Cloudflare Workers Configuration for BrainSAIT AI Service
-
+# ============================================================
+# BrainSAIT AI — Cloudflare Workers Configuration
+# AI/ML inference service with Workers AI, Vectorize, Durable Objects
+# ============================================================
 name = "brainsait-ai"
-main = "dist/index.js"
-compatibility_date = "2024-01-01"
+main = "packages/brainsait-ai/dist/index.js"
+compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
-
-# Account configuration
 account_id = "87a79e73521fc85dab488b2c700554e3"
-workers_dev = true
-route = { pattern = "ai.brainsait.com/*", zone_id = "YOUR_ZONE_ID" }
 
-# KV Namespaces for caching
+# ── Routes ──
+[env.production]
+name = "brainsait-ai-production"
+route = { pattern = "ai.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.staging]
+name = "brainsait-ai-staging"
+route = { pattern = "staging-ai.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.preview]
+name = "brainsait-ai-preview"
+workers_dev = true
+
+# ── KV Namespaces ──
 [[kv_namespaces]]
 binding = "AI_CACHE"
-id = "YOUR_AI_CACHE_KV_ID"
-preview_id = "YOUR_AI_CACHE_PREVIEW_ID"
+id = "AI_CACHE_KV_ID"
 
-# Durable Objects for usage tracking
-[[durable_objects.bindings]]
-name = "USAGE_TRACKER"
-class_name = "UsageTracker"
+[[kv_namespaces]]
+binding = "MODEL_REGISTRY"
+id = "MODEL_REGISTRY_KV_ID"
 
-# R2 Storage for model outputs
+[[kv_namespaces]]
+binding = "PROMPT_TEMPLATES"
+id = "PROMPT_TEMPLATES_KV_ID"
+
+# ── R2 Buckets ──
 [[r2_buckets]]
 binding = "AI_OUTPUTS"
 bucket_name = "brainsait-ai-outputs"
 
-# Analytics Engine binding
+[[r2_buckets]]
+binding = "MODEL_STORE"
+bucket_name = "brainsait-models"
+
+[[r2_buckets]]
+binding = "TRAINING_DATA"
+bucket_name = "brainsait-training-data"
+
+# ── Queues ──
+[[queues.producers]]
+binding = "INFERENCE_QUEUE"
+queue = "brainsait-inference"
+
+[[queues.producers]]
+binding = "TRAINING_QUEUE"
+queue = "brainsait-training"
+
+# ── Durable Objects ──
+[[durable_objects.bindings]]
+name = "USAGE_TRACKER"
+class_name = "AIUsageTracker"
+
+[[durable_objects.bindings]]
+name = "SESSION_CONTEXT"
+class_name = "AISessionContext"
+
+# ── Vectorize ──
+[[vectorize]]
+binding = "EMBEDDINGS_INDEX"
+index_name = "brainsait-embeddings"
+
+[[vectorize]]
+binding = "KNOWLEDGE_GRAPH"
+index_name = "brainsait-knowledge-graph"
+
+# ── AI Gateway ──
+[ai]
+binding = "AI"
+
+# ── Analytics Engine ──
 [[analytics_engine_datasets]]
 binding = "AI_ANALYTICS"
+dataset = "brainsait_ai_usage"
 
-# Environment variables
+# ── Variables ──
 [vars]
 SERVICE_NAME = "brainsait-ai"
 MAX_TOKENS_PER_REQUEST = "4000"
 MAX_REQUESTS_PER_MINUTE = "60"
+SUPPORTED_MODELS = "@cf/meta/llama-3.1-8b-instruct,@cf/mistral/mistral-7b-instruct-v0.2,@cf/qwen/qwen1.5-14b-chat-awq"
 
-# Production environment
 [env.production.vars]
 ENVIRONMENT = "production"
-API_BASE_URL = "https://api.brainsait.com"
 LOG_LEVEL = "info"
+EMBEDDING_MODEL = "@cf/baai/bge-base-en-v1.5"
 
-# Staging environment
 [env.staging.vars]
 ENVIRONMENT = "staging"
-API_BASE_URL = "https://staging-api.brainsait.com"
 LOG_LEVEL = "debug"
-
-# Development environment
-[env.development.vars]
-ENVIRONMENT = "development"
-API_BASE_URL = "http://localhost:5000"
-LOG_LEVEL = "debug"
+EMBEDDING_MODEL = "@cf/baai/bge-base-en-v1.5"

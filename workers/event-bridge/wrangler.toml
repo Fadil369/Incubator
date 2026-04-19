@@ -1,0 +1,54 @@
+# ============================================================
+# BrainSAIT Event Bridge — GitHub Webhooks → CF Queues → NATS
+# Receives GitHub webhooks and routes to internal queues
+# ============================================================
+name = "brainsait-event-bridge"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "87a79e73521fc85dab488b2c700554e3"
+
+[env.production]
+name = "brainsait-event-bridge-prod"
+route = { pattern = "events.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.staging]
+name = "brainsait-event-bridge-staging"
+workers_dev = true
+
+# ── KV ──
+[[kv_namespaces]]
+binding = "WEBHOOK_SECRETS"
+id = "WEBHOOK_SECRETS_KV_ID"
+
+[[kv_namespaces]]
+binding = "EVENT_LOG"
+id = "EVENT_LOG_KV_ID"
+
+# ── Queues ──
+[[queues.producers]]
+binding = "GITHUB_EVENTS"
+queue = "brainsait-github-events"
+
+[[queues.producers]]
+binding = "PIPELINE_EVENTS"
+queue = "brainsait-pipeline-events"
+
+[[queues.producers]]
+binding = "NOTIFICATION_QUEUE"
+queue = "brainsait-notifications"
+
+# ── D1 ──
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-events"
+database_id = "EVENTS_D1_ID"
+
+# ── Analytics ──
+[[analytics_engine_datasets]]
+binding = "EVENT_ANALYTICS"
+dataset = "brainsait_events"
+
+# ── Variables ──
+[vars]
+ALLOWED_REPOS = "brainsait-incubator"
+EVENT_TTL_SECONDS = "604800"

@@ -1,0 +1,51 @@
+# ============================================================
+# BrainSAIT Notification Router — Multi-channel push notifications
+# ============================================================
+name = "brainsait-notification-router"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+account_id = "87a79e73521fc85dab488b2c700554e3"
+
+[env.production]
+name = "brainsait-notifications-prod"
+route = { pattern = "notifications.brainsait.com/*", zone_name = "brainsait.com" }
+
+[env.staging]
+name = "brainsait-notifications-staging"
+workers_dev = true
+
+# ── KV ──
+[[kv_namespaces]]
+binding = "CHANNEL_CONFIG"
+id = "CHANNEL_CONFIG_KV_ID"
+
+[[kv_namespaces]]
+binding = "NOTIFICATION_LOG"
+id = "NOTIFICATION_LOG_KV_ID"
+
+# ── D1 ──
+[[d1_databases]]
+binding = "DB"
+database_name = "brainsait-notifications"
+database_id = "NOTIFICATIONS_D1_ID"
+
+# ── Queues (consumer) ──
+[[queues.consumers]]
+queue = "brainsait-notifications"
+max_batch_size = 10
+max_batch_timeout = 5
+
+[[queues.producers]]
+binding = "RETRY_QUEUE"
+queue = "brainsait-notification-retries"
+
+# ── Durable Objects ──
+[[durable_objects.bindings]]
+name = "WS_SESSIONS"
+class_name = "WebSocketSessions"
+
+# ── Variables ──
+[vars]
+SLACK_WEBHOOK_BASE = "https://hooks.slack.com/services"
+MAX_RETRIES = "3"
+RETRY_DELAY_MS = "5000"
