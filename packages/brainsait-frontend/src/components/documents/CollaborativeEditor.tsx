@@ -17,8 +17,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  IconButton,
-  Tooltip,
   LinearProgress,
   Tabs,
   Tab
