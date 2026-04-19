@@ -6,7 +6,7 @@
  *  POST  /api/v1/partners/application              — Receive application (webhook from brainsait-org or direct)
  *  GET   /api/v1/partners/applications             — Admin: list applications (requires X-Admin-Key)
  *  GET   /api/v1/partners/applications/:id         — Admin: get one application
- *  POST  /api/v1/partners/applications/:id/accept  — Admin: accept → generate magic link → send email
+ *  POST  /api/v1/partners/applications/:id/accept  — Admin: accept → generate magic link → send email + provision GitHub repo
  *  POST  /api/v1/partners/applications/:id/reject  — Admin: reject → send rejection email
  *  GET   /api/v1/partners/validate?token=xxx       — Validate invitation token, return partner info
  *  POST  /api/v1/partners/complete-onboarding      — Partner completes onboarding and persists profile details after clicking magic link
@@ -16,10 +16,13 @@ import { Hono } from 'hono';
 
 interface Env {
   PARTNER_APPLICATIONS: KVNamespace;
+  RATE_LIMIT: KVNamespace;
   SENDGRID_API_KEY: string;
   ADMIN_KEY: string;
   JWT_SECRET: string;
   FRONTEND_URL: string;
+  GITHUB_TOKEN: string;
+  GITHUB_ORG: string;
 }
 
 export type ApplicationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'ONBOARDED';
@@ -44,24 +47,57 @@ export interface PartnerApplication {
   timezone?: string;
   linkedIn?: string;
   passwordHash?: string;
+  githubRepo?: string;
   createdAt: string;
   updatedAt: string;
 }
 
+/** Maximum number of healthcare SMEs accepted into the Ultimate Incubator Program. */
+const MAX_ACCEPTED_SMES = 32;
+
+/**
+ * Hash a password using PBKDF2-HMAC-SHA256 with a random salt.
+ * Returns a "$pbkdf2-sha256$<iter>$<saltHex>$<hashHex>" string.
+ */
 async function hashPassword(password: string): Promise<string> {
-  const data = new TextEncoder().encode(password);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(digest))
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
+  const ITERATIONS = 100_000;
+  const SALT_BYTES = 16;
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const derived = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: salt.buffer as ArrayBuffer, iterations: ITERATIONS },
+    keyMaterial,
+    256
+  );
+  const toHex = (buf: ArrayBuffer | Uint8Array) => {
+    const arr = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+    return Array.from(arr)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  };
+  return `$pbkdf2-sha256$${ITERATIONS}$${toHex(salt)}$${toHex(derived)}`;
 }
 
 const PARTNER_TYPE_NAMES: Record<string, string> = {
+  sme: 'Healthcare SME Startup',
   tech: 'Technology Partner',
   health: 'Healthcare Provider',
   dist: 'Distribution Partner',
   integ: 'Integration Partner',
 };
+
+const VALID_PARTNER_TYPES = new Set(Object.keys(PARTNER_TYPE_NAMES));
+
+/** Basic RFC 5321 / HTML5 email pattern check. */
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 const partners = new Hono<{ Bindings: Env }>();
 
@@ -310,8 +346,37 @@ Questions? Contact partner@brainsait.org.
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
+/**
+ * Rate-limit helper using the RATE_LIMIT KV namespace.
+ * Returns true if the caller is within limits.
+ * Window: 1 hour / 5 submissions per IP.
+ *
+ * Note: KV get-check-put is not atomic. Under high concurrency a small number of
+ * extra requests may slip through. For a fully atomic counter, replace with a
+ * Durable Object. This is acceptable for the current low-volume partner flow.
+ */
+async function checkRateLimit(kv: KVNamespace, ip: string): Promise<boolean> {
+  if (!kv) return true; // namespace not bound — allow (graceful degradation)
+  const key = `rate:application:${ip}`;
+  const raw = await kv.get(key);
+  const count = raw ? parseInt(raw) : 0;
+  if (count >= 5) return false;
+  await kv.put(key, String(count + 1), { expirationTtl: 3600 });
+  return true;
+}
+
 // Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
 partners.post('/application', async (c) => {
+  // ── Rate limiting ──────────────────────────────────────────────────────────
+  const clientIp =
+    c.req.header('cf-connecting-ip') ??
+    c.req.header('x-forwarded-for')?.split(',')[0].trim() ??
+    'unknown';
+  const allowed = await checkRateLimit(c.env.RATE_LIMIT, clientIp);
+  if (!allowed) {
+    return c.json({ error: 'Too many applications from this IP. Please try again later.' }, 429);
+  }
+
   type Body = {
     firstName: string;
     lastName: string;
@@ -329,6 +394,16 @@ partners.post('/application', async (c) => {
     if (typeof body[field] !== 'string' || !body[field].trim()) {
       return c.json({ error: `Missing required field: ${field}` }, 400);
     }
+  }
+
+  // ── Validate email format ──────────────────────────────────────────────────
+  if (!isValidEmail(body.email.trim())) {
+    return c.json({ error: 'Invalid email address' }, 400);
+  }
+
+  // ── Validate partner type ──────────────────────────────────────────────────
+  if (!VALID_PARTNER_TYPES.has(body.partnerType.trim())) {
+    return c.json({ error: `Invalid partnerType. Must be one of: ${[...VALID_PARTNER_TYPES].join(', ')}` }, 400);
   }
 
   const id = crypto.randomUUID();
@@ -399,7 +474,7 @@ partners.get('/applications/:id', async (c) => {
   return c.json(JSON.parse(raw) as PartnerApplication);
 });
 
-// Admin: accept application → generate magic link → send acceptance email
+// Admin: accept application → generate magic link → send acceptance email + provision GitHub repo
 partners.post('/applications/:id/accept', async (c) => {
   const adminKey = c.req.header('x-admin-key');
   if (!c.env.ADMIN_KEY || adminKey !== c.env.ADMIN_KEY) {
@@ -415,6 +490,40 @@ partners.post('/applications/:id/accept', async (c) => {
     return c.json({ error: `Application is already ${app.status}` }, 409);
   }
 
+  // ── Enforce the 32-SME enrollment cap ─────────────────────────────────────
+  // Note: This count is performed with a KV list+get approach which is not
+  // atomic. Under concurrent admin accept requests (extremely unlikely), the
+  // cap could be exceeded by at most the number of concurrent requests. For
+  // strict atomicity a Durable Object counter would be required.
+  const allKeys: string[] = [];
+  let cursor: string | undefined = undefined;
+  do {
+    const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
+    allKeys.push(...page.keys.map((k) => k.name));
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+
+  const acceptedCount = (
+    await Promise.all(
+      allKeys.map(async (key) => {
+        const r = await c.env.PARTNER_APPLICATIONS.get(key);
+        return r ? (JSON.parse(r) as PartnerApplication) : null;
+      })
+    )
+  ).filter(
+    (a): a is PartnerApplication =>
+      a !== null && (a.status === 'ACCEPTED' || a.status === 'ONBOARDED')
+  ).length;
+
+  if (acceptedCount >= MAX_ACCEPTED_SMES) {
+    return c.json(
+      {
+        error: `The Ultimate Incubator Program has reached its maximum capacity of ${MAX_ACCEPTED_SMES} startups.`,
+      },
+      422
+    );
+  }
+
   // Derive startup slug from organization name
   const slug = app.organization
     .toLowerCase()
@@ -425,6 +534,39 @@ partners.post('/applications/:id/accept', async (c) => {
   const inviteToken = await generateInviteToken(id, c.env.JWT_SECRET);
   const now = new Date().toISOString();
 
+  // ── Auto-provision GitHub repository ──────────────────────────────────────
+  let githubRepo: string | undefined;
+  const githubToken = c.env.GITHUB_TOKEN;
+  const githubOrg = c.env.GITHUB_ORG;
+  if (githubToken && githubOrg) {
+    const repoName = `startup-${slug}`;
+    const ghRes = await fetch(`https://api.github.com/orgs/${githubOrg}/repos`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'brainsait-incubator/2.0',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: repoName,
+        description: `BrainSAIT Incubator — ${app.organization} (${app.referenceId})`,
+        private: true,
+        auto_init: true,
+        gitignore_template: 'Node',
+      }),
+    });
+    if (ghRes.ok) {
+      const ghData = await ghRes.json() as { full_name: string };
+      githubRepo = ghData.full_name;
+    } else {
+      // Non-fatal: log warning but continue with acceptance
+      const errBody = await ghRes.text().catch(() => '');
+      console.warn(`GitHub repo creation failed for ${slug}: ${ghRes.status}`, errBody);
+    }
+  }
+
   const updated: PartnerApplication = {
     ...app,
     status: 'ACCEPTED',
@@ -433,6 +575,7 @@ partners.post('/applications/:id/accept', async (c) => {
     acceptedAt: now,
     startupSlug: slug,
     updatedAt: now,
+    ...(githubRepo ? { githubRepo } : {}),
   };
 
   await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(updated));
@@ -460,6 +603,9 @@ partners.post('/applications/:id/accept', async (c) => {
     startupSlug: slug,
     portalUrl,
     emailSent,
+    githubRepo: githubRepo ?? null,
+    enrolledCount: acceptedCount + 1,
+    spotsRemaining: MAX_ACCEPTED_SMES - (acceptedCount + 1),
     message: emailSent
       ? `Application accepted and invitation email sent to ${updated.email}`
       : `Application accepted, but invitation email was not sent because SENDGRID_API_KEY is not configured`,

@@ -13,7 +13,7 @@ interface Env {
   GITHUB_TOKEN: string;
   GITHUB_ORG: string;
   GITHUB_APP_ID?: string;
-  AUTH_JWT_SECRET: string;
+  JWT_SECRET: string;
   DB: D1Database;
 }
 
@@ -61,7 +61,7 @@ async function requireGithubOrgAccess(c: any): Promise<Response | null> {
   try {
     const verified = await jwtVerify(
       token,
-      new TextEncoder().encode(c.env.AUTH_JWT_SECRET)
+      new TextEncoder().encode(c.env.JWT_SECRET)
     );
     payload = verified.payload as GithubAuthClaims;
   } catch {

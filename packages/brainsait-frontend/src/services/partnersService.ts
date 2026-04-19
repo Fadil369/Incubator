@@ -44,6 +44,7 @@ export interface PartnerApplication {
   rejectedAt?: string;
   onboardedAt?: string;
   startupSlug?: string;
+  githubRepo?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,7 +1,7 @@
 # Cloudflare Workers Configuration for BrainSAIT Platform
 
 name = "brainsait-backend"
-main = "packages/brainsait-backend/dist/worker.js"
+main = "dist/worker.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -122,7 +122,7 @@ binding = "AI"
 # ── Build ──
 [build]
 command = "npm run build"
-watch_paths = ["packages/**/*.ts", "packages/**/*.tsx"]
+watch_paths = ["src/**/*.ts"]
 
 # ── Environment Variables ──
 [vars]
