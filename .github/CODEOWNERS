@@ -1,0 +1,24 @@
+# BrainSAIT Incubator — Code Owners
+# Defines automatic reviewers and ownership
+
+# ── Global (requires platform-engineers approval) ──
+* @brainsait-incubator/platform-engineers
+
+# ── CI/CD & DevOps ──
+/.github/ @brainsait-incubator/platform-engineers
+/scripts/ @brainsait-incubator/platform-engineers
+/k8s/ @brainsait-incubator/platform-engineers
+
+# ── Security-sensitive files ──
+**/auth*.yaml @brainsait-incubator/compliance
+**/secrets*.yaml @brainsait-incubator/compliance
+**/.env* @brainsait-incubator/compliance
+**/docker-compose*.yml @brainsait-incubator/platform-engineers
+
+# ── Documentation ──
+/docs/ @brainsait-incubator/incubator-admins
+README.md @brainsait-incubator/incubator-admins
+
+# ── Data contracts (cross-startup) ──
+/data-contracts/ @brainsait-incubator/compliance @brainsait-incubator/platform-engineers
+/openapi.yaml @brainsait-incubator/platform-engineers

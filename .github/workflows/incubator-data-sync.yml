@@ -1,0 +1,115 @@
+# ============================================================
+# BrainSAIT — Cross-Startup Data Synchronization Pipeline
+# Ensures secure, audited data sharing across incubator startups
+# ============================================================
+name: "🔄 Data Hub Sync"
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  push:
+    branches: [main]
+    paths:
+      - 'data-contracts/**'
+      - 'openapi.yaml'
+      - 'data-schemas/**'
+  workflow_dispatch:
+    inputs:
+      sync_scope:
+        description: 'Sync scope'
+        required: false
+        default: 'incremental'
+        type: choice
+        options: [full, incremental, contracts-only]
+
+env:
+  DATA_HUB_URL: https://data-hub.brainsait.dev
+  ORG: ${{ github.repository_owner }}
+
+jobs:
+  discover-contracts:
+    name: "🔍 Discover Data Contracts"
+    runs-on: ubuntu-latest
+    outputs:
+      contracts: ${{ steps.scan.outputs.contracts }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for data contracts
+        id: scan
+        run: |
+          contracts=$(find . -name "*.contract.json" -o -name "*.schema.json" -o -name "openapi.yaml" | jq -R . | jq -s .)
+          echo "contracts=$contracts" >> $GITHUB_OUTPUT
+          echo "Found contracts: $contracts"
+
+  sync-schemas:
+    name: "📤 Sync Schemas"
+    runs-on: ubuntu-latest
+    needs: discover-contracts
+    if: needs.discover-contracts.outputs.contracts != '[]'
+    strategy:
+      matrix:
+        startup: ${{ fromJson(needs.discover-contracts.outputs.contracts) }}
+      max-parallel: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync to Data Hub
+        env:
+          HUB_TOKEN: ${{ secrets.DATA_HUB_TOKEN }}
+        run: |
+          STARTUP="${{ github.event.repository.name }}"
+
+          # Export API contracts
+          for f in $(find . -name "*.contract.json" -o -name "*.schema.json"); do
+            echo "📤 Syncing: $f"
+            curl -sSf -X POST \
+              -H "Authorization: Bearer $HUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data-binary @"$f" \
+              "${DATA_HUB_URL}/api/v1/schemas/${STARTUP}/$(basename "$f")"
+          done
+
+          # Sync OpenAPI spec
+          if [ -f "openapi.yaml" ]; then
+            echo "📤 Syncing OpenAPI spec..."
+            curl -sSf -X POST \
+              -H "Authorization: Bearer $HUB_TOKEN" \
+              -H "Content-Type: application/yaml" \
+              --data-binary @openapi.yaml \
+              "${DATA_HUB_URL}/api/v1/schemas/${STARTUP}/openapi"
+          fi
+
+  publish-catalog:
+    name: "📋 Update Data Catalog"
+    runs-on: ubuntu-latest
+    needs: sync-schemas
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Rebuild catalog
+        env:
+          HUB_TOKEN: ${{ secrets.DATA_HUB_TOKEN }}
+        run: |
+          curl -sSf -X POST \
+            -H "Authorization: Bearer $HUB_TOKEN" \
+            "${DATA_HUB_URL}/api/v1/catalog/rebuild"
+
+      - name: Notify subscribed startups
+        env:
+          HUB_TOKEN: ${{ secrets.DATA_HUB_TOKEN }}
+          COMM_HUB_TOKEN: ${{ secrets.COMM_HUB_TOKEN }}
+        run: |
+          # Get list of startups that subscribe to this startup's data
+          SUBSCRIBERS=$(curl -sSf \
+            -H "Authorization: Bearer $HUB_TOKEN" \
+            "${DATA_HUB_URL}/api/v1/subscriptions/${{ github.event.repository.name }}" \
+            | jq -r '.subscribers[]')
+
+          for sub in $SUBSCRIBERS; do
+            echo "📢 Notifying subscriber: $sub"
+            curl -sSf -X POST \
+              -H "Authorization: Bearer $COMM_HUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"startup\":\"$sub\",\"event\":\"schema_updated\",\"source\":\"${{ github.event.repository.name }}\"}" \
+              "https://comm-hub.brainsait.dev/api/v1/notify"
+          done

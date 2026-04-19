@@ -1,0 +1,52 @@
+# BrainSAIT Incubator — Dependabot Configuration
+version: 2
+
+updates:
+  # npm packages
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "brainsait-incubator/platform-engineers"
+    labels:
+      - "type:security"
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Python packages
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "brainsait-incubator/platform-engineers"
+    labels:
+      - "type:security"
+      - "dependencies"
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "type:infra"
+      - "dependencies"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "type:infra"
+      - "dependencies"

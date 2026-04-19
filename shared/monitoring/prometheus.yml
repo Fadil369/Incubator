@@ -1,0 +1,70 @@
+# BrainSAIT Incubator — Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'brainsait-incubator'
+    environment: 'production'
+
+rule_files:
+  - 'alerts/*.yml'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  # ── API Gateway (Kong) ──
+  - job_name: 'kong'
+    static_configs:
+      - targets: ['api-gateway:8001']
+    metrics_path: '/metrics'
+
+  # ── Prometheus self-monitoring ──
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ── PostgreSQL ──
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # ── Redis ──
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # ── Node Exporter ──
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # ── Per-Startup Services (auto-discovery via Consul) ──
+  - job_name: 'startup-services'
+    consul_sd_configs:
+      - server: 'consul:8500'
+        services: ['brainsait-startup']
+    relabel_configs:
+      - source_labels: [__meta_consul_service_metadata_startup]
+        target_label: startup
+      - source_labels: [__meta_consul_service_metadata_sector]
+        target_label: sector
+
+  # ── NATS ──
+  - job_name: 'nats'
+    static_configs:
+      - targets: ['nats:8222']
+    metrics_path: '/varz'
+
+  # ── Hasura ──
+  - job_name: 'hasura'
+    static_configs:
+      - targets: ['hasura:8081']
+    metrics_path: '/metrics'
+
+  # ── Docker containers ──
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['docker-exporter:9323']

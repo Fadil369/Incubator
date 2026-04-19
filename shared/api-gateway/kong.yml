@@ -1,0 +1,145 @@
+# ============================================================
+# BrainSAIT API Gateway — Kong Declarative Config
+# Routes all incubator services with auth, rate limiting, logging
+# ============================================================
+_format_version: "3.0"
+
+services:
+  # ─────────────────────────────────────────────
+  # Data Hub
+  # ─────────────────────────────────────────────
+  - name: data-hub
+    url: http://hasura:8080
+    routes:
+      - name: data-hub-route
+        paths:
+          - /api/v1/data
+        strip_path: true
+    plugins:
+      - name: jwt
+        config:
+          claims_to_verify: ["exp"]
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+      - name: cors
+        config:
+          origins: ["*.brainsait.dev"]
+          methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+          headers: ["Authorization", "Content-Type", "X-Startup-ID"]
+          credentials: true
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "X-Request-ID:$(uuid)"
+              - "X-Gateway:brainsait"
+
+  # ─────────────────────────────────────────────
+  # Auth Service (Keycloak)
+  # ─────────────────────────────────────────────
+  - name: auth-service
+    url: http://auth-service:8080
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 30
+          hour: 500
+
+  # ─────────────────────────────────────────────
+  # Communication Hub
+  # ─────────────────────────────────────────────
+  - name: comm-hub
+    url: http://matrix:8008
+    routes:
+      - name: comm-route
+        paths:
+          - /api/v1/comm
+        strip_path: true
+    plugins:
+      - name: jwt
+      - name: rate-limiting
+        config:
+          minute: 60
+          hour: 500
+
+  # ─────────────────────────────────────────────
+  # Dashboard
+  # ─────────────────────────────────────────────
+  - name: dashboard
+    url: http://dashboard:3000
+    routes:
+      - name: dashboard-route
+        paths:
+          - /dashboard
+        strip_path: true
+
+  # ─────────────────────────────────────────────
+  # Per-Startup Service Routes (dynamic)
+  # Routes: /api/v1/startups/{startup-name}/*
+  # ─────────────────────────────────────────────
+  - name: startup-services
+    url: http://nats:4222  # Routes through event bus
+    routes:
+      - name: startup-api-route
+        paths:
+          - /api/v1/startups
+        strip_path: false
+    plugins:
+      - name: jwt
+      - name: acl
+        config:
+          allow:
+            - startup-admin
+            - startup-member
+            - incubator-admin
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+
+# ─────────────────────────────────────────────
+# Consumers (per-startup)
+# ─────────────────────────────────────────────
+consumers:
+  - username: brainsait
+    keyauth_credentials:
+      - key: ${BRAINSAIT_API_KEY}
+    acls:
+      - group: incubator-admin
+
+  - username: dashboard
+    keyauth_credentials:
+      - key: ${DASHBOARD_API_KEY}
+    acls:
+      - group: dashboard-service
+
+# ─────────────────────────────────────────────
+# Plugins (global)
+# ─────────────────────────────────────────────
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid
+      echo_downstream: true
+
+  - name: prometheus
+    config:
+      per_consumer: true
+
+  - name: ip-restriction
+    config:
+      allow:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16

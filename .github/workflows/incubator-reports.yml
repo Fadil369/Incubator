@@ -1,0 +1,64 @@
+# ============================================================
+# BrainSAIT Incubator — Unified Reporting & Analytics
+# Generates cross-startup reports from GitHub data
+# ============================================================
+name: "📊 Incubator Reports"
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday 8 AM
+    - cron: '0 8 1 * *'  # 1st of month 8 AM
+  workflow_dispatch:
+
+jobs:
+  weekly-report:
+    name: "📋 Weekly Report"
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 8 * * 1' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Generate Report
+        env:
+          GH_TOKEN: ${{ secrets.INCUBATOR_GITHUB_TOKEN }}
+          ORG: brainsait-incubator
+        run: |
+          echo "# BrainSAIT Incubator — Weekly Report" > report.md
+          echo "_Generated: $(date -u +%Y-%m-%d_%H:%M) UTC_" >> report.md
+          echo "" >> report.md
+
+          echo "## 📈 Repository Activity" >> report.md
+          echo "" >> report.md
+          echo "| Startup | Open PRs | Closed PRs | Open Issues | Commits (7d) |" >> report.md
+          echo "|---------|----------|------------|-------------|-------------|" >> report.md
+
+          for repo in $(gh repo list "$ORG" --limit 200 --json name -q '.[].name' | grep -E 'platform$'); do
+            startup=$(echo "$repo" | sed 's/-platform$//')
+            prs_open=$(gh pr list --repo "$ORG/$repo" --state open --json number -q 'length')
+            prs_closed=$(gh pr list --repo "$ORG/$repo" --state closed --json number -q 'length' --search 'closed:>=$(date -d "7 days ago" +%Y-%m-%d)')
+            issues=$(gh issue list --repo "$ORG/$repo" --state open --json number -q 'length')
+            commits=$(gh api "repos/$ORG/$repo/commits?since=$(date -d "7 days ago" -u +%Y-%m-%dT%H:%M:%SZ)" --jq 'length')
+            echo "| $startup | $prs_open | $prs_closed | $issues | $commits |" >> report.md
+          done
+
+          echo "" >> report.md
+          echo "## 🚀 Top Active Startups" >> report.md
+          echo "" >> report.md
+
+      - name: Publish Report
+        env:
+          GH_TOKEN: ${{ secrets.INCUBATOR_GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo "$ORG/incubator-platform" \
+            --title "📊 Weekly Report — $(date +%Y-%m-%d)" \
+            --body-file report.md \
+            --label "type:docs,priority:medium"
+
+      - name: Send to Communication Hub
+        env:
+          COMM_HUB_TOKEN: ${{ secrets.COMM_HUB_TOKEN }}
+        run: |
+          curl -sSf -X POST \
+            -H "Authorization: Bearer $COMM_HUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"type\":\"weekly_report\",\"file\":\"report.md\"}" \
+            "https://comm-hub.brainsait.dev/api/v1/broadcast"

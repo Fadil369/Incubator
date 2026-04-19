@@ -1,40 +1,71 @@
-# BrainSAIT Healthcare SME Digital Transformation Platform
+# BrainSAIT Ultimate Incubator — Healthcare AI Platform
 
 ## Overview
 
-BrainSAIT is a comprehensive healthcare SME (Small and Medium Enterprise) digital transformation platform designed to support healthcare startups and businesses in the Arab world. The platform provides incubation programs, mentorship opportunities, digital tools, and resources to accelerate healthcare innovation.
+BrainSAIT Ultimate Incubator is a comprehensive healthcare AI startup incubator platform natively hosted on GitHub, designed for the **National Healthcare AI Sandbox** cohort of **35 healthcare AI startups**. Built with a microservices architecture, it provides full GitHub integration, cross-startup data sharing, HIPAA-compliant CI/CD, and real-time communication.
 
 ### Key Features
 
-- **Multilingual Support**: Full Arabic and English support with RTL layout
-- **SME Incubation Programs**: Comprehensive business development programs
-- **Expert Mentorship**: Connect with healthcare industry experts
-- **Digital Transformation Tools**: Analytics, reporting, and business intelligence
-- **Document Generation**: Automated certificate and report generation
-- **Scalable Architecture**: Microservices-based architecture with Docker support
+- **🏥 35 Healthcare AI Startups** — Full cohort management with per-startup repos, teams, and project boards
+- **🔄 Cross-Startup Data Sharing** — Contract-based, HIPAA-compliant data exchange via Data Hub
+- **🔒 HIPAA-Compliant CI/CD** — Security scanning (Trivy, CodeQL, Gitleaks) on every PR
+- **💬 Multi-Channel Communication** — Slack, Discord, WebSocket routing via NATS event bus
+- **🧠 ML Model Pipeline** — MLflow-integrated model registry and K8s serving
+- **🌐 Full GitHub Integration** — Org, Projects, Repos, Hooks, Apps, Pages, Actions
+- **📊 Monitoring & Analytics** — Prometheus + Grafana with auto-discovery
+- **🌍 Multilingual Support** — Full Arabic and English support with RTL layout
+- **🏗️ Infrastructure as Code** — Terraform-managed GitHub resources
 
 ## Architecture
 
-The platform follows a modern microservices architecture:
-
 ```
-📁 brainsait-platform/
-├── 📁 packages/
-│   ├── 📁 brainsait-frontend/    # Next.js 14 with TypeScript & Material-UI
-│   ├── 📁 brainsait-backend/     # Node.js/Express API with PostgreSQL
-│   ├── 📁 brainsait-shared/      # Shared types and utilities
-│   └── 📁 brainsait-docs/        # PDF generation service with Puppeteer
-├── 📁 docker/                   # Docker configurations
-├── 📄 docker-compose.yml        # Multi-service orchestration
-└── 📄 README.md                 # This file
+brainsait-incubator (GitHub Enterprise)
+├── 📦 Platform Services
+│   ├── brainsait-frontend    → Next.js 14 with Material-UI & RTL
+│   ├── brainsait-backend     → Express.js API with PostgreSQL & Redis
+│   ├── brainsait-shared      → Common types, utilities, auth client
+│   ├── brainsait-docs        → PDF generation (Puppeteer)
+│   ├── brainsait-ai          → AI/ML services (Cloudflare Workers)
+│   ├── data-hub              → Hasura GraphQL (cross-startup data)
+│   ├── api-gateway           → Kong API Gateway
+│   ├── auth-service          → Keycloak SSO
+│   ├── communication-hub     → Multi-channel notifications (NATS)
+│   └── dashboard             → Incubator management UI
+│
+├── 🚀 Startup Infra (×35 startups)
+│   ├── Provisioning scripts  → Auto-create repos, teams, projects
+│   ├── K8s manifests         → Namespaces, network policies, quotas
+│   ├── Terraform IaC         → Declarative GitHub resource management
+│   └── Per-startup CI/CD     → Shared healthcare pipeline
+│
+├── 📊 GitHub Integration
+│   ├── Actions Workflows     → CI/CD, Data Sync, ML Deploy, Reports
+│   ├── Projects              → Master board, Milestones, Demo Day
+│   ├── Branch Protection     → Required reviews, status checks
+│   └── Dependabot            → Auto dependency updates
+│
+└── 🔐 Security & Compliance
+    ├── HIPAA checks          → PII detection, PHI logging prevention
+    ├── Secret scanning       → Gitleaks on every push
+    ├── Network policies      → Zero-trust K8s networking
+    └── Audit logging         → Immutable event trail
 ```
 
-### Services
+### Participating Startups (35)
 
-1. **Frontend** (`brainsait-frontend`): Next.js application with Material-UI and RTL support
-2. **Backend API** (`brainsait-backend`): Express.js API with PostgreSQL and Redis
-3. **Document Service** (`brainsait-docs`): PDF generation service using Puppeteer
-4. **Shared Package** (`brainsait-shared`): Common types, utilities, and constants
+| Sector | Startups |
+|--------|----------|
+| **AI Operating System** | BrainSAIT |
+| **Healthcare AI** | Dsmart, ALDABB AI, Pion Dialecton, Cycls, UntoldAI, MSR04, Sām, JULEB, Rqmii, Senor |
+| **Digital Health** | iHealth, Digiations |
+| **Bio/Genomics** | Bio-Grid, Biosentry, FAHM Biotechnology |
+| **Dental AI** | dentalAI |
+| **Clinical/Medical** | CINOVA, TTMD, Healthron, MedFlow, Innova |
+| **Physiotherapy** | Physaio |
+| **Analytics** | Qanary, Baseerah, Reporty |
+| **Aging/Aging Tech** | iAGE |
+| **Medical Devices** | ROLOOY |
+| **Other Health Tech** | MINOVA, Vitaio, Mara, Alsamer, Salim, ANICON, VLEED |
 
 ## Prerequisites
 
@@ -469,6 +500,64 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Prisma team for the modern database toolkit
 - Next.js team for the React framework
 - All open source contributors who made this project possible
+
+---
+
+## 🧠 Incubator Infrastructure
+
+### Quick Commands
+
+```bash
+# Provision all 35 startups on GitHub (repos, teams, projects, webhooks)
+bash scripts/provision-all.sh
+
+# Bootstrap a single startup
+bash scripts/bootstrap-startup.sh <startup-name>
+
+# Deploy full platform stack locally
+docker compose up -d
+
+# Apply Terraform-managed GitHub resources
+cd infra && terraform init && terraform plan && terraform apply
+```
+
+### Key Infrastructure Files
+
+| Path | Description |
+|------|-------------|
+| `scripts/provision-all.sh` | Full GitHub org provisioner (35 startups × 4 repos) |
+| `scripts/bootstrap-startup.sh` | Single startup bootstrapper |
+| `infra/github.tf` | Terraform: all GitHub resources declaratively |
+| `.github/workflows/incubator-ci-healthcare.yml` | HIPAA-compliant 5-stage CI/CD |
+| `.github/workflows/incubator-data-sync.yml` | Cross-startup data synchronization |
+| `.github/workflows/incubator-ml-deploy.yml` | ML model deployment pipeline |
+| `.github/workflows/incubator-reports.yml` | Weekly/monthly analytics reports |
+| `shared/libs/auth-client.ts` | Keycloak JWT verification |
+| `shared/libs/data-contracts.ts` | HIPAA-compliant schema validator |
+| `shared/libs/event-bus.ts` | NATS cross-startup event publishing |
+| `shared/libs/logger.ts` | PHI-safe structured logging |
+| `shared/api-gateway/kong.yml` | Kong API gateway routing config |
+| `shared/communication/index.ts` | Multi-channel notification hub |
+| `k8s/base/` | K8s namespaces, network policies, quotas |
+| `docs/onboarding.md` | Startup onboarding guide |
+| `docs/data-sharing.md` | Data sharing protocol & tiers |
+
+### Data Sharing Protocol
+
+Startups share data via **contracts** (JSON Schema + HIPAA extensions):
+
+```
+Startup A → data-contracts/patient-data.contract.json → push to main
+  → CI auto-syncs to Data Hub → Subscribed startups notified
+  → Startup B queries via GraphQL → Full audit trail
+```
+
+### GitHub Actions Workflows
+
+- **CI/CD** — Build → Security Scan → Data Sync → Deploy → Notify
+- **Data Sync** — Schema discovery, Data Hub sync, subscriber notifications
+- **ML Deploy** — Train → Register (MLflow) → Build → Deploy → Smoke test
+- **Reports** — Weekly cross-startup analytics, published as GitHub Issues
 
 ---
 

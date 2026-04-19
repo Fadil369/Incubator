@@ -1,0 +1,71 @@
+name: "🚀 Startup Onboarding"
+description: "Onboard a new startup into the BrainSAIT Incubator"
+title: "[Onboard] "
+labels: ["type:feature", "milestone:week-1"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Startup Onboarding Request
+        Fill out the details below to begin onboarding.
+
+  - type: input
+    id: startup_name
+    attributes:
+      label: Startup Name
+      placeholder: e.g., dentalAI
+    validations:
+      required: true
+
+  - type: input
+    id: github_org_username
+    attributes:
+      label: GitHub Username (Lead Developer)
+      placeholder: e.g., @developer
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sector
+    attributes:
+      label: Healthcare Sector
+      options:
+        - AI Diagnostics
+        - Dental AI
+        - Medical Devices
+        - Biotech
+        - Health Analytics
+        - Digital Health
+        - Clinical Workflow
+        - Physiotherapy
+        - Aging Tech
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: tech_stack
+    attributes:
+      label: Tech Stack
+      description: "Languages, frameworks, cloud providers"
+      placeholder: "Python/FastAPI, React, PostgreSQL, AWS"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: compliance
+    attributes:
+      label: Compliance Requirements
+      options:
+        - label: "HIPAA"
+        - label: "SOC 2"
+        - label: "GDPR"
+        - label: "FDA 21 CFR Part 11"
+        - label: "Saudi NCA"
+
+  - type: textarea
+    id: repos_needed
+    attributes:
+      label: Repositories Needed
+      description: "Additional repos beyond the standard 4 (platform, infra, docs, data)"
+      placeholder: "e.g., mobile-app, ml-models"

@@ -1,0 +1,158 @@
+# ============================================================
+# BrainSAIT — ML Model Deployment Pipeline
+# Standardized model deployment for all incubator startups
+# ============================================================
+name: "🧠 ML Model Deploy"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'models/**'
+      - 'ml/**'
+      - 'training/**'
+  workflow_dispatch:
+    inputs:
+      model_name:
+        description: 'Model name to deploy'
+        required: true
+      model_version:
+        description: 'Model version tag'
+        required: true
+      environment:
+        description: 'Target environment'
+        required: false
+        default: 'staging'
+        type: choice
+        options: [sandbox, staging, production]
+
+env:
+  REGISTRY: ghcr.io
+  ORG: ${{ github.repository_owner }}
+  MLFLOW_TRACKING_URI: https://mlflow.brainsait.dev
+
+jobs:
+  train-and-register:
+    name: "🏋️ Train & Register"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    outputs:
+      model_uri: ${{ steps.register.outputs.model_uri }}
+      model_version: ${{ steps.register.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install mlflow scikit-learn torch transformers
+          pip install -r requirements.txt 2>/dev/null || true
+
+      - name: Run training
+        env:
+          MLFLOW_TRACKING_TOKEN: ${{ secrets.MLFLOW_TOKEN }}
+        run: |
+          if [ -f "training/train.py" ]; then
+            python training/train.py \
+              --experiment "${{ github.event.repository.name }}" \
+              --run-name "ci-${{ github.sha }}"
+          elif [ -f "ml/train.py" ]; then
+            python ml/train.py
+          else
+            echo "No training script found, skipping..."
+          fi
+
+      - name: Register model
+        id: register
+        env:
+          MLFLOW_TRACKING_TOKEN: ${{ secrets.MLFLOW_TOKEN }}
+        run: |
+          MODEL_NAME="${{ github.event.repository.name }}"
+          VERSION=$(python -c "
+          import mlflow
+          client = mlflow.tracking.MlflowClient()
+          latest = client.get_latest_versions('$MODEL_NAME', stages=['None'])
+          print(latest[0].version if latest else '1')
+          ")
+
+          echo "model_uri=models:/${MODEL_NAME}/${VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+          # Transition to staging
+          python -c "
+          import mlflow
+          client = mlflow.tracking.MlflowClient()
+          client.transition_model_version_stage(
+            name='$MODEL_NAME',
+            version='$VERSION',
+            stage='Staging'
+          )
+          "
+
+  deploy-model:
+    name: "🚀 Deploy Model"
+    runs-on: ubuntu-latest
+    needs: train-and-register
+    environment:
+      name: ${{ github.event.inputs.environment || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build model serving image
+        run: |
+          MODEL_NAME="${{ github.event.repository.name }}"
+          MODEL_VERSION="${{ needs.train-and-register.outputs.model_version || github.event.inputs.model_version }}"
+
+          cat > Dockerfile.model << 'EOF'
+          FROM python:3.12-slim
+          RUN pip install mlflow flask gunicorn
+          WORKDIR /app
+          COPY serve.py .
+          ENV MODEL_URI=${MODEL_URI}
+          EXPOSE 8080
+          CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "serve:app"]
+          EOF
+
+          docker build \
+            -f Dockerfile.model \
+            --build-arg MODEL_URI="${{ needs.train-and-register.outputs.model_uri }}" \
+            -t ${{ env.REGISTRY }}/${{ env.ORG }}/${MODEL_NAME}-model:${MODEL_VERSION} \
+            .
+
+          docker push ${{ env.REGISTRY }}/${{ env.ORG }}/${MODEL_NAME}-model:${MODEL_VERSION}
+
+      - name: Deploy to K8s
+        uses: azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/model-deployment.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.ORG }}/${{ github.event.repository.name }}-model:${{ needs.train-and-register.outputs.model_version }}
+          namespace: brainsait-${{ github.event.inputs.environment || 'staging' }}
+
+  smoke-test:
+    name: "🧪 Smoke Test"
+    runs-on: ubuntu-latest
+    needs: deploy-model
+    steps:
+      - name: Test model endpoint
+        run: |
+          ENDPOINT="https://${{ github.event.repository.name }}.staging.brainsait.dev/model/predict"
+          for i in {1..5}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X POST "$ENDPOINT" \
+              -H "Content-Type: application/json" \
+              -d '{"test": true}')
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ Model serving correctly"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "❌ Model not responding"
+          exit 1

@@ -1,0 +1,17 @@
+# ============================================================
+# BrainSAIT — Kubernetes Base Deployment Manifests
+# Shared K8s config for all incubator startups
+# ============================================================
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: brainsait
+
+commonLabels:
+  app.kubernetes.io/part-of: brainsait-incubator
+  app.kubernetes.io/managed-by: github-actions
+
+resources:
+  - namespace.yaml
+  - network-policy.yaml
+  - resource-quota.yaml
