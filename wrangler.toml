@@ -19,6 +19,7 @@ FRONTEND_URL = "https://brainsait.org"
 AI_SERVICE_URL = "https://ai.brainsait.org"
 DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
+CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org"
 
 # KV Namespaces
 [[kv_namespaces]]
@@ -26,12 +27,22 @@ binding = "SESSIONS"
 id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
-binding = "AI_CACHE"
+binding = "CACHE"
 id = "9201cf6a9b1143d8822250dc24e8c8ba"
 
 [[kv_namespaces]]
-binding = "RATE_LIMIT_STORE"
+binding = "RATE_LIMIT"
 id = "8c0682e8e21b4703b46fd1c1a3487ec0"
+
+[[kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+# Replace with a real KV namespace ID: wrangler kv:namespace create PARTNER_APPLICATIONS
+id = "placeholder-partner-applications-kv-id"
+
+[[kv_namespaces]]
+binding = "STARTUP_REGISTRY"
+# Replace with a real KV namespace ID: wrangler kv:namespace create STARTUP_REGISTRY
+id = "placeholder-startup-registry-kv-id"
 
 # Durable Objects
 [[durable_objects.bindings]]

@@ -32,7 +32,7 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { Search, CheckCircle, Cancel, Visibility, Refresh, Business } from '@mui/icons-material';
+import { Search, CheckCircle, Cancel, Visibility, Refresh, Business, GitHub } from '@mui/icons-material';
 import {
   listApplications,
   acceptApplication,
@@ -49,6 +49,7 @@ const STATUS_COLORS: Record<ApplicationStatus, 'default' | 'warning' | 'success'
 };
 
 const PARTNER_TYPE_LABELS: Record<string, string> = {
+  sme: 'Healthcare SME',
   tech: 'Technology',
   health: 'Healthcare',
   dist: 'Distribution',
@@ -358,6 +359,7 @@ export default function AdminApplicationsPage() {
                 ...(selected.acceptedAt ? [['Accepted', new Date(selected.acceptedAt).toLocaleString()]] : []),
                 ...(selected.onboardedAt ? [['Onboarded', new Date(selected.onboardedAt).toLocaleString()]] : []),
                 ...(selected.startupSlug ? [['Startup Slug', selected.startupSlug]] : []),
+                ...(selected.githubRepo ? [['GitHub Repo', selected.githubRepo]] : []),
               ].map(([label, value]) => (
                 <Box key={label} sx={{ display: 'flex', gap: 2, py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
                   <Typography variant="caption" color="text.secondary" sx={{ width: 130, flexShrink: 0, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>{label}</Typography>
@@ -396,6 +398,17 @@ export default function AdminApplicationsPage() {
               {(selected.status === 'ACCEPTED' || selected.status === 'ONBOARDED') && selected.startupSlug && (
                 <Button variant="contained" href={`/portal/${selected.startupSlug}`}>
                   Open Portal
+                </Button>
+              )}
+              {selected.githubRepo && (
+                <Button
+                  variant="outlined"
+                  startIcon={<GitHub />}
+                  href={`https://github.com/${selected.githubRepo}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub Repo
                 </Button>
               )}
             </DialogActions>

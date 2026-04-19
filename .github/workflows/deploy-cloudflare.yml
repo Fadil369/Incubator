@@ -2,9 +2,6 @@ name: Deploy to Cloudflare
 permissions:
   contents: read
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [main, production]
@@ -59,6 +56,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.API_URL }}
           NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          NEXT_PUBLIC_GITHUB_ORG: ${{ secrets.GITHUB_ORG }}
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
@@ -89,11 +87,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma Client
-        run: |
-          cd packages/brainsait-backend
-          npx prisma generate
-
       - name: Build backend
         run: npm run build:backend
 
@@ -104,21 +97,21 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           secrets: |
-            DATABASE_URL
             JWT_SECRET
+            SENDGRID_API_KEY
+            ANTHROPIC_API_KEY
             OPENAI_API_KEY
-            CLAUDE_API_KEY
-            REDIS_URL
-            EMAIL_API_KEY
-            SAUDI_GOV_API_KEY
+            ADMIN_KEY
+            GITHUB_TOKEN
+            GITHUB_ORG
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
-          EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
-          SAUDI_GOV_API_KEY: ${{ secrets.SAUDI_GOV_API_KEY }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_ORG: ${{ secrets.GITHUB_ORG }}
 
   deploy-ai-service:
     runs-on: ubuntu-latest
