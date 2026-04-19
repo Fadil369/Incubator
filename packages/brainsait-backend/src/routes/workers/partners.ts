@@ -65,20 +65,6 @@ const PARTNER_TYPE_NAMES: Record<string, string> = {
 
 const partners = new Hono<{ Bindings: Env }>();
 
-// ── Middleware: require admin key ─────────────────────────────────────────────
-
-function requireAdmin(c: { req: { header: (k: string) => string | undefined }, env: Env }, next: () => Promise<Response>): Promise<Response> {
-  const key = c.req.header('x-admin-key');
-  const expected = c.env.ADMIN_KEY;
-  if (!expected || !key || key !== expected) {
-    return Promise.resolve(new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    }));
-  }
-  return next();
-}
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function generateReferenceId(): string {
