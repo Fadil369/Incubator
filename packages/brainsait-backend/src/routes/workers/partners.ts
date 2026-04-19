@@ -9,7 +9,7 @@
  *  POST  /api/v1/partners/applications/:id/accept  — Admin: accept → generate magic link → send email
  *  POST  /api/v1/partners/applications/:id/reject  — Admin: reject → send rejection email
  *  GET   /api/v1/partners/validate?token=xxx       — Validate invitation token, return partner info
- *  POST  /api/v1/partners/complete-onboarding      — Partner completes profile after clicking magic link
+ *  POST  /api/v1/partners/complete-onboarding      — Partner completes onboarding and persists profile details after clicking magic link
  */
 
 import { Hono } from 'hono';
@@ -41,8 +41,19 @@ export interface PartnerApplication {
   rejectedAt?: string;
   onboardedAt?: string;
   startupSlug?: string;
+  timezone?: string;
+  linkedIn?: string;
+  passwordHash?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+async function hashPassword(password: string): Promise<string> {
+  const data = new TextEncoder().encode(password);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 const PARTNER_TYPE_NAMES: Record<string, string> = {
@@ -554,7 +565,20 @@ partners.post('/complete-onboarding', async (c) => {
   }
 
   const now = new Date().toISOString();
-  const updated: PartnerApplication = { ...app, status: 'ONBOARDED', onboardedAt: now, updatedAt: now };
+  const trimmedTimezone = body.timezone?.trim();
+  const trimmedLinkedIn = body.linkedIn?.trim();
+  const trimmedPassword = body.password?.trim();
+  const passwordHash = trimmedPassword ? await hashPassword(trimmedPassword) : undefined;
+
+  const updated: PartnerApplication = {
+    ...app,
+    status: 'ONBOARDED',
+    onboardedAt: now,
+    updatedAt: now,
+    ...(trimmedTimezone ? { timezone: trimmedTimezone } : {}),
+    ...(trimmedLinkedIn ? { linkedIn: trimmedLinkedIn } : {}),
+    ...(passwordHash ? { passwordHash } : {}),
+  };
   await c.env.PARTNER_APPLICATIONS.put(`application:${applicationId}`, JSON.stringify(updated));
 
   return c.json({
