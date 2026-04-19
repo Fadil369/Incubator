@@ -443,9 +443,10 @@ partners.post('/applications/:id/accept', async (c) => {
   // Build portal URL with magic token
   const frontendUrl = c.env.FRONTEND_URL || 'https://brainsait.org';
   const portalUrl = `${frontendUrl}/portal/accept?token=${encodeURIComponent(inviteToken)}&app=${id}`;
+  const emailSent = Boolean(c.env.SENDGRID_API_KEY);
 
   // Send acceptance email
-  if (c.env.SENDGRID_API_KEY) {
+  if (emailSent) {
     await sendEmail(
       updated.email,
       `${updated.firstName} ${updated.lastName}`,
@@ -461,7 +462,10 @@ partners.post('/applications/:id/accept', async (c) => {
     applicationId: id,
     startupSlug: slug,
     portalUrl,
-    message: `Application accepted and invitation email sent to ${updated.email}`,
+    emailSent,
+    message: emailSent
+      ? `Application accepted and invitation email sent to ${updated.email}`
+      : `Application accepted, but invitation email was not sent because SENDGRID_API_KEY is not configured`,
   });
 });
 
@@ -484,8 +488,9 @@ partners.post('/applications/:id/reject', async (c) => {
   const now = new Date().toISOString();
   const updated: PartnerApplication = { ...app, status: 'REJECTED', rejectedAt: now, updatedAt: now };
   await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(updated));
+  const emailSent = Boolean(c.env.SENDGRID_API_KEY);
 
-  if (c.env.SENDGRID_API_KEY) {
+  if (emailSent) {
     await sendEmail(
       updated.email,
       `${updated.firstName} ${updated.lastName}`,
@@ -496,7 +501,13 @@ partners.post('/applications/:id/reject', async (c) => {
     );
   }
 
-  return c.json({ success: true, message: `Application rejected and notification sent to ${updated.email}` });
+  return c.json({
+    success: true,
+    emailSent,
+    message: emailSent
+      ? `Application rejected and notification sent to ${updated.email}`
+      : `Application rejected, but notification email was not sent because SENDGRID_API_KEY is not configured`,
+  });
 });
 
 // Validate invitation token (called by frontend /portal/accept page)
