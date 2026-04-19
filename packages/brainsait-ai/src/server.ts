@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { aiChampionsService } from './services/aiChampionsService';
 import { llmService } from './services/llmService';
 import aiRoutes from './routes/aiRoutes';
+import enhancedRoutes from './routes/enhancedRoutes';
 import { logger } from './utils/logger';
 
 const app = express();
@@ -60,8 +61,12 @@ app.get('/health', (req, res) => {
   res.json(healthStatus);
 });
 
-// Add new AI service routes
+// Add AI service routes
 app.use('/api/ai', aiRoutes);
+
+// Add enhanced AI service routes (financial intelligence, security)
+app.use('/api/financial', enhancedRoutes);
+app.use('/api/security', enhancedRoutes);
 
 // AI Chat/Completion endpoint
 app.post('/api/ai/chat', async (req, res) => {
