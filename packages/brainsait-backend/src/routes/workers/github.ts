@@ -7,11 +7,13 @@
  */
 
 import { Hono } from 'hono';
+import { jwtVerify, type JWTPayload } from 'jose';
 
 interface Env {
   GITHUB_TOKEN: string;
   GITHUB_ORG: string;
   GITHUB_APP_ID?: string;
+  AUTH_JWT_SECRET: string;
   DB: D1Database;
 }
 
@@ -38,9 +40,57 @@ async function ghFetch(path: string, token: string, options: RequestInit = {}): 
   });
 }
 
+interface GithubAuthClaims extends JWTPayload {
+  org?: string;
+  startupOrg?: string;
+  organizations?: string[];
+}
+
+async function requireGithubOrgAccess(c: any): Promise<Response | null> {
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const token = authHeader.slice('Bearer '.length).trim();
+  if (!token) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  let payload: GithubAuthClaims;
+  try {
+    const verified = await jwtVerify(
+      token,
+      new TextEncoder().encode(c.env.AUTH_JWT_SECRET)
+    );
+    payload = verified.payload as GithubAuthClaims;
+  } catch {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const { org } = c.req.param();
+  const allowedOrgs = new Set<string>(
+    [payload.org, payload.startupOrg, ...(Array.isArray(payload.organizations) ? payload.organizations : [])]
+      .filter((value): value is string => typeof value === 'string' && value.length > 0)
+  );
+
+  if (org !== c.env.GITHUB_ORG) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  if (!allowedOrgs.has(org)) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return null;
+}
+
 // ── Organisation repos ────────────────────────────────────────────────────────
 
 github.get('/orgs/:org/repos', async (c) => {
+  const authError = await requireGithubOrgAccess(c);
+  if (authError) return authError;
+
   const { org } = c.req.param();
   const res = await ghFetch(
     `/orgs/${org}/repos?type=all&per_page=100&sort=updated`,
@@ -52,6 +102,9 @@ github.get('/orgs/:org/repos', async (c) => {
 // ── Organisation templates (repos marked is_template) ─────────────────────────
 
 github.get('/orgs/:org/templates', async (c) => {
+  const authError = await requireGithubOrgAccess(c);
+  if (authError) return authError;
+
   const { org } = c.req.param();
   const res = await ghFetch(
     `/orgs/${org}/repos?type=all&per_page=100`,
