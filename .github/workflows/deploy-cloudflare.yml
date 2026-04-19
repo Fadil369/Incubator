@@ -95,6 +95,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: packages/brainsait-backend
           environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           secrets: |
             JWT_SECRET
@@ -103,7 +104,6 @@ jobs:
             OPENAI_API_KEY
             ADMIN_KEY
             GITHUB_TOKEN
-            GITHUB_ORG
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
@@ -111,7 +111,6 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          GITHUB_ORG: ${{ secrets.GITHUB_ORG }}
 
   deploy-ai-service:
     runs-on: ubuntu-latest
@@ -182,34 +181,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: packages/brainsait-docs
           environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-
-  run-migrations:
-    runs-on: ubuntu-latest
-    name: Run Database Migrations
-    needs: [deploy-backend]
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          cd packages/brainsait-backend
-          npm ci
-
-      - name: Run migrations
-        run: |
-          cd packages/brainsait-backend
-          npx prisma migrate deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   health-check:
     runs-on: ubuntu-latest
