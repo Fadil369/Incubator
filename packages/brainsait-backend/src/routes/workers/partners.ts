@@ -606,6 +606,7 @@ partners.post('/complete-onboarding', async (c) => {
   await c.env.PARTNER_APPLICATIONS.put(`application:${applicationId}`, JSON.stringify(updated));
 
   // Register startup in the startup registry KV
+  const STARTUP_REGISTRY_TTL_SECONDS = 5 * 365 * 24 * 60 * 60; // 5 years
   if (c.env.STARTUP_REGISTRY && updated.startupSlug) {
     const registryEntry = {
       slug: updated.startupSlug,
@@ -619,7 +620,7 @@ partners.post('/complete-onboarding', async (c) => {
     await c.env.STARTUP_REGISTRY.put(
       `startup:${updated.startupSlug}`,
       JSON.stringify(registryEntry),
-      { expirationTtl: 5 * 365 * 24 * 60 * 60 }
+      { expirationTtl: STARTUP_REGISTRY_TTL_SECONDS }
     ).catch((err: unknown) => {
       console.warn('STARTUP_REGISTRY put failed:', err);
     });
