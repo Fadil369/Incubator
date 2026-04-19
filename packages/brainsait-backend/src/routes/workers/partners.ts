@@ -355,11 +355,6 @@ partners.post('/application', async (c) => {
     expirationTtl: 365 * 24 * 60 * 60, // 1 year
   });
 
-  // Also store in an index for listing
-  const index: string[] = JSON.parse(await c.env.PARTNER_APPLICATIONS.get('index:applications') ?? '[]');
-  index.unshift(id);
-  await c.env.PARTNER_APPLICATIONS.put('index:applications', JSON.stringify(index.slice(0, 500)));
-
   return c.json({ success: true, applicationId: id, referenceId: application.referenceId });
 });
 
@@ -371,16 +366,25 @@ partners.get('/applications', async (c) => {
   }
 
   const status = c.req.query('status');
-  const index: string[] = JSON.parse(await c.env.PARTNER_APPLICATIONS.get('index:applications') ?? '[]');
+  const keys: string[] = [];
+  let cursor: string | undefined = undefined;
+
+  do {
+    const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
+    keys.push(...page.keys.map((key) => key.name));
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
 
   const applications = (
     await Promise.all(
-      index.map(async (id) => {
-        const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${id}`);
+      keys.map(async (key) => {
+        const raw = await c.env.PARTNER_APPLICATIONS.get(key);
         return raw ? (JSON.parse(raw) as PartnerApplication) : null;
       })
     )
-  ).filter((a): a is PartnerApplication => a !== null);
+  )
+    .filter((a): a is PartnerApplication => a !== null)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const filtered = status ? applications.filter((a) => a.status === status) : applications;
   return c.json({ applications: filtered, total: filtered.length });
