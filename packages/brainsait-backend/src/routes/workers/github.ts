@@ -78,6 +78,16 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.length > 0;
 }
 
+function normalizeStartupSlug(value: unknown): string | undefined {
+  const slug = isNonEmptyString(value) ? value.trim().toLowerCase() : undefined;
+  if (!slug) return undefined;
+  return /^[a-z0-9-]+$/.test(slug) ? slug : undefined;
+}
+
+function isValidRepoName(repoName: string): boolean {
+  return /^[A-Za-z0-9._-]+$/.test(repoName);
+}
+
 function isAdmin(claims: GithubAuthClaims): boolean {
   return claims.role === 'ADMIN' || claims.role === 'SUPER_ADMIN';
 }
@@ -88,6 +98,10 @@ function getAuthorizedOrgs(claims: GithubAuthClaims): string[] {
     claims.startupOrg,
     ...(Array.isArray(claims.organizations) ? claims.organizations : []),
   ].filter(isNonEmptyString);
+}
+
+function getStartupSlugFromClaims(claims: GithubAuthClaims): string | undefined {
+  return normalizeStartupSlug(claims.startupSlug);
 }
 
 async function readGithubError(response: Response): Promise<{ message: string; status: number }> {
@@ -142,7 +156,7 @@ function requireGithubOrgAccess(c: Context<GithubRouteContext>, org: string): Re
 
   const claims = c.get('authClaims');
   const allowedOrgs = getAuthorizedOrgs(claims);
-  if (!isAdmin(claims) && allowedOrgs.length > 0 && !allowedOrgs.includes(org)) {
+  if (!isAdmin(claims) && !allowedOrgs.includes(org)) {
     return c.json({ error: 'Forbidden' }, 403);
   }
 
@@ -155,7 +169,22 @@ function requireStartupSlugAccess(c: Context<GithubRouteContext>, slug: string):
   }
 
   const claims = c.get('authClaims');
-  if (!isAdmin(claims) && isNonEmptyString(claims.startupSlug) && claims.startupSlug !== slug) {
+  const startupSlug = getStartupSlugFromClaims(claims);
+  if (!isAdmin(claims) && startupSlug && startupSlug !== slug) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return null;
+}
+
+function requireRepoTenantAccess(c: Context<GithubRouteContext>, repoName: string): Response | null {
+  if (!isValidRepoName(repoName)) {
+    return c.json({ error: 'Invalid repository name' }, 400);
+  }
+
+  const claims = c.get('authClaims');
+  const startupSlug = getStartupSlugFromClaims(claims);
+  if (!isAdmin(claims) && startupSlug && !isStartupRepoName(repoName, startupSlug)) {
     return c.json({ error: 'Forbidden' }, 403);
   }
 
@@ -197,8 +226,17 @@ function isStartupRepoName(repoName: string, startupSlug: string): boolean {
   return repoName === startupSlug || repoName.startsWith(getRepoSlugPrefix(startupSlug));
 }
 
-function requireRepoOwnerAccess(c: Context<GithubRouteContext>, owner: string): Response | null {
-  return requireGithubOrgAccess(c, owner);
+function requireRepoOwnerAccess(c: Context<GithubRouteContext>, owner: string, repoName?: string): Response | null {
+  const orgError = requireGithubOrgAccess(c, owner);
+  if (orgError) {
+    return orgError;
+  }
+
+  if (repoName) {
+    return requireRepoTenantAccess(c, repoName);
+  }
+
+  return null;
 }
 
 function requireConfiguredTemplateOwner(c: Context<GithubRouteContext>, templateOwner: string): Response | null {
@@ -219,7 +257,24 @@ github.get('/orgs/:org/repos', async (c) => {
   const authError = requireGithubOrgAccess(c, org);
   if (authError) return authError;
 
-  return proxyGithubResponse(c, `/orgs/${org}/repos?type=all&per_page=100&sort=updated`);
+  const res = await ghFetch(
+    `/orgs/${org}/repos?type=all&per_page=100&sort=updated`,
+    c.env.GITHUB_TOKEN
+  );
+  if (!res.ok) {
+    return buildGithubErrorResponse(c, res);
+  }
+
+  const repos: Array<Record<string, unknown>> = await res.json();
+  const claims = c.get('authClaims');
+  const startupSlug = getStartupSlugFromClaims(claims);
+  if (!isAdmin(claims) && startupSlug) {
+    return c.json(
+      repos.filter((repo) => typeof repo.name === 'string' && isStartupRepoName(repo.name, startupSlug))
+    );
+  }
+
+  return c.json(repos);
 });
 
 // ── Organisation templates (repos marked is_template) ─────────────────────────
@@ -247,6 +302,11 @@ github.get('/orgs/:org/projects', async (c) => {
   const { org } = c.req.param();
   const authError = requireGithubOrgAccess(c, org);
   if (authError) return authError;
+
+  const claims = c.get('authClaims');
+  if (!isAdmin(claims) && getStartupSlugFromClaims(claims)) {
+    return c.json([]);
+  }
 
   return proxyGithubResponse(c, `/orgs/${org}/projects?state=open&per_page=50`, {
     headers: { Accept: 'application/vnd.github.inertia-preview+json' },
@@ -282,7 +342,7 @@ github.get('/startups/:slug/repos', async (c) => {
 
 github.get('/repos/:owner/:repo', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}`);
@@ -292,7 +352,7 @@ github.get('/repos/:owner/:repo', async (c) => {
 
 github.get('/repos/:owner/:repo/workflows', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/workflows`);
@@ -300,7 +360,7 @@ github.get('/repos/:owner/:repo/workflows', async (c) => {
 
 github.get('/repos/:owner/:repo/workflows/:workflowId/runs', async (c) => {
   const { owner, repo, workflowId } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=20`);
@@ -308,7 +368,7 @@ github.get('/repos/:owner/:repo/workflows/:workflowId/runs', async (c) => {
 
 github.get('/repos/:owner/:repo/runs', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/runs?per_page=20`);
@@ -318,7 +378,7 @@ github.get('/repos/:owner/:repo/runs', async (c) => {
 
 github.get('/repos/:owner/:repo/releases', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/releases?per_page=10`);
@@ -328,7 +388,7 @@ github.get('/repos/:owner/:repo/releases', async (c) => {
 
 github.get('/repos/:owner/:repo/issues', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/issues?state=open&per_page=30`);
@@ -338,7 +398,7 @@ github.get('/repos/:owner/:repo/issues', async (c) => {
 
 github.get('/repos/:owner/:repo/pulls', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/pulls?state=open&per_page=30`);
@@ -348,7 +408,7 @@ github.get('/repos/:owner/:repo/pulls', async (c) => {
 
 github.get('/repos/:owner/:repo/projects', async (c) => {
   const { owner, repo } = c.req.param();
-  const authError = requireRepoOwnerAccess(c, owner);
+  const authError = requireRepoOwnerAccess(c, owner, repo);
   if (authError) return authError;
 
   return proxyGithubResponse(c, `/repos/${owner}/${repo}/projects?state=open&per_page=20`, {
@@ -384,6 +444,9 @@ github.post('/automation/repos/from-template', async (c) => {
   const [templateOwner, templateRepoName] = templateRepoParts;
   const templateAccessError = requireConfiguredTemplateOwner(c, templateOwner);
   if (templateAccessError) return templateAccessError;
+
+  const repoScopeError = requireRepoTenantAccess(c, body.newRepoName);
+  if (repoScopeError) return repoScopeError;
 
   const org = c.env.GITHUB_ORG;
 
@@ -430,7 +493,7 @@ github.post('/automation/workflows/dispatch', async (c) => {
     return c.json({ success: false, message: 'owner, repo, and workflowId are required' }, 400);
   }
 
-  const ownerError = requireRepoOwnerAccess(c, body.owner);
+  const ownerError = requireRepoOwnerAccess(c, body.owner, body.repo);
   if (ownerError) {
     return ownerError;
   }
@@ -467,6 +530,11 @@ github.post('/automation/apps/install', async (c) => {
   const orgError = requireGithubOrgAccess(c, body.org);
   if (orgError) {
     return orgError;
+  }
+
+  const repoScopeError = requireRepoTenantAccess(c, body.repo);
+  if (repoScopeError) {
+    return repoScopeError;
   }
 
   const appId = c.env.GITHUB_APP_ID;

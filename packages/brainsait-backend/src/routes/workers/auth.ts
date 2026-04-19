@@ -6,18 +6,85 @@ import { Hono } from 'hono';
 import { sign, verify } from 'hono/jwt';
 import { getCookie, setCookie } from 'hono/cookie';
 
+type WorkerAuthRole = 'SME_OWNER' | 'MENTOR' | 'ADMIN' | 'SUPER_ADMIN';
+
+interface WorkerAuthClaims {
+  userId: string;
+  email: string;
+  role: WorkerAuthRole;
+  org?: string;
+  startupOrg?: string;
+  startupSlug?: string;
+  organizations?: string[];
+  exp?: number;
+}
+
+interface WorkerSessionRecord {
+  userId: string;
+  email: string;
+  role: WorkerAuthRole;
+  org?: string;
+  startupOrg?: string;
+  startupSlug?: string;
+  organizations?: string[];
+  createdAt: string;
+}
+
 interface Env {
   SESSIONS: any; // KV Namespace
   JWT_SECRET: string;
   NODE_ENV: string;
+  GITHUB_ORG?: string;
 }
 
 const auth = new Hono<{ Bindings: Env }>();
 
+const SUPPORTED_ROLES: WorkerAuthRole[] = ['SME_OWNER', 'MENTOR', 'ADMIN', 'SUPER_ADMIN'];
+
+function normalizeOptionalString(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeStartupSlug(value: unknown): string | undefined {
+  const slug = normalizeOptionalString(value)?.toLowerCase();
+  if (!slug) return undefined;
+  return /^[a-z0-9-]+$/.test(slug) ? slug : undefined;
+}
+
+function normalizeRole(value: unknown): WorkerAuthRole {
+  return typeof value === 'string' && SUPPORTED_ROLES.includes(value as WorkerAuthRole)
+    ? (value as WorkerAuthRole)
+    : 'SME_OWNER';
+}
+
+function normalizeOrganizations(value: unknown, defaultOrg?: string): string[] {
+  const organizations = Array.isArray(value)
+    ? value.map((item) => normalizeOptionalString(item)).filter((item): item is string => Boolean(item))
+    : [];
+
+  if (defaultOrg && !organizations.includes(defaultOrg)) {
+    organizations.unshift(defaultOrg);
+  }
+
+  return [...new Set(organizations)];
+}
+
 // POST /api/v1/auth/login
 auth.post('/login', async (c) => {
   try {
-    const { email, password } = await c.req.json();
+    const body = await c.req.json<{
+      email?: string;
+      password?: string;
+      role?: WorkerAuthRole;
+      org?: string;
+      startupOrg?: string;
+      startupSlug?: string;
+      organizations?: string[];
+    }>();
+    const email = normalizeOptionalString(body.email);
+    const password = normalizeOptionalString(body.password);
     
     // Validate input
     if (!email || !password) {
@@ -26,22 +93,61 @@ auth.post('/login', async (c) => {
         message: 'Email and password are required'
       }, 400);
     }
+
+    const role = normalizeRole(body.role);
+    const defaultOrg = normalizeOptionalString(c.env.GITHUB_ORG);
+    const requestedOrg = normalizeOptionalString(body.org) ?? defaultOrg;
+    const startupSlug = normalizeOptionalString(body.startupSlug)
+      ? normalizeStartupSlug(body.startupSlug)
+      : undefined;
+
+    if (normalizeOptionalString(body.startupSlug) && !startupSlug) {
+      return c.json({
+        error: 'Invalid startup slug',
+        message: 'startupSlug must contain only lowercase letters, numbers, and hyphens',
+      }, 400);
+    }
+
+    if (defaultOrg && requestedOrg && requestedOrg !== defaultOrg) {
+      return c.json({
+        error: 'Invalid organization',
+        message: `Only the configured org (${defaultOrg}) is supported in this environment`,
+      }, 400);
+    }
+
+    const requestedStartupOrg = normalizeOptionalString(body.startupOrg) ?? (startupSlug ? defaultOrg : undefined);
+    if (defaultOrg && requestedStartupOrg && requestedStartupOrg !== defaultOrg) {
+      return c.json({
+        error: 'Invalid startup organization',
+        message: `Only the configured org (${defaultOrg}) is supported in this environment`,
+      }, 400);
+    }
+
+    const organizations = normalizeOrganizations(body.organizations, requestedOrg);
+    const claims: WorkerAuthClaims = {
+      userId: 'mock-user-id',
+      email,
+      role,
+      ...(requestedOrg ? { org: requestedOrg } : {}),
+      ...(requestedStartupOrg ? { startupOrg: requestedStartupOrg } : {}),
+      ...(startupSlug ? { startupSlug } : {}),
+      ...(organizations.length > 0 ? { organizations } : {}),
+    };
     
     // Here you would validate against your database
     // For now, returning a mock response for deployment testing
     const token = await sign({
-      userId: 'mock-user-id',
-      email: email,
-      role: 'SME_OWNER',
+      ...claims,
       exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
     }, c.env.JWT_SECRET);
+
+    const sessionRecord: WorkerSessionRecord = {
+      ...claims,
+      createdAt: new Date().toISOString(),
+    };
     
     // Store session in KV
-    await c.env.SESSIONS.put(`session:${token}`, JSON.stringify({
-      userId: 'mock-user-id',
-      email: email,
-      createdAt: new Date().toISOString()
-    }), {
+    await c.env.SESSIONS.put(`session:${token}`, JSON.stringify(sessionRecord), {
       expirationTtl: 60 * 60 * 24 // 24 hours
     });
     
@@ -56,9 +162,13 @@ auth.post('/login', async (c) => {
     return c.json({
       message: 'Login successful',
       user: {
-        id: 'mock-user-id',
-        email: email,
-        role: 'SME_OWNER'
+        id: claims.userId,
+        email: claims.email,
+        role: claims.role,
+        org: claims.org,
+        startupOrg: claims.startupOrg,
+        startupSlug: claims.startupSlug,
+        organizations: claims.organizations ?? []
       },
       token: token
     });
@@ -116,7 +226,7 @@ auth.get('/me', async (c) => {
     }
     
     // Verify JWT
-    const payload = await verify(token, c.env.JWT_SECRET, 'HS256');
+    const payload = (await verify(token, c.env.JWT_SECRET, 'HS256')) as unknown as WorkerAuthClaims;
     
     // Check session in KV
     const session = await c.env.SESSIONS.get(`session:${token}`);
@@ -134,6 +244,10 @@ auth.get('/me', async (c) => {
         id: payload.userId,
         email: payload.email,
         role: payload.role,
+        org: payload.org,
+        startupOrg: payload.startupOrg,
+        startupSlug: payload.startupSlug,
+        organizations: payload.organizations ?? [],
         sessionCreated: sessionData.createdAt
       }
     });
@@ -160,23 +274,34 @@ auth.post('/refresh', async (c) => {
     }
     
     // Verify current token
-    const payload = await verify(token, c.env.JWT_SECRET, 'HS256');
+    const payload = (await verify(token, c.env.JWT_SECRET, 'HS256')) as unknown as WorkerAuthClaims;
     
     // Create new token
     const newToken = await sign({
       userId: payload.userId,
       email: payload.email,
       role: payload.role,
+      ...(payload.org ? { org: payload.org } : {}),
+      ...(payload.startupOrg ? { startupOrg: payload.startupOrg } : {}),
+      ...(payload.startupSlug ? { startupSlug: payload.startupSlug } : {}),
+      ...(Array.isArray(payload.organizations) ? { organizations: payload.organizations } : {}),
       exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
     }, c.env.JWT_SECRET);
+
+    const refreshedSession: WorkerSessionRecord = {
+      userId: payload.userId,
+      email: payload.email,
+      role: normalizeRole(payload.role),
+      ...(payload.org ? { org: payload.org } : {}),
+      ...(payload.startupOrg ? { startupOrg: payload.startupOrg } : {}),
+      ...(payload.startupSlug ? { startupSlug: payload.startupSlug } : {}),
+      ...(Array.isArray(payload.organizations) ? { organizations: payload.organizations } : {}),
+      createdAt: new Date().toISOString(),
+    };
     
     // Update session in KV
     await c.env.SESSIONS.delete(`session:${token}`);
-    await c.env.SESSIONS.put(`session:${newToken}`, JSON.stringify({
-      userId: payload.userId,
-      email: payload.email,
-      createdAt: new Date().toISOString()
-    }), {
+    await c.env.SESSIONS.put(`session:${newToken}`, JSON.stringify(refreshedSession), {
       expirationTtl: 60 * 60 * 24 // 24 hours
     });
     
