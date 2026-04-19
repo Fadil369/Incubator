@@ -20,8 +20,8 @@ AI_SERVICE_URL = "https://ai.brainsait.org"
 DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
-# GITHUB_REPO: repo hosting partner-provision.yml. Update to org repo in production.
-GITHUB_REPO = "Fadil369/Incubator"
+# GITHUB_REPO must be provided via environment-specific production configuration
+# and should point to an org-owned repo hosting partner-provision.yml.
 
 # KV Namespaces
 [[kv_namespaces]]
