@@ -1,6 +1,4 @@
 name: Deploy to Cloudflare
-permissions:
-  contents: read
 
 permissions:
   contents: read
@@ -111,6 +109,9 @@ jobs:
             REDIS_URL
             EMAIL_API_KEY
             SAUDI_GOV_API_KEY
+            SENDGRID_API_KEY
+            GITHUB_TOKEN
+            ADMIN_KEY
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -119,6 +120,9 @@ jobs:
           REDIS_URL: ${{ secrets.REDIS_URL }}
           EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
           SAUDI_GOV_API_KEY: ${{ secrets.SAUDI_GOV_API_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.INCUBATOR_GITHUB_TOKEN }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
 
   deploy-ai-service:
     runs-on: ubuntu-latest

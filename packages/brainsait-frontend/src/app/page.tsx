@@ -80,11 +80,11 @@ export default function HomePage() {
             تمكين الشركات الصغيرة والمتوسطة في مجال الرعاية الصحية من خلال التحول الرقمي والابتكار
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button variant="contained" size="large" color="primary">
-              Get Started
+            <Button variant="contained" size="large" color="primary" href="/apply">
+              Apply to Incubator
             </Button>
-            <Button variant="outlined" size="large" color="primary">
-              ابدأ الآن
+            <Button variant="outlined" size="large" color="primary" href="/apply">
+              قدّم طلبك الآن
             </Button>
           </Box>
         </Box>
@@ -146,7 +146,7 @@ export default function HomePage() {
             Join our platform and access comprehensive tools, expert guidance, and a supportive community 
             to accelerate your healthcare SME's growth and digital transformation journey.
           </Typography>
-          <Button variant="contained" size="large" color="primary">
+          <Button variant="contained" size="large" color="primary" href="/apply">
             Join BrainSAIT Today
           </Button>
         </Box>

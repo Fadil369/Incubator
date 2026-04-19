@@ -19,6 +19,8 @@ FRONTEND_URL = "https://brainsait.org"
 AI_SERVICE_URL = "https://ai.brainsait.org"
 DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
+GITHUB_ORG = "brainsait-incubator"
+GITHUB_REPO = "Fadil369/Incubator"
 
 # KV Namespaces
 [[kv_namespaces]]

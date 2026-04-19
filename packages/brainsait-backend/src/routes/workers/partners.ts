@@ -16,10 +16,14 @@ import { Hono } from 'hono';
 
 interface Env {
   PARTNER_APPLICATIONS: KVNamespace;
+  STARTUP_REGISTRY: KVNamespace;
   SENDGRID_API_KEY: string;
   ADMIN_KEY: string;
   JWT_SECRET: string;
   FRONTEND_URL: string;
+  GITHUB_TOKEN: string;
+  GITHUB_ORG: string;
+  GITHUB_REPO: string;       // e.g. "Fadil369/Incubator" — repo that hosts the provision workflow
 }
 
 export type ApplicationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'ONBOARDED';
@@ -62,6 +66,40 @@ const PARTNER_TYPE_NAMES: Record<string, string> = {
   dist: 'Distribution Partner',
   integ: 'Integration Partner',
 };
+
+/**
+ * Dispatch the `partner-provision` GitHub Actions workflow via
+ * repository_dispatch so the startup's GitHub repos and Cloudflare
+ * resources are automatically provisioned after onboarding.
+ */
+async function dispatchProvisioningWorkflow(
+  app: PartnerApplication,
+  githubToken: string,
+  githubRepo: string
+): Promise<void> {
+  if (!githubToken || !githubRepo) return;
+
+  await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+      'User-Agent': 'brainsait-incubator/2.0',
+    },
+    body: JSON.stringify({
+      event_type: 'startup_onboarded',
+      client_payload: {
+        startup_slug: app.startupSlug ?? '',
+        organization: app.organization,
+        partner_type: app.partnerType,
+        contact_email: app.email,
+        reference_id: app.referenceId,
+      },
+    }),
+  });
+}
 
 const partners = new Hono<{ Bindings: Env }>();
 
@@ -567,11 +605,40 @@ partners.post('/complete-onboarding', async (c) => {
   };
   await c.env.PARTNER_APPLICATIONS.put(`application:${applicationId}`, JSON.stringify(updated));
 
+  // Register startup in the startup registry KV
+  if (c.env.STARTUP_REGISTRY && updated.startupSlug) {
+    const registryEntry = {
+      slug: updated.startupSlug,
+      organization: updated.organization,
+      partnerType: updated.partnerType,
+      email: updated.email,
+      referenceId: updated.referenceId,
+      onboardedAt: now,
+      status: 'active',
+    };
+    await c.env.STARTUP_REGISTRY.put(
+      `startup:${updated.startupSlug}`,
+      JSON.stringify(registryEntry),
+      { expirationTtl: 5 * 365 * 24 * 60 * 60 }
+    ).catch((err: unknown) => {
+      console.warn('STARTUP_REGISTRY put failed:', err);
+    });
+  }
+
+  // Fire-and-forget: dispatch GitHub Actions provisioning workflow
+  const githubRepo = c.env.GITHUB_REPO;
+  const githubToken = c.env.GITHUB_TOKEN;
+  if (githubToken && githubRepo) {
+    dispatchProvisioningWorkflow(updated, githubToken, githubRepo).catch((err: unknown) => {
+      console.warn('Failed to dispatch provisioning workflow:', err);
+    });
+  }
+
   return c.json({
     success: true,
     startupSlug: updated.startupSlug,
     referenceId: updated.referenceId,
-    message: 'Onboarding complete. Redirecting to your portal…',
+    message: 'Onboarding complete. Your workspace is being provisioned. Redirecting to your portal…',
   });
 });
 
