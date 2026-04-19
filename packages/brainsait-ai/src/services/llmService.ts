@@ -123,8 +123,11 @@ export class LLMService {
       max_tokens: request.maxTokens ?? 1000,
     });
 
-    const content = response.content[0];
-    const textContent = content.type === 'text' ? content.text : '';
+    const contentBlock = response.content[0];
+    if (!contentBlock) {
+      throw new Error('Anthropic returned an empty content array');
+    }
+    const textContent = contentBlock.type === 'text' ? contentBlock.text : '';
 
     return {
       content: textContent,

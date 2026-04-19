@@ -20,6 +20,10 @@ import {
   Divider,
   Avatar,
   Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import {
   Search,
@@ -54,6 +58,13 @@ export default function TemplatesPage() {
     severity: 'success',
   });
 
+  // Clone dialog state
+  const [cloneDialog, setCloneDialog] = useState<{ open: boolean; template: RepoTemplate | null }>({
+    open: false,
+    template: null,
+  });
+  const [newRepoName, setNewRepoName] = useState('');
+
   useEffect(() => {
     const org = process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator';
     setLoading(true);
@@ -79,14 +90,25 @@ export default function TemplatesPage() {
     );
   }, [search, templates]);
 
-  async function handleClone(template: RepoTemplate) {
-    const newName = prompt(`New repository name for clone of "${template.name}":`, `my-${template.name}`);
-    if (!newName) return;
+  function openCloneDialog(template: RepoTemplate) {
+    setNewRepoName(`my-${template.name}`);
+    setCloneDialog({ open: true, template });
+  }
+
+  function closeCloneDialog() {
+    setCloneDialog({ open: false, template: null });
+    setNewRepoName('');
+  }
+
+  async function handleClone() {
+    const { template } = cloneDialog;
+    if (!template || !newRepoName.trim()) return;
     setCloning(template.full_name);
+    closeCloneDialog();
     try {
       const result = await createRepoFromTemplate({
         templateRepo: template.full_name,
-        newRepoName: newName,
+        newRepoName: newRepoName.trim(),
         private: true,
       });
       setFeedback({ open: true, message: result.message || 'Repository created!', severity: result.success ? 'success' : 'error' });
@@ -201,7 +223,7 @@ export default function TemplatesPage() {
                       <Button
                         size="small"
                         startIcon={cloning === template.full_name ? <CircularProgress size={14} /> : <ContentCopy />}
-                        onClick={() => handleClone(template)}
+                        onClick={() => openCloneDialog(template)}
                         disabled={cloning === template.full_name}
                       >
                         Use Template
@@ -232,6 +254,36 @@ export default function TemplatesPage() {
           </>
         )}
       </Box>
+
+      {/* Clone Dialog */}
+      <Dialog open={cloneDialog.open} onClose={closeCloneDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>Create repository from template</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Creating a new repository based on <strong>{cloneDialog.template?.name}</strong>.
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            label="New repository name"
+            value={newRepoName}
+            onChange={(e) => setNewRepoName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && newRepoName.trim()) handleClone(); }}
+            helperText="The repository will be created as private in your organization."
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeCloneDialog}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleClone}
+            disabled={!newRepoName.trim()}
+            startIcon={<ContentCopy />}
+          >
+            Create Repository
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={feedback.open}

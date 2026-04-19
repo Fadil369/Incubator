@@ -8,7 +8,7 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ['localhost', 'brainsait.org', 'avatars.githubusercontent.com', 'github.com'],
+    domains: ['localhost', 'brainsait.org', 'avatars.githubusercontent.com', 'raw.githubusercontent.com'],
     unoptimized: true, // Required for static export
   },
   env: {

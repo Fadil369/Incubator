@@ -166,21 +166,43 @@ async function processEvent(event: Record<string, string>, env: Env): Promise<vo
 
 async function handlePortalAutomation(request: Request, env: Env): Promise<Response> {
   const body = await request.json<Record<string, unknown>>();
-  const eventId = crypto.randomUUID();
 
+  // Validate required fields to prevent arbitrary payloads from being queued
+  const eventType = body.type;
+  const startup = body.startup;
+  if (typeof eventType !== 'string' || !eventType) {
+    return Response.json({ error: 'Missing required field: type' }, { status: 400 });
+  }
+  if (typeof startup !== 'string' || !startup) {
+    return Response.json({ error: 'Missing required field: startup' }, { status: 400 });
+  }
+
+  // Only include known safe top-level fields in the queued event
+  const safePayload: Record<string, unknown> = {
+    type: eventType,
+    startup,
+    source: 'incubator-portal',
+    ...(typeof body.repo === 'string' ? { repo: body.repo } : {}),
+    ...(typeof body.action === 'string' ? { action: body.action } : {}),
+    ...(body.meta && typeof body.meta === 'object' && !Array.isArray(body.meta)
+      ? { meta: body.meta }
+      : {}),
+  };
+
+  const eventId = crypto.randomUUID();
   const event = {
     id: eventId,
-    type: `portal.automation.${String(body.type ?? 'unknown')}`,
+    type: `portal.automation.${eventType}`,
     source: 'incubator-portal',
     timestamp: new Date().toISOString(),
-    payload: body,
+    payload: safePayload,
   };
 
   await env.EVENT_LOG.put(eventId, JSON.stringify(event), { expirationTtl: 604800 });
   await env.PIPELINE_EVENTS.send(event);
 
   env.EVENT_ANALYTICS.writeDataPoint({
-    blobs: [String(body.type ?? 'unknown'), 'portal', String(body.startup ?? 'unknown')],
+    blobs: [eventType, 'portal', startup],
     doubles: [Date.now()],
     indexes: [eventId],
   });

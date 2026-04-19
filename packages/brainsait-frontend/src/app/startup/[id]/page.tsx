@@ -209,9 +209,9 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                 {repos.map((r) => (
                   <ListItem
                     key={r.id}
-                    button
                     selected={selectedRepo?.id === r.id}
                     onClick={() => setSelectedRepo(r)}
+                    sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                   >
                     <ListItemIcon sx={{ minWidth: 32 }}>
                       <Code fontSize="small" />

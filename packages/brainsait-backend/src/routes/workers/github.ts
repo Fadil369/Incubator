@@ -222,7 +222,9 @@ github.post('/automation/repos/from-template', async (c) => {
   )
     .bind(crypto.randomUUID(), 'create_repo', String(repo.full_name ?? ''), JSON.stringify(body), new Date().toISOString())
     .run()
-    .catch(() => {/* non-fatal if table doesn't exist yet */});
+    .catch((err: unknown) => {
+      console.warn('github_automations D1 insert failed (table may not exist yet):', err);
+    });
 
   return c.json({ success: true, message: `Repository ${String(repo.full_name)} created`, data: repo });
 });
@@ -279,9 +281,16 @@ github.post('/automation/apps/install', async (c) => {
     }, 503);
   }
 
-  // In a production scenario this would call the Apps API via JWT auth.
-  // For now return the install URL so the user can complete the flow in-browser.
-  const installUrl = `https://github.com/apps/brainsait-incubator/installations/new/permissions?target_id=${body.org}&repository_ids[]=${body.repo}`;
+  // Resolve org to numeric ID so the install URL is correct
+  const orgRes = await ghFetch(`/orgs/${body.org}`, c.env.GITHUB_TOKEN);
+  if (!orgRes.ok) {
+    return c.json({ success: false, message: `Could not resolve org "${body.org}"` }, 422);
+  }
+  const orgData = await orgRes.json<{ id: number }>();
+
+  // The standard GitHub App install flow; deep-link directly to the install page.
+  // Repository selection happens in the browser after the user authorises.
+  const installUrl = `https://github.com/apps/brainsait-incubator/installations/new?target_id=${orgData.id}&target_type=Organization`;
 
   return c.json({
     success: true,
