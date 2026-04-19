@@ -42,5 +42,4 @@ binding = "EVENT_ANALYTICS"
 dataset = "brainsait_events"
 
 [vars]
-ALLOWED_REPOS = "*"
 EVENT_TTL_SECONDS = "604800"
