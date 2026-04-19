@@ -396,7 +396,10 @@ const TemplateIntelligence: React.FC<TemplateIntelligenceProps> = ({
                         variant="outlined"
                       />
                       <Tooltip title={item.detail}>
-                        <IconButton size="small">
+                        <IconButton
+                          size="small"
+                          aria-label={`${item.label}: ${item.detail}`}
+                        >
                           <Info />
                         </IconButton>
                       </Tooltip>
