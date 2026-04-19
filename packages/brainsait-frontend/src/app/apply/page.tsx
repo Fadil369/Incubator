@@ -227,69 +227,76 @@ export default function ApplyPage() {
                   All fields are required unless noted.
                 </Typography>
 
-                <Grid container spacing={2.5}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      value={form.firstName}
-                      onChange={(e) => setField('firstName', e.target.value)}
-                      error={Boolean(fieldErrors.firstName)}
-                      helperText={fieldErrors.firstName}
-                      disabled={step === 'submitting'}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      value={form.lastName}
-                      onChange={(e) => setField('lastName', e.target.value)}
-                      error={Boolean(fieldErrors.lastName)}
-                      helperText={fieldErrors.lastName}
-                      disabled={step === 'submitting'}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Work Email"
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setField('email', e.target.value)}
-                      error={Boolean(fieldErrors.email)}
-                      helperText={fieldErrors.email}
-                      disabled={step === 'submitting'}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={8}>
-                    <TextField
-                      fullWidth
-                      label="Organization Name"
-                      value={form.organization}
-                      onChange={(e) => setField('organization', e.target.value)}
-                      error={Boolean(fieldErrors.organization)}
-                      helperText={fieldErrors.organization || 'Your startup or company name'}
-                      disabled={step === 'submitting'}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Country"
-                      value={form.country}
-                      onChange={(e) => setField('country', e.target.value)}
-                      error={Boolean(fieldErrors.country)}
-                      helperText={fieldErrors.country}
-                      disabled={step === 'submitting'}
-                    >
-                      {COUNTRIES.map((c) => (
-                        <MenuItem key={c} value={c}>{c}</MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12}>
+                <Box
+                  component="form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                >
+                  <Grid container spacing={2.5}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="First Name"
+                        value={form.firstName}
+                        onChange={(e) => setField('firstName', e.target.value)}
+                        error={Boolean(fieldErrors.firstName)}
+                        helperText={fieldErrors.firstName}
+                        disabled={step === 'submitting'}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Last Name"
+                        value={form.lastName}
+                        onChange={(e) => setField('lastName', e.target.value)}
+                        error={Boolean(fieldErrors.lastName)}
+                        helperText={fieldErrors.lastName}
+                        disabled={step === 'submitting'}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Work Email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => setField('email', e.target.value)}
+                        error={Boolean(fieldErrors.email)}
+                        helperText={fieldErrors.email}
+                        disabled={step === 'submitting'}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
+                      <TextField
+                        fullWidth
+                        label="Organization Name"
+                        value={form.organization}
+                        onChange={(e) => setField('organization', e.target.value)}
+                        error={Boolean(fieldErrors.organization)}
+                        helperText={fieldErrors.organization || 'Your startup or company name'}
+                        disabled={step === 'submitting'}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        select
+                        label="Country"
+                        value={form.country}
+                        onChange={(e) => setField('country', e.target.value)}
+                        error={Boolean(fieldErrors.country)}
+                        helperText={fieldErrors.country}
+                        disabled={step === 'submitting'}
+                      >
+                        {COUNTRIES.map((c) => (
+                          <MenuItem key={c} value={c}>{c}</MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
                     <TextField
                       fullWidth
                       select
@@ -327,24 +334,25 @@ export default function ApplyPage() {
                       disabled={step === 'submitting'}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <Divider sx={{ mb: 1 }} />
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      size="large"
-                      endIcon={step === 'submitting' ? <CircularProgress size={18} color="inherit" /> : <Send />}
-                      onClick={handleSubmit}
-                      disabled={step === 'submitting'}
-                      sx={{ py: 1.5 }}
-                    >
-                      {step === 'submitting' ? 'Submitting Application…' : 'Submit Application'}
-                    </Button>
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'center' }}>
-                      After submission, our team will review your application within 3–5 business days.
-                    </Typography>
+                    <Grid item xs={12}>
+                      <Divider sx={{ mb: 1 }} />
+                      <Button
+                        fullWidth
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        endIcon={step === 'submitting' ? <CircularProgress size={18} color="inherit" /> : <Send />}
+                        disabled={step === 'submitting'}
+                        sx={{ py: 1.5 }}
+                      >
+                        {step === 'submitting' ? 'Submitting Application…' : 'Submit Application'}
+                      </Button>
+                      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'center' }}>
+                        After submission, our team will review your application within 3–5 business days.
+                      </Typography>
+                    </Grid>
                   </Grid>
-                </Grid>
+                </Box>
               </CardContent>
             </Card>
 
