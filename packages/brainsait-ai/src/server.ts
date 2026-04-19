@@ -219,10 +219,8 @@ app.post('/api/ai/champions/enroll', async (req, res) => {
   try {
     const enrollmentSchema = z.object({
       userId: z.string(),
-      smeId: z.string(),
       department: z.string(),
-      experience: z.string(),
-      goals: z.array(z.string()),
+      proposedUseCase: z.string().optional(),
     });
 
     const validatedData = enrollmentSchema.parse(req.body);
@@ -263,31 +261,21 @@ app.get('/api/ai/champions/:userId/metrics', async (req, res) => {
 app.get('/api/ai/usage/analytics', async (req, res) => {
   try {
     const { startDate, endDate, userId, feature } = req.query;
-    
-    // Mock analytics data for now - implement with actual analytics service
-    const analytics = {
-      totalRequests: 1250,
-      totalTokens: 125000,
-      averageResponseTime: 2.3,
-      topFeatures: [
-        { feature: 'claims_analysis', usage: 450 },
-        { feature: 'compliance_report', usage: 320 },
-        { feature: 'contact_summary', usage: 280 },
-      ],
-      costBreakdown: {
-        openai: 45.67,
-        claude: 23.45,
-        total: 69.12,
-      },
-      period: {
-        start: startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        end: endDate || new Date().toISOString(),
-      },
+
+    const period = {
+      start: (startDate as string) || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      end: (endDate as string) || new Date().toISOString(),
     };
+
+    logger.info('Usage analytics requested', { userId, feature, period });
 
     res.json({
       success: true,
-      data: analytics,
+      data: {
+        period,
+        filters: { userId: userId || null, feature: feature || null },
+        message: 'Connect to your analytics store to retrieve real usage data',
+      },
     });
   } catch (error) {
     logger.error('Usage analytics error', { error });

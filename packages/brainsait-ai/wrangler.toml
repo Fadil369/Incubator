@@ -61,6 +61,10 @@ class_name = "AIUsageTracker"
 name = "SESSION_CONTEXT"
 class_name = "AISessionContext"
 
+[[migrations]]
+tag = "v1"
+new_classes = ["AIUsageTracker", "AISessionContext"]
+
 # ── Vectorize ──
 [[vectorize]]
 binding = "EMBEDDINGS_INDEX"

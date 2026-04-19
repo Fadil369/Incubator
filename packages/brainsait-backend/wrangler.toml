@@ -74,7 +74,7 @@ bucket_name = "brainsait-storage"
 # ── Queues (reusing existing) ──
 [[queues.producers]]
 binding = "EVENT_QUEUE"
-queue = "brainsait-notifications"
+queue = "brainsait-events"
 
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
@@ -96,6 +96,10 @@ class_name = "ChatRoom"
 [[durable_objects.bindings]]
 name = "USAGE_TRACKER"
 class_name = "AIUsageTracker"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiter", "ChatRoom", "AIUsageTracker"]
 
 # ── Analytics Engine ──
 [[analytics_engine_datasets]]

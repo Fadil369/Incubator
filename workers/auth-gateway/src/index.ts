@@ -135,7 +135,7 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
 
   // Create session
   const sessionId = crypto.randomUUID();
-  const payload = JSON.parse(atob(tokens.access_token.split('.')[1]));
+  const payload = JSON.parse(base64urlDecode(tokens.access_token.split('.')[1]));
   await env.SESSION_STORE.put(`session:${sessionId}`, JSON.stringify({
     accessToken: tokens.access_token,
     refreshToken: tokens.refresh_token,
@@ -157,11 +157,18 @@ async function getSession(request: Request, env: Env): Promise<Response> {
   return Response.json({ user: data.user, createdAt: data.createdAt });
 }
 
+function base64urlDecode(str: string): string {
+  // Convert base64url to base64 by replacing URL-safe chars and re-padding
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+  return atob(padded);
+}
+
 async function verifyJWT(token: string, env: Env): Promise<Record<string, unknown>> {
   const parts = token.split('.');
   if (parts.length !== 3) throw new Error('Invalid JWT format');
 
-  const payload = JSON.parse(atob(parts[1]));
+  const payload = JSON.parse(base64urlDecode(parts[1]));
 
   // Check expiration
   if (payload.exp && payload.exp < Date.now() / 1000) {
@@ -173,7 +180,7 @@ async function verifyJWT(token: string, env: Env): Promise<Record<string, unknow
   if (!jwksStr) throw new Error('JWKS not available');
 
   const jwks = JSON.parse(jwksStr);
-  const header = JSON.parse(atob(parts[0]));
+  const header = JSON.parse(base64urlDecode(parts[0]));
   const key = jwks.keys?.find((k: Record<string, string>) => k.kid === header.kid);
   if (!key) throw new Error('Signing key not found');
 
@@ -184,7 +191,7 @@ async function verifyJWT(token: string, env: Env): Promise<Record<string, unknow
 
   const encoder = new TextEncoder();
   const data = encoder.encode(parts[0] + '.' + parts[1]);
-  const signature = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+  const signature = Uint8Array.from(base64urlDecode(parts[2]), c => c.charCodeAt(0));
 
   const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', cryptoKey, signature, data);
   if (!valid) throw new Error('Invalid signature');

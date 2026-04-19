@@ -112,8 +112,30 @@ export class LLMService {
       throw new Error('Claude API key not configured');
     }
 
-    // For now, fallback to OpenAI since Anthropic SDK has compatibility issues
-    return this.generateOpenAICompletion(request);
+    const messages: Anthropic.MessageParam[] = [
+      { role: 'user', content: request.prompt },
+    ];
+
+    const response = await this.anthropic.messages.create({
+      model: request.model || 'claude-3-5-sonnet-20241022',
+      system: request.systemPrompt,
+      messages,
+      max_tokens: request.maxTokens ?? 1000,
+    });
+
+    const content = response.content[0];
+    const textContent = content.type === 'text' ? content.text : '';
+
+    return {
+      content: textContent,
+      usage: {
+        promptTokens: response.usage.input_tokens,
+        completionTokens: response.usage.output_tokens,
+        totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+      },
+      model: response.model,
+      provider: 'anthropic',
+    };
   }
 
   async generateClaimsAnalysis(claimData: any): Promise<string> {

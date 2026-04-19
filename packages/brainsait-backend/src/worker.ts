@@ -3,7 +3,6 @@
  * Converts Express.js app to Workers-compatible handler
  */
 
-import { Request as WorkerRequest, Response as WorkerResponse } from '@cloudflare/workers-types';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
@@ -17,26 +16,33 @@ import healthRoutes from './routes/workers/health';
 
 interface Env {
   // Cloudflare KV Namespaces
-  SESSIONS: any; // KVNamespace
-  AI_CACHE: any; // KVNamespace
-  RATE_LIMIT_STORE: any; // KVNamespace
-  
+  SESSIONS: KVNamespace;
+  CACHE: KVNamespace;
+  RATE_LIMIT: KVNamespace;
+  CONFIG: KVNamespace;
+  FEATURE_FLAGS: KVNamespace;
+  STARTUP_REGISTRY: KVNamespace;
+
+  // D1 Databases
+  DB: D1Database;
+  AUDIT_LOG: D1Database;
+
   // R2 Storage
-  DOCUMENTS: any; // R2Bucket
-  UPLOADS: any; // R2Bucket
-  BACKUPS: any; // R2Bucket
-  
-  // D1 Database
-  DB: any; // D1Database
-  
+  DOCUMENTS: R2Bucket;
+  UPLOADS: R2Bucket;
+  DATA_CONTRACTS: R2Bucket;
+
+  // AI Binding
+  AI: Ai;
+
   // Environment Variables
   NODE_ENV: string;
   JWT_SECRET: string;
-  REDIS_URL: string;
   DATABASE_URL: string;
   FRONTEND_URL: string;
   API_BASE_URL: string;
-  
+  CORS_ORIGINS: string;
+
   // External Services
   OPENAI_API_KEY: string;
   ANTHROPIC_API_KEY: string;
@@ -51,7 +57,10 @@ app.use('*', poweredBy());
 app.use('*', prettyJSON());
 app.use('*', secureHeaders());
 app.use('*', cors({
-  origin: ['https://brainsait.com', 'https://staging.brainsait.com', 'http://localhost:3000'],
+  origin: (origin, c) => {
+    const allowed = (c.env.CORS_ORIGINS || 'https://brainsait.org,http://localhost:3000').split(',');
+    return allowed.includes(origin) ? origin : allowed[0];
+  },
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   exposeHeaders: ['Content-Length'],
