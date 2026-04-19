@@ -6,8 +6,16 @@
  * workflow, install GitHub App) consumed by the Incubator startup portals.
  */
 
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { jwtVerify, type JWTPayload } from 'jose';
+
+interface GithubAuthClaims extends JWTPayload {
+  org?: string;
+  startupOrg?: string;
+  startupSlug?: string;
+  organizations?: string[];
+  role?: string;
+}
 
 interface Env {
   GITHUB_TOKEN: string;
@@ -19,7 +27,14 @@ interface Env {
 
 const GITHUB_API = 'https://api.github.com';
 
-const github = new Hono<{ Bindings: Env }>();
+type GithubRouteContext = {
+  Bindings: Env;
+  Variables: {
+    authClaims: GithubAuthClaims;
+  };
+};
+
+const github = new Hono<GithubRouteContext>();
 
 // ── Router-level JWT auth middleware (protects all routes) ────────────────────
 github.use('*', async (c, next) => {
@@ -32,7 +47,8 @@ github.use('*', async (c, next) => {
     return c.json({ error: 'Unauthorized' }, 401);
   }
   try {
-    await jwtVerify(token, new TextEncoder().encode(c.env.JWT_SECRET));
+    const verified = await jwtVerify(token, new TextEncoder().encode(c.env.JWT_SECRET));
+    c.set('authClaims', verified.payload as GithubAuthClaims);
   } catch {
     return c.json({ error: 'Unauthorized' }, 401);
   }
@@ -58,46 +74,139 @@ async function ghFetch(path: string, token: string, options: RequestInit = {}): 
   });
 }
 
-interface GithubAuthClaims extends JWTPayload {
-  org?: string;
-  startupOrg?: string;
-  organizations?: string[];
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0;
 }
 
-async function requireGithubOrgAccess(c: any): Promise<Response | null> {
-  const authHeader = c.req.header('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return c.json({ error: 'Unauthorized' }, 401);
+function isAdmin(claims: GithubAuthClaims): boolean {
+  return claims.role === 'ADMIN' || claims.role === 'SUPER_ADMIN';
+}
+
+function getAuthorizedOrgs(claims: GithubAuthClaims): string[] {
+  return [
+    claims.org,
+    claims.startupOrg,
+    ...(Array.isArray(claims.organizations) ? claims.organizations : []),
+  ].filter(isNonEmptyString);
+}
+
+async function readGithubError(response: Response): Promise<{ message: string; status: number }> {
+  const raw = await response.text().catch(() => '');
+  if (!raw) {
+    return { message: response.statusText || 'Unknown GitHub API error', status: response.status };
   }
 
-  const token = authHeader.slice('Bearer '.length).trim();
-  if (!token) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-
-  let payload: GithubAuthClaims;
   try {
-    const verified = await jwtVerify(
-      token,
-      new TextEncoder().encode(c.env.JWT_SECRET)
-    );
-    payload = verified.payload as GithubAuthClaims;
+    const parsed = JSON.parse(raw) as { message?: string; error?: string };
+    return {
+      message: parsed.message ?? parsed.error ?? raw,
+      status: response.status,
+    };
   } catch {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return { message: raw, status: response.status };
+  }
+}
+
+async function buildGithubErrorResponse(c: Context<GithubRouteContext>, response: Response): Promise<Response> {
+  const error = await readGithubError(response);
+  return c.json(
+    {
+      error: 'GitHub API error',
+      status: error.status,
+      message: error.message,
+    },
+    502
+  );
+}
+
+async function proxyGithubResponse(
+  c: Context<GithubRouteContext>,
+  path: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const response = await ghFetch(path, c.env.GITHUB_TOKEN, options);
+  if (!response.ok) {
+    return buildGithubErrorResponse(c, response);
   }
 
-  const { org } = c.req.param();
-  const allowedOrgs = new Set<string>(
-    [payload.org, payload.startupOrg, ...(Array.isArray(payload.organizations) ? payload.organizations : [])]
-      .filter((value): value is string => typeof value === 'string' && value.length > 0)
-  );
+  return new Response(response.body, {
+    status: response.status,
+    headers: { 'Content-Type': response.headers.get('Content-Type') ?? 'application/json' },
+  });
+}
 
+function requireGithubOrgAccess(c: Context<GithubRouteContext>, org: string): Response | null {
   if (org !== c.env.GITHUB_ORG) {
     return c.json({ error: 'Forbidden' }, 403);
   }
 
-  if (!allowedOrgs.has(org)) {
+  const claims = c.get('authClaims');
+  const allowedOrgs = getAuthorizedOrgs(claims);
+  if (!isAdmin(claims) && allowedOrgs.length > 0 && !allowedOrgs.includes(org)) {
     return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return null;
+}
+
+function requireStartupSlugAccess(c: Context<GithubRouteContext>, slug: string): Response | null {
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return c.json({ error: 'Invalid startup slug' }, 400);
+  }
+
+  const claims = c.get('authClaims');
+  if (!isAdmin(claims) && isNonEmptyString(claims.startupSlug) && claims.startupSlug !== slug) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return null;
+}
+
+async function writeGithubAutomationAudit(
+  db: D1Database,
+  type: string,
+  target: string,
+  payload: Record<string, unknown>
+): Promise<void> {
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS github_automations (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      target TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )
+  `);
+
+  await db.prepare(
+    'INSERT OR IGNORE INTO github_automations (id, type, target, payload, created_at) VALUES (?, ?, ?, ?, ?)'
+  )
+    .bind(crypto.randomUUID(), type, target, JSON.stringify(payload), new Date().toISOString())
+    .run();
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
+}
+
+function getRepoSlugPrefix(slug: string): string {
+  return `${slug}-`;
+}
+
+function isStartupRepoName(repoName: string, startupSlug: string): boolean {
+  return repoName === startupSlug || repoName.startsWith(getRepoSlugPrefix(startupSlug));
+}
+
+function requireRepoOwnerAccess(c: Context<GithubRouteContext>, owner: string): Response | null {
+  return requireGithubOrgAccess(c, owner);
+}
+
+function requireConfiguredTemplateOwner(c: Context<GithubRouteContext>, templateOwner: string): Response | null {
+  if (templateOwner !== c.env.GITHUB_ORG) {
+    return c.json({
+      success: false,
+      message: `templateRepo must belong to the configured incubator org (${c.env.GITHUB_ORG})`,
+    }, 403);
   }
 
   return null;
@@ -106,30 +215,26 @@ async function requireGithubOrgAccess(c: any): Promise<Response | null> {
 // ── Organisation repos ────────────────────────────────────────────────────────
 
 github.get('/orgs/:org/repos', async (c) => {
-  const authError = await requireGithubOrgAccess(c);
+  const { org } = c.req.param();
+  const authError = requireGithubOrgAccess(c, org);
   if (authError) return authError;
 
-  const { org } = c.req.param();
-  const res = await ghFetch(
-    `/orgs/${org}/repos?type=all&per_page=100&sort=updated`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  return proxyGithubResponse(c, `/orgs/${org}/repos?type=all&per_page=100&sort=updated`);
 });
 
 // ── Organisation templates (repos marked is_template) ─────────────────────────
 
 github.get('/orgs/:org/templates', async (c) => {
-  const authError = await requireGithubOrgAccess(c);
+  const { org } = c.req.param();
+  const authError = requireGithubOrgAccess(c, org);
   if (authError) return authError;
 
-  const { org } = c.req.param();
   const res = await ghFetch(
     `/orgs/${org}/repos?type=all&per_page=100`,
     c.env.GITHUB_TOKEN
   );
   if (!res.ok) {
-    return c.json({ error: 'GitHub API error', status: res.status }, 502);
+    return buildGithubErrorResponse(c, res);
   }
   const repos: Array<Record<string, unknown>> = await res.json();
   const templates = repos.filter((r) => r.is_template === true);
@@ -140,29 +245,35 @@ github.get('/orgs/:org/templates', async (c) => {
 
 github.get('/orgs/:org/projects', async (c) => {
   const { org } = c.req.param();
-  const res = await ghFetch(
-    `/orgs/${org}/projects?state=open&per_page=50`,
-    c.env.GITHUB_TOKEN,
-    { headers: { Accept: 'application/vnd.github.inertia-preview+json' } }
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireGithubOrgAccess(c, org);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/orgs/${org}/projects?state=open&per_page=50`, {
+    headers: { Accept: 'application/vnd.github.inertia-preview+json' },
+  });
 });
 
 // ── Startup repos (repos whose name begins with the startup slug) ─────────────
 
 github.get('/startups/:slug/repos', async (c) => {
-  const { slug } = c.req.param();
+  const slug = c.req.param('slug').trim().toLowerCase();
+  const orgError = requireGithubOrgAccess(c, c.env.GITHUB_ORG);
+  if (orgError) return orgError;
+
+  const slugError = requireStartupSlugAccess(c, slug);
+  if (slugError) return slugError;
+
   const org = c.env.GITHUB_ORG;
   const res = await ghFetch(
     `/orgs/${org}/repos?type=all&per_page=100&sort=updated`,
     c.env.GITHUB_TOKEN
   );
   if (!res.ok) {
-    return c.json({ error: 'GitHub API error' }, 502);
+    return buildGithubErrorResponse(c, res);
   }
   const repos: Array<Record<string, unknown>> = await res.json();
   const startupRepos = repos.filter(
-    (r) => typeof r.name === 'string' && r.name.startsWith(slug)
+    (r) => typeof r.name === 'string' && isStartupRepoName(r.name, slug)
   );
   return c.json(startupRepos);
 });
@@ -171,79 +282,78 @@ github.get('/startups/:slug/repos', async (c) => {
 
 github.get('/repos/:owner/:repo', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(`/repos/${owner}/${repo}`, c.env.GITHUB_TOKEN);
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}`);
 });
 
 // ── Workflows ─────────────────────────────────────────────────────────────────
 
 github.get('/repos/:owner/:repo/workflows', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(`/repos/${owner}/${repo}/actions/workflows`, c.env.GITHUB_TOKEN);
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/workflows`);
 });
 
 github.get('/repos/:owner/:repo/workflows/:workflowId/runs', async (c) => {
   const { owner, repo, workflowId } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=20`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/workflows/${workflowId}/runs?per_page=20`);
 });
 
 github.get('/repos/:owner/:repo/runs', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/actions/runs?per_page=20`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/actions/runs?per_page=20`);
 });
 
 // ── Releases ──────────────────────────────────────────────────────────────────
 
 github.get('/repos/:owner/:repo/releases', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/releases?per_page=10`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/releases?per_page=10`);
 });
 
 // ── Issues ────────────────────────────────────────────────────────────────────
 
 github.get('/repos/:owner/:repo/issues', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/issues?state=open&per_page=30`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/issues?state=open&per_page=30`);
 });
 
 // ── Pull Requests ─────────────────────────────────────────────────────────────
 
 github.get('/repos/:owner/:repo/pulls', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/pulls?state=open&per_page=30`,
-    c.env.GITHUB_TOKEN
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/pulls?state=open&per_page=30`);
 });
 
 // ── Repo Projects ─────────────────────────────────────────────────────────────
 
 github.get('/repos/:owner/:repo/projects', async (c) => {
   const { owner, repo } = c.req.param();
-  const res = await ghFetch(
-    `/repos/${owner}/${repo}/projects?state=open&per_page=20`,
-    c.env.GITHUB_TOKEN,
-    { headers: { Accept: 'application/vnd.github.inertia-preview+json' } }
-  );
-  return new Response(res.body, { status: res.status, headers: { 'Content-Type': 'application/json' } });
+  const authError = requireRepoOwnerAccess(c, owner);
+  if (authError) return authError;
+
+  return proxyGithubResponse(c, `/repos/${owner}/${repo}/projects?state=open&per_page=20`, {
+    headers: { Accept: 'application/vnd.github.inertia-preview+json' },
+  });
 });
 
 // ── Automation: Create repo from template ────────────────────────────────────
@@ -272,6 +382,9 @@ github.post('/automation/repos/from-template', async (c) => {
   }
 
   const [templateOwner, templateRepoName] = templateRepoParts;
+  const templateAccessError = requireConfiguredTemplateOwner(c, templateOwner);
+  if (templateAccessError) return templateAccessError;
+
   const org = c.env.GITHUB_ORG;
 
   const res = await ghFetch(
@@ -290,21 +403,13 @@ github.post('/automation/repos/from-template', async (c) => {
   );
 
   if (!res.ok) {
-    const error: Record<string, unknown> = await res.json().catch(() => ({ message: 'Unknown error' }));
-    return c.json({ success: false, message: String(error.message ?? 'GitHub API error') }, 422);
+    const error = await readGithubError(res);
+    return c.json({ success: false, message: error.message }, 422);
   }
 
   const repo: Record<string, unknown> = await res.json();
 
-  // Log to D1
-  await c.env.DB.prepare(
-    'INSERT OR IGNORE INTO github_automations (id, type, target, payload, created_at) VALUES (?, ?, ?, ?, ?)'
-  )
-    .bind(crypto.randomUUID(), 'create_repo', String(repo.full_name ?? ''), JSON.stringify(body), new Date().toISOString())
-    .run()
-    .catch((err: unknown) => {
-      console.warn('github_automations D1 insert failed (table may not exist yet):', err);
-    });
+  await writeGithubAutomationAudit(c.env.DB, 'create_repo', String(repo.full_name ?? ''), body);
 
   return c.json({ success: true, message: `Repository ${String(repo.full_name)} created`, data: repo });
 });
@@ -325,6 +430,11 @@ github.post('/automation/workflows/dispatch', async (c) => {
     return c.json({ success: false, message: 'owner, repo, and workflowId are required' }, 400);
   }
 
+  const ownerError = requireRepoOwnerAccess(c, body.owner);
+  if (ownerError) {
+    return ownerError;
+  }
+
   const res = await ghFetch(
     `/repos/${body.owner}/${body.repo}/actions/workflows/${body.workflowId}/dispatches`,
     c.env.GITHUB_TOKEN,
@@ -336,11 +446,12 @@ github.post('/automation/workflows/dispatch', async (c) => {
 
   // 204 = success for workflow dispatch
   if (res.status === 204 || res.ok) {
+    await writeGithubAutomationAudit(c.env.DB, 'dispatch_workflow', `${body.owner}/${body.repo}`, asRecord(body));
     return c.json({ success: true, message: 'Workflow dispatched successfully' });
   }
 
-  const error: Record<string, unknown> = await res.json().catch(() => ({ message: 'Unknown error' }));
-  return c.json({ success: false, message: String(error.message ?? 'GitHub API error') }, 422);
+  const error = await readGithubError(res);
+  return c.json({ success: false, message: error.message }, 422);
 });
 
 // ── Automation: Request GitHub App install ────────────────────────────────────
@@ -351,6 +462,11 @@ github.post('/automation/apps/install', async (c) => {
 
   if (!body.org || !body.repo) {
     return c.json({ success: false, message: 'org and repo are required' }, 400);
+  }
+
+  const orgError = requireGithubOrgAccess(c, body.org);
+  if (orgError) {
+    return orgError;
   }
 
   const appId = c.env.GITHUB_APP_ID;
@@ -364,13 +480,16 @@ github.post('/automation/apps/install', async (c) => {
   // Resolve org to numeric ID so the install URL is correct
   const orgRes = await ghFetch(`/orgs/${body.org}`, c.env.GITHUB_TOKEN);
   if (!orgRes.ok) {
-    return c.json({ success: false, message: `Could not resolve org "${body.org}"` }, 422);
+    const error = await readGithubError(orgRes);
+    return c.json({ success: false, message: error.message }, 422);
   }
-  const orgData = await orgRes.json<{ id: number }>();
+  const orgData = (await orgRes.json()) as { id: number };
 
   // The standard GitHub App install flow; deep-link directly to the install page.
   // Repository selection happens in the browser after the user authorises.
   const installUrl = `https://github.com/apps/brainsait-incubator/installations/new?target_id=${orgData.id}&target_type=Organization`;
+
+  await writeGithubAutomationAudit(c.env.DB, 'install_app', `${body.org}/${body.repo}`, asRecord(body));
 
   return c.json({
     success: true,

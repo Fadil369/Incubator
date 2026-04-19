@@ -490,7 +490,7 @@ partners.get('/applications', async (c) => {
   do {
     const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
     keys.push(...page.keys.map((key) => key.name));
-    cursor = page.list_complete ? undefined : page.cursor;
+    cursor = 'cursor' in page ? page.cursor : undefined;
   } while (cursor);
 
   const applications = (
@@ -546,7 +546,7 @@ partners.post('/applications/:id/accept', async (c) => {
   do {
     const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
     allKeys.push(...page.keys.map((k) => k.name));
-    cursor = page.list_complete ? undefined : page.cursor;
+    cursor = 'cursor' in page ? page.cursor : undefined;
   } while (cursor);
 
   const acceptedCount = (

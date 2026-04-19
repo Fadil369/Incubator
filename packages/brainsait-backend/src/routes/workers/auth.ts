@@ -116,7 +116,7 @@ auth.get('/me', async (c) => {
     }
     
     // Verify JWT
-    const payload = await verify(token, c.env.JWT_SECRET);
+    const payload = await verify(token, c.env.JWT_SECRET, 'HS256');
     
     // Check session in KV
     const session = await c.env.SESSIONS.get(`session:${token}`);
@@ -160,7 +160,7 @@ auth.post('/refresh', async (c) => {
     }
     
     // Verify current token
-    const payload = await verify(token, c.env.JWT_SECRET);
+    const payload = await verify(token, c.env.JWT_SECRET, 'HS256');
     
     // Create new token
     const newToken = await sign({
