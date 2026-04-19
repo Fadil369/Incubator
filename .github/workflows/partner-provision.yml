@@ -205,7 +205,7 @@ jobs:
           node-version: '20'
 
       - name: Install Wrangler
-        run: npm install -g wrangler@latest
+        run: npm install -g wrangler@3
 
       - name: Create KV namespace for startup
         env:

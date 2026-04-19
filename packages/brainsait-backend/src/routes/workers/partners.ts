@@ -78,8 +78,12 @@ async function dispatchProvisioningWorkflow(
   githubRepo: string
 ): Promise<void> {
   if (!githubToken || !githubRepo) return;
+  if (!app.startupSlug) {
+    console.warn('dispatchProvisioningWorkflow: startupSlug is empty, skipping dispatch');
+    return;
+  }
 
-  await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
+  const res = await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${githubToken}`,
@@ -91,7 +95,7 @@ async function dispatchProvisioningWorkflow(
     body: JSON.stringify({
       event_type: 'startup_onboarded',
       client_payload: {
-        startup_slug: app.startupSlug ?? '',
+        startup_slug: app.startupSlug,
         organization: app.organization,
         partner_type: app.partnerType,
         contact_email: app.email,
@@ -99,6 +103,12 @@ async function dispatchProvisioningWorkflow(
       },
     }),
   });
+
+  // GitHub returns 204 No Content on success for repository_dispatch
+  if (!res.ok && res.status !== 204) {
+    const body = await res.text().catch(() => '');
+    console.warn(`dispatchProvisioningWorkflow: GitHub API error ${res.status}: ${body}`);
+  }
 }
 
 const partners = new Hono<{ Bindings: Env }>();

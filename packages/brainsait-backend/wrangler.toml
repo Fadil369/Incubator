@@ -136,8 +136,8 @@ LOG_LEVEL = "info"
 CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
 # GITHUB_REPO: repo that hosts the partner-provision.yml workflow.
-# Update to your org repo in production (e.g. "brainsait-incubator/incubator").
-GITHUB_REPO = "Fadil369/Incubator"
+# Must be overridden via a secret or environment-specific var in production
+# (e.g. "brainsait-incubator/incubator"). Do not commit an org-specific value here.
 FRONTEND_URL = "https://brainsait.org"
 
 [env.staging.vars]
