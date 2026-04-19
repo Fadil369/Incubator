@@ -180,13 +180,17 @@ const AIDashboardPage: React.FC = () => {
           <Box display="grid" gridTemplateColumns={{ xs: '1fr', xl: '1.2fr 0.8fr' }} gap={3}>
             <TemplateIntelligence
               onSelectTemplate={(templateId) => {
-                console.log('Selected template', templateId);
+                void templateId;
               }}
             />
             <CollaborativeEditor
               documentTitle="AI-Assisted Healthcare Document"
-              onSaveDraft={(val) => console.log('Draft saved', val.length)}
-              onSubmitForApproval={(val) => console.log('Submitted for approval', val.length)}
+              onSaveDraft={(val) => {
+                void val.length;
+              }}
+              onSubmitForApproval={(val) => {
+                void val.length;
+              }}
             />
           </Box>
         </TabPanel>
