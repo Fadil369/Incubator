@@ -48,6 +48,16 @@ export interface PartnerApplication {
   updatedAt: string;
 }
 
+type ApplicationBody = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  organization?: string;
+  country?: string;
+  partnerType?: string;
+  description?: string;
+};
+
 async function hashPassword(password: string): Promise<string> {
   const data = new TextEncoder().encode(password);
   const digest = await crypto.subtle.digest('SHA-256', data);
@@ -66,6 +76,88 @@ const PARTNER_TYPE_NAMES: Record<string, string> = {
 const partners = new Hono<{ Bindings: Env }>();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+const APPLICATION_FIELD_ALIASES: Record<keyof Required<ApplicationBody>, string[]> = {
+  firstName: ['firstName', 'firstname', 'first_name', 'first-name', 'givenName', 'given_name'],
+  lastName: ['lastName', 'lastname', 'last_name', 'last-name', 'familyName', 'family_name'],
+  email: ['email', 'emailAddress', 'email_address'],
+  organization: ['organization', 'org', 'company', 'companyName', 'company_name', 'startup', 'startupName'],
+  country: ['country', 'location', 'region'],
+  partnerType: ['partnerType', 'partner_type', 'partner-type', 'partnershipType', 'type', 'category'],
+  description: ['description', 'message', 'notes', 'note', 'about', 'overview', 'details'],
+};
+
+function pickFromRecord(source: Record<string, unknown>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = source[key];
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+  return undefined;
+}
+
+function pickFromForm(source: FormData, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = source.get(key);
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+  return undefined;
+}
+
+async function parseApplicationBody(
+  req: Request
+): Promise<{ ok: true; body: ApplicationBody } | { ok: false; error: string; status?: number }> {
+  const contentType = req.headers.get('content-type')?.toLowerCase() ?? '';
+
+  const buildFromRecord = (data: Record<string, unknown>): ApplicationBody => {
+    const body: ApplicationBody = {};
+    for (const [field, aliases] of Object.entries(APPLICATION_FIELD_ALIASES) as [
+      keyof ApplicationBody,
+      string[]
+    ][]) {
+      const value = pickFromRecord(data, aliases);
+      if (value) body[field] = value;
+    }
+    return body;
+  };
+
+  if (contentType.includes('application/json') || contentType.includes('application/ld+json')) {
+    const json = await req.json().catch(() => null);
+    if (!json || typeof json !== 'object') return { ok: false, error: 'Invalid JSON payload', status: 400 };
+    return { ok: true, body: buildFromRecord(json as Record<string, unknown>) };
+  }
+
+  if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+    const form = await req.formData().catch(() => null);
+    if (!form) return { ok: false, error: 'Invalid form submission', status: 400 };
+    const body: ApplicationBody = {};
+    for (const [field, aliases] of Object.entries(APPLICATION_FIELD_ALIASES) as [
+      keyof ApplicationBody,
+      string[]
+    ][]) {
+      const value = pickFromForm(form, aliases);
+      if (value) body[field] = value;
+    }
+    return { ok: true, body };
+  }
+
+  const fallbackText = await req.text().catch(() => '');
+  if (fallbackText) {
+    try {
+      const parsed = JSON.parse(fallbackText);
+      if (parsed && typeof parsed === 'object') {
+        return { ok: true, body: buildFromRecord(parsed as Record<string, unknown>) };
+      }
+    } catch {
+      // ignore fallback parse errors
+    }
+  }
+
+  return { ok: false, error: 'Unsupported content type. Submit JSON or form-encoded data.', status: 415 };
+}
 
 function generateReferenceId(): string {
   return `BSP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -312,23 +404,18 @@ Questions? Contact partner@brainsait.org.
 
 // Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
 partners.post('/application', async (c) => {
-  type Body = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    organization: string;
-    country: string;
-    partnerType: string;
-    description: string;
-  };
-  const body = await c.req.json<Body>().catch(() => null);
-  if (!body) return c.json({ error: 'Invalid JSON' }, 400);
+  const parsed = await parseApplicationBody(c.req.raw);
+  if (!parsed.ok) return c.json({ error: parsed.error }, parsed.status ?? 400);
 
   const required = ['firstName', 'lastName', 'email', 'organization', 'country', 'partnerType', 'description'] as const;
+  const missing = required.filter((field) => !parsed.body[field]?.trim());
+  if (missing.length) {
+    return c.json({ error: `Missing required field(s): ${missing.join(', ')}` }, 400);
+  }
+
+  const body = {} as Record<(typeof required)[number], string>;
   for (const field of required) {
-    if (typeof body[field] !== 'string' || !body[field].trim()) {
-      return c.json({ error: `Missing required field: ${field}` }, 400);
-    }
+    body[field] = parsed.body[field]!.trim();
   }
 
   const id = crypto.randomUUID();
