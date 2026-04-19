@@ -165,10 +165,10 @@ const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
         <Stack direction="row" spacing={1} alignItems="center">
           <Chip icon={<Shield />} label={isRTL ? 'جاهز للامتثال' : 'Compliance ready'} color="success" />
           <AvatarGroup max={4}>
-            <Avatar alt="Aisha" src="https://ui-avatars.com/api/?name=Aisha" />
-            <Avatar alt="Fahad" src="https://ui-avatars.com/api/?name=Fahad" />
-            <Avatar alt="Sara" src="https://ui-avatars.com/api/?name=Sara" />
-            <Avatar alt="Omar" src="https://ui-avatars.com/api/?name=Omar" />
+            <Avatar alt="Aisha">A</Avatar>
+            <Avatar alt="Fahad">F</Avatar>
+            <Avatar alt="Sara">S</Avatar>
+            <Avatar alt="Omar">O</Avatar>
           </AvatarGroup>
         </Stack>
       </Box>
