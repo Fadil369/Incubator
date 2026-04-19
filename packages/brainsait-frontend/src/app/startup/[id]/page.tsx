@@ -112,17 +112,28 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
   useEffect(() => {
     if (!selectedRepo) return;
     const [owner, repo] = selectedRepo.full_name.split('/');
+    setLoading(true);
+    setError(null);
     Promise.all([
       listWorkflowRuns(owner, repo),
       listRepoIssues(owner, repo),
       listRepoPRs(owner, repo),
       listReleases(owner, repo),
-    ]).then(([r, i, p, rel]) => {
-      setRuns(r);
-      setIssues(i);
-      setPRs(p);
-      setReleases(rel);
-    });
+    ])
+      .then(([r, i, p, rel]) => {
+        setRuns(r);
+        setIssues(i);
+        setPRs(p);
+        setReleases(rel);
+      })
+      .catch((err: Error) => {
+        setError(err.message);
+        setRuns([]);
+        setIssues([]);
+        setPRs([]);
+        setReleases([]);
+      })
+      .finally(() => setLoading(false));
   }, [selectedRepo]);
 
   const openIssues = issues.filter((i) => i.state === 'open' && !i.pull_request);
