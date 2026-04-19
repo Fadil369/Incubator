@@ -191,7 +191,16 @@ github.post('/automation/repos/from-template', async (c) => {
     return c.json({ success: false, message: 'templateRepo and newRepoName are required' }, 400);
   }
 
-  const [templateOwner, templateRepoName] = body.templateRepo.split('/');
+  const templateRepoParts = body.templateRepo.split('/');
+  if (
+    templateRepoParts.length !== 2 ||
+    !templateRepoParts[0] ||
+    !templateRepoParts[1]
+  ) {
+    return c.json({ success: false, message: 'templateRepo must be in the format "owner/repo"' }, 400);
+  }
+
+  const [templateOwner, templateRepoName] = templateRepoParts;
   const org = c.env.GITHUB_ORG;
 
   const res = await ghFetch(
