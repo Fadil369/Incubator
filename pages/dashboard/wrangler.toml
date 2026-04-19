@@ -15,6 +15,9 @@ NEXT_PUBLIC_ML_URL = "https://ml.brainsait.org"
 NEXT_PUBLIC_WS_URL = "wss://notifications.brainsait.org/ws"
 NEXT_PUBLIC_APP_NAME = "BrainSAIT Incubator"
 NEXT_PUBLIC_DEFAULT_LOCALE = "en"
+NEXT_PUBLIC_GITHUB_ORG = "brainsait-incubator"
+NEXT_PUBLIC_PARTNER_APPLY_URL = "https://partners-api.brainsait.org/apply"
+NEXT_PUBLIC_PORTAL_URL = "https://brainsait.org/portal"
 
 [[kv_namespaces]]
 binding = "ISR_CACHE"
@@ -34,8 +37,12 @@ route = { pattern = "brainsait.org/*", zone_name = "brainsait.org" }
 [env.production.vars]
 NODE_ENV = "production"
 NEXT_PUBLIC_API_URL = "https://api.brainsait.org"
+NEXT_PUBLIC_PORTAL_URL = "https://brainsait.org/portal"
+NEXT_PUBLIC_PARTNER_APPLY_URL = "https://partners-api.brainsait.org/apply"
 
 [env.preview]
 [env.preview.vars]
 NODE_ENV = "preview"
 NEXT_PUBLIC_API_URL = "https://staging-api.brainsait.org"
+NEXT_PUBLIC_PORTAL_URL = "http://localhost:3000/portal"
+NEXT_PUBLIC_PARTNER_APPLY_URL = "https://partners-api.brainsait.org/apply"

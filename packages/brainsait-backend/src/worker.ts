@@ -14,15 +14,17 @@ import { secureHeaders } from 'hono/secure-headers';
 import authRoutes from './routes/workers/auth';
 import healthRoutes from './routes/workers/health';
 import githubRoutes from './routes/workers/github';
+import partnersRoutes from './routes/workers/partners';
 
 interface Env {
-  // Cloudflare KV Namespaces
+  // KV Namespaces
   SESSIONS: KVNamespace;
   CACHE: KVNamespace;
   RATE_LIMIT: KVNamespace;
   CONFIG: KVNamespace;
   FEATURE_FLAGS: KVNamespace;
   STARTUP_REGISTRY: KVNamespace;
+  PARTNER_APPLICATIONS: KVNamespace;
 
   // D1 Databases
   DB: D1Database;
@@ -43,6 +45,7 @@ interface Env {
   FRONTEND_URL: string;
   API_BASE_URL: string;
   CORS_ORIGINS: string;
+  ADMIN_KEY: string;
 
   // External Services
   OPENAI_API_KEY: string;
@@ -80,6 +83,7 @@ app.route('/api/v1', healthRoutes);
 // API routes
 app.route('/api/v1/auth', authRoutes);
 app.route('/api/v1/github', githubRoutes);
+app.route('/api/v1/partners', partnersRoutes);
 
 // Placeholder routes for other services (to be implemented)
 app.get('/api/v1/users/profile', (c) => {

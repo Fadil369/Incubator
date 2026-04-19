@@ -47,6 +47,10 @@ id = "7e559b5bf3f84271b679db018f59e6d9"
 binding = "STARTUP_REGISTRY"
 id = "a6ac3b1a6086420e95b14e51e78bc288"
 
+[[kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+
 # ── D1 Databases (reusing existing) ──
 [[d1_databases]]
 binding = "DB"
@@ -129,11 +133,13 @@ PLATFORM_VERSION = "2.0.0"
 [env.production.vars]
 NODE_ENV = "production"
 LOG_LEVEL = "info"
-CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org"
+CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
+FRONTEND_URL = "https://brainsait.org"
 
 [env.staging.vars]
 NODE_ENV = "staging"
 LOG_LEVEL = "debug"
 CORS_ORIGINS = "https://staging.brainsait.org,http://localhost:3000"
 GITHUB_ORG = "brainsait-incubator"
+FRONTEND_URL = "http://localhost:3000"
