@@ -17,7 +17,8 @@ import {
   TrendingUp,
   Assessment,
   MonetizationOn,
-  Psychology
+  Psychology,
+  Description
 } from '@mui/icons-material';
 
 // Import our AI dashboard components
@@ -25,6 +26,8 @@ import AIInsightsDashboard from '@/components/dashboard/AIInsightsDashboard';
 import MarketIntelligenceWidget from '@/components/dashboard/MarketIntelligenceWidget';
 import PerformanceAnalytics from '@/components/dashboard/PerformanceAnalytics';
 import FinancialIntelligenceDashboard from '@/components/dashboard/FinancialIntelligenceDashboard';
+import TemplateIntelligence from '@/components/documents/TemplateIntelligence';
+import CollaborativeEditor from '@/components/documents/CollaborativeEditor';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -135,6 +138,12 @@ const AIDashboardPage: React.FC = () => {
               id="ai-tab-3"
               aria-controls="ai-tabpanel-3"
             />
+            <Tab
+              icon={<Description />}
+              label="Document Intelligence"
+              id="ai-tab-4"
+              aria-controls="ai-tabpanel-4"
+            />
           </Tabs>
         </Paper>
 
@@ -165,6 +174,21 @@ const AIDashboardPage: React.FC = () => {
           <FinancialIntelligenceDashboard 
             smeId={smeId}
           />
+        </TabPanel>
+
+        <TabPanel value={currentTab} index={4}>
+          <Box display="grid" gridTemplateColumns={{ xs: '1fr', xl: '1.2fr 0.8fr' }} gap={3}>
+            <TemplateIntelligence
+              onSelectTemplate={(templateId) => {
+                console.log('Selected template', templateId);
+              }}
+            />
+            <CollaborativeEditor
+              documentTitle="AI-Assisted Healthcare Document"
+              onSaveDraft={(val) => console.log('Draft saved', val.length)}
+              onSubmitForApproval={(val) => console.log('Submitted for approval', val.length)}
+            />
+          </Box>
         </TabPanel>
 
         {/* Footer Information */}
