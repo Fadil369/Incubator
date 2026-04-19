@@ -41,14 +41,10 @@ export interface AIAnalyticsResponse {
 
 class AIAnalyticsService {
   private openai: OpenAI | null = null;
-  private anthropic: Anthropic | null = null;
 
   constructor() {
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    }
-    if (process.env.CLAUDE_API_KEY) {
-      this.anthropic = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
     }
   }
 
