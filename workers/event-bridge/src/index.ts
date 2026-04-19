@@ -39,6 +39,11 @@ export default {
       return handleGenericEvent(request, env);
     }
 
+    // GitHub automation via portal
+    if (url.pathname === '/api/v1/github/automation' && request.method === 'POST') {
+      return handlePortalAutomation(request, env);
+    }
+
     // Event query
     if (url.pathname.startsWith('/api/v1/events/') && request.method === 'GET') {
       const eventId = url.pathname.split('/').pop()!;
@@ -157,6 +162,52 @@ async function processEvent(event: Record<string, string>, env: Env): Promise<vo
   )
     .bind(event.id, event.type, event.source, event.repo || '', JSON.stringify(event.payload), event.timestamp)
     .run();
+}
+
+async function handlePortalAutomation(request: Request, env: Env): Promise<Response> {
+  const body = await request.json<Record<string, unknown>>();
+
+  // Validate required fields to prevent arbitrary payloads from being queued
+  const eventType = body.type;
+  const startup = body.startup;
+  if (typeof eventType !== 'string' || !eventType) {
+    return Response.json({ error: 'Missing required field: type' }, { status: 400 });
+  }
+  if (typeof startup !== 'string' || !startup) {
+    return Response.json({ error: 'Missing required field: startup' }, { status: 400 });
+  }
+
+  // Only include known safe top-level fields in the queued event
+  const safePayload: Record<string, unknown> = {
+    type: eventType,
+    startup,
+    source: 'incubator-portal',
+    ...(typeof body.repo === 'string' ? { repo: body.repo } : {}),
+    ...(typeof body.action === 'string' ? { action: body.action } : {}),
+    ...(body.meta && typeof body.meta === 'object' && !Array.isArray(body.meta)
+      ? { meta: body.meta }
+      : {}),
+  };
+
+  const eventId = crypto.randomUUID();
+  const event = {
+    id: eventId,
+    type: `portal.automation.${eventType}`,
+    source: 'incubator-portal',
+    timestamp: new Date().toISOString(),
+    payload: safePayload,
+  };
+
+  await env.EVENT_LOG.put(eventId, JSON.stringify(event), { expirationTtl: 604800 });
+  await env.PIPELINE_EVENTS.send(event);
+
+  env.EVENT_ANALYTICS.writeDataPoint({
+    blobs: [eventType, 'portal', startup],
+    doubles: [Date.now()],
+    indexes: [eventId],
+  });
+
+  return Response.json({ status: 'queued', eventId });
 }
 
 async function verifySignature(signature: string, body: ArrayBuffer, secret: string): Promise<boolean> {

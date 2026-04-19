@@ -27,11 +27,11 @@ database_id = "925780db-b119-42f2-a3ca-2aea98712168"
 
 [[queues.producers]]
 binding = "GITHUB_EVENTS"
-queue = "brainsait-notifications"
+queue = "brainsait-claims"
 
 [[queues.producers]]
 binding = "PIPELINE_EVENTS"
-queue = "brainsait-claims"
+queue = "brainsait-notifications"
 
 [[queues.producers]]
 binding = "NOTIFICATION_QUEUE"
@@ -42,5 +42,4 @@ binding = "EVENT_ANALYTICS"
 dataset = "brainsait_events"
 
 [vars]
-ALLOWED_REPOS = "brainsait-incubator"
 EVENT_TTL_SECONDS = "604800"

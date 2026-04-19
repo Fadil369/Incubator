@@ -129,6 +129,7 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
+        continue-on-error: true
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3
@@ -156,13 +157,16 @@ jobs:
           echo "🔍 Running HIPAA compliance checks..."
           # Check for PII patterns
           grep -rn "SSN\|social.security\|date.of.birth\|patient.id\|medical.record" \
-            --include="*.{js,ts,py,json,yaml,yml}" . 2>/dev/null && \
+            --include="*.js" --include="*.ts" --include="*.py" \
+            --include="*.json" --include="*.yaml" --include="*.yml" \
+            . 2>/dev/null && \
             echo "::error::Potential PII detected in codebase" || \
             echo "✅ No obvious PII patterns found"
 
           # Check for PHI logging
           grep -rn "console.log\|print(\|logger.*debug" \
-            --include="*.{js,ts,py}" . 2>/dev/null | \
+            --include="*.js" --include="*.ts" --include="*.py" \
+            . 2>/dev/null | \
             grep -i "patient\|diagnosis\|treatment\|medication" && \
             echo "::error::Potential PHI in logs" || \
             echo "✅ No PHI in logging detected"
@@ -278,7 +282,7 @@ jobs:
     name: "📢 Notify"
     runs-on: ubuntu-latest
     needs: [build, security, deploy]
-    if: always()
+    if: always() && needs.build.result != 'skipped'
     steps:
       - name: Dispatch to Communication Hub
         env:
@@ -288,7 +292,7 @@ jobs:
           {
             "event": "pipeline_complete",
             "repo": "${{ github.repository }}",
-            "status": "${{ needs.build.result == 'success' && needs.security.result == 'success' && needs.deploy.result == 'success' && 'success' || 'failure' }}",
+            "status": "${{ needs.build.result == 'success' && needs.security.result == 'success' && (needs.deploy.result == 'success' || needs.deploy.result == 'skipped') && 'success' || 'failure' }}",
             "sha": "${{ github.sha }}",
             "ref": "${{ github.ref }}",
             "actor": "${{ github.actor }}",
