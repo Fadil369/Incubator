@@ -108,7 +108,7 @@ class AIAnalyticsService {
         4. Competitive landscape
         5. Growth projections for 2024-2025
 
-        Respond ONLY with a JSON array of BusinessInsight objects with the fields:
+        Respond ONLY with a JSON object in the form {"insights":[...]} where insights is an array of BusinessInsight objects with the fields:
         type, title, titleAr, description, descriptionAr, confidence, impact, category.
         Values for Vision 2030 healthcare objectives specific to Saudi Arabia.
       `;
