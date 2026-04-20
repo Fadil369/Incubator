@@ -33,6 +33,10 @@ queue = "brainsait-notifications"
 name = "WS_SESSIONS"
 class_name = "WebSocketSession"
 
+[[env.production.migrations]]
+tag = "v1"
+new_sqlite_classes = ["WebSocketSession"]
+
 [env.staging]
 name = "brainsait-notifications-staging"
 workers_dev = true

@@ -10,6 +10,7 @@ routes = [{ pattern = "events.brainsait.org", custom_domain = true, zone_name = 
 
 [env.production.vars]
 EVENT_TTL_SECONDS = "604800"
+ALLOWED_REPOS = "brainsait-incubator/*"
 
 [[env.production.kv_namespaces]]
 binding = "WEBHOOK_SECRETS"
@@ -75,3 +76,4 @@ dataset = "brainsait_events"
 
 [vars]
 EVENT_TTL_SECONDS = "604800"
+ALLOWED_REPOS = "*"

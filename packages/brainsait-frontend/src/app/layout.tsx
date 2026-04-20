@@ -30,7 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const pathname = usePathname() ?? '/';
   const locale = Array.isArray(params?.locale) ? params.locale[0] : params?.locale;
   const isArabic = locale === 'ar';
-  const useSiteChrome = pathname !== '/';
+  const useSiteChrome = true;
 
   // Create theme with RTL support and Arabic typography
   const theme = createTheme({

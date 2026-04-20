@@ -44,18 +44,24 @@ interface NotificationHistoryItem {
   metadata?: Record<string, unknown>;
 }
 
-const ALLOWED_ORIGINS = ['https://brainsait.org', 'https://partners.brainsait.org', 'https://portal.elfadil.com'];
+const ALLOWED_ORIGINS = new Set([
+  'https://brainsait.org',
+  'https://partners.brainsait.org',
+  'https://incubator.brainsait.org',
+  'https://portal.elfadil.com',
+  'http://localhost:3000',
+  'http://localhost:3001',
+]);
 
 function buildCorsHeaders(request: Request): Record<string, string> {
-  const origin = request.headers.get('Origin') || '';
+  const origin = request.headers.get('Origin') ?? '';
   return {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : 'https://brainsait.org',
     'Access-Control-Allow-Methods': 'GET,POST,PUT,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-hub-signature-256, x-github-event, x-github-delivery',
   };
 }
 
-// Keep the const for places that use it directly
 const corsHeaders = buildCorsHeaders({ headers: new Headers({ Origin: 'https://brainsait.org' }) } as Request);
 
 let notificationSchemaReady = false;
@@ -63,9 +69,10 @@ let notificationSchemaReady = false;
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders });
+      return new Response(null, { status: 204, headers: buildCorsHeaders(request) });
     }
 
+    const cors = (r: Response) => withCors(r, request);
     const url = new URL(request.url);
 
     if (url.pathname === '/ws' || url.pathname.startsWith('/ws/')) {
@@ -76,7 +83,7 @@ export default {
 
     if (url.pathname === '/health') {
       response = Response.json({ status: 'ok', service: 'notification-router' });
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname.startsWith('/api/v1/channels/') && request.method === 'PUT') {
@@ -84,37 +91,37 @@ export default {
       const config = await request.text();
       await env.CHANNEL_CONFIG.put(`channels:${startup}`, config);
       response = Response.json({ status: 'configured', startup });
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname.startsWith('/api/v1/channels/') && request.method === 'GET') {
       const startup = url.pathname.split('/')[4];
       const config = await env.CHANNEL_CONFIG.get(`channels:${startup}`);
       response = Response.json(JSON.parse(config || '[]'));
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/send' && request.method === 'POST') {
       const cl = parseInt(request.headers.get('Content-Length') || '0');
       if (cl > 524_288) { // 512 KB max
         response = Response.json({ error: 'Payload too large' }, { status: 413 });
-        return withCors(response);
+        return cors(response);
       }
       const event = await request.json<NotificationEvent>();
       if (!event.type || typeof event.type !== 'string' || event.type.length > 100) {
         response = Response.json({ error: 'Invalid event: type must be a string ≤100 chars' }, { status: 400 });
-        return withCors(response);
+        return cors(response);
       }
       await routeNotification(event, env);
       response = Response.json({ status: 'sent' });
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/broadcast' && request.method === 'POST') {
       const cl = parseInt(request.headers.get('Content-Length') || '0');
       if (cl > 524_288) {
         response = Response.json({ error: 'Payload too large' }, { status: 413 });
-        return withCors(response);
+        return cors(response);
       }
       const event = await request.json<NotificationEvent>();
       const list = await env.CHANNEL_CONFIG.list({ prefix: 'channels:' });
@@ -123,49 +130,49 @@ export default {
         await routeNotification({ ...event, target: startup }, env);
       }
       response = Response.json({ status: 'broadcast', targets: list.keys.length });
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/chat/rooms' && request.method === 'GET') {
       response = await listChatRooms(env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname.startsWith('/api/v1/chat/rooms/') && url.pathname.endsWith('/messages') && request.method === 'GET') {
       const roomId = url.pathname.split('/')[5];
       response = await listChatMessages(roomId, env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname.startsWith('/api/v1/chat/rooms/') && url.pathname.endsWith('/messages') && request.method === 'POST') {
       const roomId = url.pathname.split('/')[5];
       response = await createChatMessage(roomId, request, env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/email/automations' && request.method === 'GET') {
       response = await listEmailAutomations(env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/email/automations' && request.method === 'POST') {
       response = await createEmailAutomation(request, env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname.startsWith('/api/v1/email/automations/') && url.pathname.endsWith('/trigger') && request.method === 'POST') {
       const automationId = url.pathname.split('/')[5];
       response = await triggerEmailAutomation(automationId, request, env);
-      return withCors(response);
+      return cors(response);
     }
 
     if (url.pathname === '/api/v1/history' && request.method === 'GET') {
       const limit = parseInt(url.searchParams.get('limit') || '50', 10);
       response = await listNotificationHistory(limit, env);
-      return withCors(response);
+      return cors(response);
     }
 
-    return withCors(Response.json({ error: 'Not found' }, { status: 404 }));
+    return cors(Response.json({ error: 'Not found' }, { status: 404 }));
   },
 
   async queue(batch: MessageBatch<NotificationEvent>, env: Env): Promise<void> {
@@ -724,9 +731,10 @@ function normalizeHistoryRecord(record: Record<string, unknown>): NotificationHi
   return null;
 }
 
-function withCors(response: Response): Response {
+function withCors(response: Response, request?: Request): Response {
   const headers = new Headers(response.headers);
-  for (const [key, value] of Object.entries(corsHeaders)) {
+  const origin = request ? buildCorsHeaders(request) : corsHeaders;
+  for (const [key, value] of Object.entries(origin)) {
     headers.set(key, value);
   }
   return new Response(response.body, {

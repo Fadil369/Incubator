@@ -26,13 +26,21 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-hub-signature-256, x-github-event, x-github-delivery',
 };
 
-// Dynamic CORS helper — allows known origins
+const ALLOWED_ORIGINS = new Set([
+  'https://brainsait.org',
+  'https://partners.brainsait.org',
+  'https://incubator.brainsait.org',
+  'https://portal.elfadil.com',
+  'http://localhost:3000',
+  'http://localhost:3001',
+]);
+
+// Dynamic CORS helper — reflects the request origin if it is in the allow-list
 function getCorsHeaders(request: Request): Record<string, string> {
-  const origin = request.headers.get('Origin') || '';
-  const allowed = ['https://brainsait.org', 'https://partners.brainsait.org', 'https://portal.elfadil.com'];
+  const origin = request.headers.get('Origin') ?? '';
   return {
     ...corsHeaders,
-    'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : 'https://brainsait.org',
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : 'https://brainsait.org',
   };
 }
 
@@ -41,35 +49,36 @@ let eventSchemaReady = false;
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders });
+      return new Response(null, { status: 204, headers: getCorsHeaders(request) });
     }
 
+    const cors = (r: Response) => withCors(r, request);
     const url = new URL(request.url);
 
     if (url.pathname === '/health') {
-      return withCors(Response.json({ status: 'ok', service: 'event-bridge', timestamp: new Date().toISOString() }));
+      return cors(Response.json({ status: 'ok', service: 'event-bridge', timestamp: new Date().toISOString() }));
     }
 
     if (url.pathname === '/webhooks/github' && request.method === 'POST') {
-      return withCors(await handleGitHubWebhook(request, env));
+      return cors(await handleGitHubWebhook(request, env));
     }
 
     if (url.pathname === '/api/v1/events' && request.method === 'POST') {
-      return withCors(await handleGenericEvent(request, env));
+      return cors(await handleGenericEvent(request, env));
     }
 
     if (url.pathname === '/api/v1/github/automation' && request.method === 'POST') {
-      return withCors(await handlePortalAutomation(request, env));
+      return cors(await handlePortalAutomation(request, env));
     }
 
     if (url.pathname.startsWith('/api/v1/events/') && request.method === 'GET') {
       const eventId = url.pathname.split('/').pop()!;
       const event = await env.EVENT_LOG.get(eventId);
-      if (!event) return withCors(Response.json({ error: 'Not found' }, { status: 404 }));
-      return withCors(Response.json(JSON.parse(event)));
+      if (!event) return cors(Response.json({ error: 'Not found' }, { status: 404 }));
+      return cors(Response.json(JSON.parse(event)));
     }
 
-    return withCors(Response.json({ error: 'Not found' }, { status: 404 }));
+    return cors(Response.json({ error: 'Not found' }, { status: 404 }));
   },
 
   async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
@@ -271,9 +280,10 @@ async function ensureEventSchema(env: Env): Promise<void> {
   eventSchemaReady = true;
 }
 
-function withCors(response: Response): Response {
+function withCors(response: Response, request?: Request): Response {
   const headers = new Headers(response.headers);
-  for (const [key, value] of Object.entries(corsHeaders)) {
+  const origin = request ? getCorsHeaders(request) : corsHeaders;
+  for (const [key, value] of Object.entries(origin)) {
     headers.set(key, value);
   }
   return new Response(response.body, {
