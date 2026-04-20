@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import {
   ArrowForward,
   AutoAwesome,
+  Bolt,
   Engineering,
   Hub,
   Launch,
@@ -9,6 +11,8 @@ import {
   PlayCircleOutline,
   NorthEast,
   ShowChart,
+  ContentCopy,
+  CalendarMonth,
 } from '@mui/icons-material';
 import {
   Avatar,
@@ -25,6 +29,11 @@ import {
   Typography,
 } from '@mui/material';
 import { featuredTrainingCourse } from '@/lib/training/catalog';
+
+export const metadata: Metadata = {
+  title: 'Collective Brainpower | BrainSAIT Training',
+  description: 'Premium BrainSAIT cohort course for healthcare, technology, AI, and integrated digital transformation.',
+};
 
 const FOCUS_ICONS = {
   automation: <Memory />,
@@ -59,11 +68,11 @@ export default function CollectiveBrainpowerCoursePage() {
             <Grid container spacing={5} alignItems="center">
               <Grid item xs={12} lg={7}>
                 <Stack direction="row" spacing={1.25} sx={{ flexWrap: 'wrap', mb: 2 }}>
-                  <Chip label="Premium Course" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
+                  <Chip label="Advanced Cohort" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white' }} />
                   <Chip label={course.badge} sx={{ bgcolor: 'rgba(46, 125, 50, 0.22)', color: '#b9f6ca' }} />
                 </Stack>
                 <Typography variant="h2" fontWeight={800} sx={{ color: 'white', maxWidth: 860, mb: 2 }}>
-                  {course.title}
+                  Engineering the future of health and technology.
                 </Typography>
                 <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.76)', fontWeight: 400, maxWidth: 760, mb: 3 }}>
                   {course.subtitle}
@@ -95,9 +104,12 @@ export default function CollectiveBrainpowerCoursePage() {
                 </Stack>
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }} sx={{ mt: 3 }}>
-                  <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.74)' }}>
-                    Class code: <Box component="span" sx={{ color: 'white', fontWeight: 700, letterSpacing: 1.2 }}>{course.classroomCode}</Box>
-                  </Typography>
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.25, px: 2, py: 1.2, borderRadius: 999, bgcolor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.74)' }}>
+                      Class code: <Box component="span" sx={{ color: '#67e8f9', fontWeight: 800, letterSpacing: 1.2 }}>{course.classroomCode}</Box>
+                    </Typography>
+                    <ContentCopy sx={{ fontSize: 18, color: 'rgba(255,255,255,0.66)' }} />
+                  </Box>
                   <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
                     Powered by Google Classroom with guided implementation support.
                   </Typography>
@@ -108,12 +120,25 @@ export default function CollectiveBrainpowerCoursePage() {
                 <Card sx={{ borderRadius: 4, bgcolor: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.10)' }}>
                   <CardContent sx={{ p: 4 }}>
                     <Chip icon={<AutoAwesome />} label="Access details" sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white', mb: 2 }} />
-                    <Stack spacing={1.5} sx={{ mb: 3 }}>
-                      <Typography variant="body1">Format: {course.format}</Typography>
-                      <Typography variant="body1">Duration: {course.duration}</Typography>
-                      <Typography variant="body1">Level: {course.level}</Typography>
-                      <Typography variant="body1">Class code: {course.classroomCode}</Typography>
-                    </Stack>
+                    <Grid container spacing={1.5} sx={{ mb: 3 }}>
+                      {[
+                        { label: 'Format', value: course.format },
+                        { label: 'Duration', value: course.duration },
+                        { label: 'Level', value: course.level },
+                        { label: 'Code', value: course.classroomCode },
+                      ].map((item) => (
+                        <Grid item xs={6} key={item.label}>
+                          <Box sx={{ p: 2, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: 1.2 }}>
+                              {item.label}
+                            </Typography>
+                            <Typography variant="body2" fontWeight={700} sx={{ color: 'white', mt: 0.5 }}>
+                              {item.value}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
                     <Box sx={{ p: 2.5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)' }}>
                       <Typography variant="subtitle2" fontWeight={700} sx={{ color: 'white', mb: 1 }}>
                         Instructor
@@ -136,7 +161,7 @@ export default function CollectiveBrainpowerCoursePage() {
                       Built as BrainSAIT’s first premium course experience.
                     </Typography>
                     <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.72)', maxWidth: 720 }}>
-                      This course now lives directly inside the training hub while still linking into Google Classroom for delivery. The experience mirrors the premium launch page design with a clear focus on healthcare, technology, and AI transformation.
+                      This course now lives directly inside the training hub while still linking into Google Classroom for delivery. The experience is designed as a premium cohort layer for healthcare, technology, and AI transformation teams.
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={5}>
@@ -187,7 +212,7 @@ export default function CollectiveBrainpowerCoursePage() {
                     <Grid item xs={12} md={4} key={area.title}>
                       <Card sx={{ height: '100%', borderRadius: 4, bgcolor: '#0e1726', border: '1px solid rgba(255,255,255,0.08)' }}>
                         <CardContent sx={{ p: 3.5 }}>
-                          <Box sx={{ width: 52, height: 52, borderRadius: 3, display: 'grid', placeItems: 'center', bgcolor: 'rgba(25,118,210,0.12)', color: '#90caf9', mb: 2 }}>
+                          <Box sx={{ width: 52, height: 52, borderRadius: 3, display: 'grid', placeItems: 'center', bgcolor: area.icon === 'automation' ? 'rgba(6,182,212,0.12)' : area.icon === 'integration' ? 'rgba(59,130,246,0.12)' : 'rgba(139,92,246,0.12)', color: '#90caf9', mb: 2 }}>
                             {FOCUS_ICONS[area.icon]}
                           </Box>
                           <Typography variant="h6" fontWeight={700} sx={{ color: 'white', mb: 1 }}>
@@ -225,6 +250,43 @@ export default function CollectiveBrainpowerCoursePage() {
                   ))}
                 </Grid>
               </Box>
+
+              <Card sx={{ borderRadius: 4, bgcolor: '#0e1726', border: '1px solid rgba(255,255,255,0.08)', mb: 5 }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Chip label="Why this cohort exists" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.08)', color: '#67e8f9' }} />
+                  <Grid container spacing={2}>
+                    {[
+                      {
+                        title: 'Automated healthcare execution',
+                        description: 'Identify workflows where AI and automation can remove friction from clinical and business operations.',
+                        icon: <Bolt />,
+                      },
+                      {
+                        title: 'Interoperable system design',
+                        description: 'Connect products, data contracts, infrastructure, and regulatory needs into one architecture.',
+                        icon: <Hub />,
+                      },
+                      {
+                        title: 'Founder-grade market growth',
+                        description: 'Translate technical decisions into narrative, positioning, and venture-ready scale plans.',
+                        icon: <ShowChart />,
+                      },
+                    ].map((item) => (
+                      <Grid item xs={12} md={4} key={item.title}>
+                        <Box sx={{ p: 2.5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', height: '100%' }}>
+                          <Avatar sx={{ mb: 1.5, bgcolor: 'rgba(255,255,255,0.08)', color: 'white' }}>{item.icon}</Avatar>
+                          <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white', mb: 1 }}>
+                            {item.title}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.68)' }}>
+                            {item.description}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
 
             <Grid item xs={12} lg={4}>
@@ -281,6 +343,25 @@ export default function CollectiveBrainpowerCoursePage() {
                           </Typography>
                         </Box>
                       ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+
+                <Card sx={{ borderRadius: 4, bgcolor: '#0e1726', border: '1px solid rgba(255,255,255,0.08)', mt: 3 }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Typography variant="h6" fontWeight={800} sx={{ color: 'white', mb: 2 }}>
+                      Continue after the cohort
+                    </Typography>
+                    <Stack spacing={1.5}>
+                      <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'flex-start' }}>
+                        <CalendarMonth sx={{ color: '#67e8f9', mt: 0.15 }} />
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.72)' }}>
+                          Book an implementation session with BrainSAIT to translate learning into startup delivery.
+                        </Typography>
+                      </Box>
+                      <Button variant="outlined" href="https://calendly.com/fadil369" target="_blank" rel="noopener noreferrer" endIcon={<NorthEast />} sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.18)' }}>
+                        Book consultation
+                      </Button>
                     </Stack>
                   </CardContent>
                 </Card>

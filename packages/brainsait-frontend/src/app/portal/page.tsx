@@ -28,6 +28,7 @@ import {
   Tooltip,
   Alert,
   CircularProgress,
+  Stack,
 } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -49,6 +50,11 @@ import {
   MenuBook,
   Star,
   ArrowForward,
+  Bolt,
+  Hub,
+  Launch,
+  ContentCopy,
+  NorthEast,
 } from '@mui/icons-material';
 import { featuredTrainingCourse } from '@/lib/training/catalog';
 
@@ -101,6 +107,27 @@ const RESOURCES: Resource[] = [
   { title: 'PDPL Compliance Checklist', description: 'Saudi Arabia Personal Data Protection Law compliance requirements for healthtech', category: 'Legal', url: 'https://docs.brainsait.org/pdpl', icon: <Assignment /> },
   { title: 'Vision 2030 Health Programs', description: 'Overview of government programs and funding opportunities aligned with Vision 2030', category: 'Strategy', url: 'https://docs.brainsait.org/vision2030', icon: <EmojiEvents /> },
   { title: 'Investor Network Access', description: 'Introduction to BrainSAIT partner VCs and angel investors active in MENA healthtech', category: 'Funding', url: 'https://brainsait.org/partners#investors', icon: <TrendingUp /> },
+];
+
+const TRAINING_ARCHITECTURE = [
+  {
+    title: 'Automated Solutions',
+    description: 'Turn clinical and operational workflows into repeatable automation systems your team can actually ship.',
+    icon: <Bolt />,
+    accent: 'linear-gradient(135deg, rgba(6,182,212,0.18) 0%, rgba(6,182,212,0.02) 100%)',
+  },
+  {
+    title: 'Integrated Systems',
+    description: 'Connect product, data, compliance, and AI services into one interoperable operating model.',
+    icon: <Hub />,
+    accent: 'linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(59,130,246,0.02) 100%)',
+  },
+  {
+    title: 'Tech-Driven Growth',
+    description: 'Translate learning into founder execution, venture readiness, and defensible healthcare positioning.',
+    icon: <TrendingUp />,
+    accent: 'linear-gradient(135deg, rgba(139,92,246,0.18) 0%, rgba(139,92,246,0.02) 100%)',
+  },
 ];
 
 function IncubatorPortalContent() {
@@ -430,71 +457,227 @@ function IncubatorPortalContent() {
 
           <TabPanel value={tab} index={3}>
             <Box sx={{ px: 2 }}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} lg={7}>
-                  <Card sx={{ height: '100%' }}>
-                    <CardContent>
-                      <Chip icon={<AutoAwesome />} label="Featured Course" color="primary" sx={{ mb: 2 }} />
-                      <Typography variant="h5" fontWeight={700} gutterBottom>
-                        {featuredTrainingCourse.title}
+              <Card
+                sx={{
+                  mb: 3,
+                  borderRadius: 5,
+                  overflow: 'hidden',
+                  background: 'linear-gradient(135deg, #050505 0%, #0b1220 45%, #14142b 100%)',
+                  color: 'white',
+                  position: 'relative',
+                }}
+              >
+                <Box sx={{ position: 'absolute', top: -60, left: -30, width: 220, height: 220, borderRadius: '50%', bgcolor: 'rgba(6,182,212,0.14)', filter: 'blur(18px)' }} />
+                <Box sx={{ position: 'absolute', bottom: -80, right: -20, width: 260, height: 260, borderRadius: '50%', bgcolor: 'rgba(139,92,246,0.14)', filter: 'blur(22px)' }} />
+                <CardContent sx={{ p: { xs: 3, md: 5 }, position: 'relative' }}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={3}>
+                    <Box sx={{ maxWidth: 860 }}>
+                      <Chip icon={<AutoAwesome />} label="Advanced Cohort" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.10)', color: 'white' }} />
+                      <Typography variant="h3" fontWeight={800} sx={{ color: 'white', maxWidth: 760, mb: 2, lineHeight: 1.05 }}>
+                        Engineering the future of health and technology inside the incubator portal.
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {featuredTrainingCourse.description}
+                      <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.72)', fontWeight: 400, maxWidth: 760, mb: 3 }}>
+                        {featuredTrainingCourse.subtitle}
+                      </Typography>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ mb: 3 }}>
+                        <Button
+                          variant="contained"
+                          size="large"
+                          href="/training/courses/collective-brainpower"
+                          endIcon={<ArrowForward />}
+                          sx={{ bgcolor: 'white', color: '#050505', '&:hover': { bgcolor: 'grey.200' } }}
+                        >
+                          Open cohort course
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          size="large"
+                          href={featuredTrainingCourse.classroomUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          endIcon={<Launch />}
+                          sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.18)' }}
+                        >
+                          Enter Google Classroom
+                        </Button>
+                      </Stack>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ xs: 'stretch', sm: 'center' }}>
+                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.25, borderRadius: 999, bgcolor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.65)' }}>Class code</Typography>
+                          <Typography variant="body2" sx={{ color: '#67e8f9', fontWeight: 800, letterSpacing: 1.4 }}>{featuredTrainingCourse.classroomCode}</Typography>
+                          <Tooltip title="Copy class code">
+                            <IconButton
+                              size="small"
+                              onClick={() => navigator.clipboard.writeText(featuredTrainingCourse.classroomCode)}
+                              sx={{ color: 'white' }}
+                            >
+                              <ContentCopy fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.58)' }}>
+                          Cohort access is embedded directly into your BrainSAIT execution flow.
+                        </Typography>
+                      </Stack>
+                    </Box>
+                    <Grid container spacing={1.5} sx={{ width: { xs: '100%', md: 320 }, alignContent: 'flex-start' }}>
+                      {[
+                        { label: 'Format', value: featuredTrainingCourse.format },
+                        { label: 'Duration', value: featuredTrainingCourse.duration },
+                        { label: 'Director', value: featuredTrainingCourse.instructor.name },
+                        { label: 'Focus', value: 'AI + healthcare + systems' },
+                      ].map((stat) => (
+                        <Grid item xs={6} md={12} key={stat.label}>
+                          <Box sx={{ p: 2, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: 1.2 }}>
+                              {stat.label}
+                            </Typography>
+                            <Typography variant="body2" fontWeight={700} sx={{ color: 'white', mt: 0.5 }}>
+                              {stat.value}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Stack>
+                </CardContent>
+              </Card>
+
+              <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} lg={6}>
+                  <Card
+                    sx={{
+                      height: '100%',
+                      borderRadius: 5,
+                      color: 'white',
+                      background: 'linear-gradient(145deg, rgba(9,15,25,1) 0%, rgba(15,23,42,1) 100%)',
+                      border: '1px solid rgba(148,163,184,0.12)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box sx={{ position: 'absolute', bottom: -50, right: -20, width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)' }} />
+                    <CardContent sx={{ p: 4, position: 'relative' }}>
+                      <Chip label="Curriculum Architecture" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.08)', color: 'white' }} />
+                      <Typography variant="h4" fontWeight={800} sx={{ color: 'white', mb: 2 }}>
+                        Collective brainpower as an operating system.
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.68)', maxWidth: 520, mb: 4 }}>
+                        The course is designed to convert shared expertise into automated healthcare workflows, integrated technical systems, and founder-ready execution.
                       </Typography>
                       <Grid container spacing={2}>
-                        {featuredTrainingCourse.focusAreas.map((area) => (
-                          <Grid item xs={12} sm={4} key={area.title}>
-                            <Box sx={{ p: 2, borderRadius: 2.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', height: '100%' }}>
-                              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                                {area.title}
+                        {TRAINING_ARCHITECTURE.map((item) => (
+                          <Grid item xs={12} md={item.title === 'Automated Solutions' ? 12 : 6} key={item.title}>
+                            <Box sx={{ p: 2.5, borderRadius: 3.5, border: '1px solid rgba(255,255,255,0.08)', background: item.accent, height: '100%' }}>
+                              <Avatar sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.08)', color: 'white' }}>{item.icon}</Avatar>
+                              <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white', mb: 1 }}>
+                                {item.title}
                               </Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                {area.description}
+                              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.68)' }}>
+                                {item.description}
                               </Typography>
                             </Box>
                           </Grid>
                         ))}
                       </Grid>
                     </CardContent>
-                    <CardActions>
-                      <Button size="small" href="/training/courses/collective-brainpower" endIcon={<ArrowForward />}>
-                        Open Course
-                      </Button>
-                      <Button size="small" href={featuredTrainingCourse.classroomUrl} target="_blank" rel="noopener noreferrer" endIcon={<OpenInNew />}>
-                        Google Classroom
-                      </Button>
-                    </CardActions>
                   </Card>
                 </Grid>
-                <Grid item xs={12} lg={5}>
-                  <Card sx={{ height: '100%' }}>
-                    <CardContent>
-                      <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-                        Included in your program flow
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Your team can now move from incubator milestones into structured course delivery without leaving the platform.
-                      </Typography>
-                      <List disablePadding>
-                        {featuredTrainingCourse.curriculum.map((module, index) => (
-                          <ListItem key={module.title} disableGutters sx={{ alignItems: 'flex-start', pb: 1.5 }}>
-                            <ListItemIcon sx={{ minWidth: 36, mt: 0.25 }}>
-                              <Avatar sx={{ width: 26, height: 26, fontSize: '0.75rem', bgcolor: 'primary.main' }}>
-                                {index + 1}
-                              </Avatar>
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={<Typography variant="body2" fontWeight={700}>{module.title}</Typography>}
-                              secondary={<Typography variant="caption" color="text.secondary">{module.description}</Typography>}
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
-                      <Chip label={`Class code: ${featuredTrainingCourse.classroomCode}`} variant="outlined" sx={{ mt: 1 }} />
-                    </CardContent>
-                  </Card>
+                <Grid item xs={12} lg={6}>
+                  <Grid container spacing={3} sx={{ height: '100%' }}>
+                    <Grid item xs={12}>
+                      <Card sx={{ borderRadius: 5, height: '100%', background: 'linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)' }}>
+                        <CardContent sx={{ p: 4 }}>
+                          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 1.5 }}>
+                            Included in your program flow
+                          </Typography>
+                          <Typography variant="h5" fontWeight={800} gutterBottom>
+                            Module sequence for execution teams
+                          </Typography>
+                          <List disablePadding>
+                            {featuredTrainingCourse.curriculum.map((module, index) => (
+                              <ListItem key={module.title} disableGutters sx={{ alignItems: 'flex-start', pb: 1.75 }}>
+                                <ListItemIcon sx={{ minWidth: 42, mt: 0.25 }}>
+                                  <Avatar sx={{ width: 30, height: 30, fontSize: '0.8rem', bgcolor: 'primary.main' }}>
+                                    {index + 1}
+                                  </Avatar>
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={<Typography variant="body2" fontWeight={800}>{module.title}</Typography>}
+                                  secondary={<Typography variant="caption" color="text.secondary">{module.description}</Typography>}
+                                />
+                              </ListItem>
+                            ))}
+                          </List>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Card sx={{ borderRadius: 5, height: '100%', background: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)', color: 'white' }}>
+                        <CardContent sx={{ p: 4 }}>
+                          <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2.5 }}>
+                            <Avatar src={featuredTrainingCourse.instructor.avatarUrl} alt={featuredTrainingCourse.instructor.name} sx={{ width: 68, height: 68 }} />
+                            <Box>
+                              <Typography variant="h6" fontWeight={800} sx={{ color: 'white' }}>
+                                {featuredTrainingCourse.instructor.name}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.72)' }}>
+                                {featuredTrainingCourse.instructor.role}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#67e8f9' }}>
+                                {featuredTrainingCourse.instructor.company} · {featuredTrainingCourse.instructor.location}
+                              </Typography>
+                            </Box>
+                          </Stack>
+                          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 2.5 }}>
+                            {featuredTrainingCourse.instructor.bio}
+                          </Typography>
+                          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap">
+                            {featuredTrainingCourse.instructor.links.slice(0, 3).map((link) => (
+                              <Button
+                                key={link.label}
+                                variant="outlined"
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                endIcon={<NorthEast />}
+                                sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.16)' }}
+                              >
+                                {link.label}
+                              </Button>
+                            ))}
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
+
+              <Card sx={{ borderRadius: 5, background: 'linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(139,92,246,0.12) 100%)', border: '1px solid', borderColor: 'divider' }}>
+                <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12} md={8}>
+                      <Typography variant="h4" fontWeight={800} gutterBottom>
+                        Move from milestones to course delivery without leaving the portal.
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Your startup team can enter the cohort, access the classroom, and tie each module directly back to incubator execution, compliance, and delivery outcomes.
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1.5}>
+                        <Button variant="contained" size="large" href="/training" endIcon={<MenuBook />}>
+                          Open training hub
+                        </Button>
+                        <Button variant="outlined" size="large" href={featuredTrainingCourse.classroomUrl} target="_blank" rel="noopener noreferrer" endIcon={<OpenInNew />}>
+                          Join cohort classroom
+                        </Button>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Box>
           </TabPanel>
 
