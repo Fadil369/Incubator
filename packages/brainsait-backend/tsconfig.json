@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": false,
@@ -15,24 +15,12 @@
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/controllers/*": ["./src/controllers/*"],
-      "@/middleware/*": ["./src/middleware/*"],
-      "@/models/*": ["./src/models/*"],
-      "@/routes/*": ["./src/routes/*"],
-      "@/services/*": ["./src/services/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/config/*": ["./src/config/*"],
-      "@brainsait/shared": ["../brainsait-shared/dist"]
-    },
-    "types": ["node", "jest"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "lib": ["ES2022"]
   },
   "include": [
     "src/**/*"
@@ -43,6 +31,21 @@
     "../brainsait-shared/src/**/*"
   ],
   "ts-node": {
-    "require": ["tsconfig-paths/register"]
+    "require": ["tsconfig-paths/register"],
+    "compilerOptions": {
+      "moduleResolution": "node",
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./src/*"],
+        "@/controllers/*": ["./src/controllers/*"],
+        "@/middleware/*": ["./src/middleware/*"],
+        "@/models/*": ["./src/models/*"],
+        "@/routes/*": ["./src/routes/*"],
+        "@/services/*": ["./src/services/*"],
+        "@/utils/*": ["./src/utils/*"],
+        "@/config/*": ["./src/config/*"],
+        "@brainsait/shared": ["../brainsait-shared/dist"]
+      }
+    }
   }
 }

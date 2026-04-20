@@ -11,6 +11,8 @@ import { secureHeaders } from 'hono/secure-headers';
 // Import our route handlers (Workers-compatible versions)
 import authRoutes from './routes/workers/auth';
 import healthRoutes from './routes/workers/health';
+import githubRoutes from './routes/workers/github';
+import partnersRoutes from './routes/workers/partners';
 const app = new Hono();
 // Middleware
 app.use('*', logger());
@@ -18,7 +20,10 @@ app.use('*', poweredBy());
 app.use('*', prettyJSON());
 app.use('*', secureHeaders());
 app.use('*', cors({
-    origin: ['https://brainsait.com', 'https://staging.brainsait.com', 'http://localhost:3000'],
+    origin: (origin, c) => {
+        const allowed = (c.env.CORS_ORIGINS || 'https://brainsait.org,http://localhost:3000').split(',');
+        return allowed.includes(origin) ? origin : allowed[0];
+    },
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     exposeHeaders: ['Content-Length'],
@@ -28,6 +33,8 @@ app.use('*', cors({
 app.route('/api/v1', healthRoutes);
 // API routes
 app.route('/api/v1/auth', authRoutes);
+app.route('/api/v1/github', githubRoutes);
+app.route('/api/v1/partners', partnersRoutes);
 // Placeholder routes for other services (to be implemented)
 app.get('/api/v1/users/profile', (c) => {
     return c.json({ message: 'Users service - Coming soon!' });
