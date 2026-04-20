@@ -7,7 +7,35 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-auth-gateway-prod"
-route = { pattern = "auth.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "auth.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+
+[env.production.vars]
+KEYCLOAK_URL = "https://keycloak.brainsait.org"
+REALM = "brainsait"
+CLIENT_ID = "brainsait-platform"
+TOKEN_TTL = "3600"
+REFRESH_TTL = "86400"
+
+[[env.production.kv_namespaces]]
+binding = "JWKS_CACHE"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[env.production.kv_namespaces]]
+binding = "SESSION_STORE"
+id = "062eab539a7049c0b1e36049441a211d"
+
+[[env.production.kv_namespaces]]
+binding = "STARTUP_ROLES"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "brainsait-stripe-identity"
+database_id = "1f1ae60a-3e0c-49d8-af2a-d15823bda8d3"
+
+[[env.production.analytics_engine_datasets]]
+binding = "AUTH_ANALYTICS"
+dataset = "brainsait_auth"
 
 [env.staging]
 name = "brainsait-auth-gateway-staging"
@@ -29,10 +57,6 @@ id = "a6ac3b1a6086420e95b14e51e78bc288"
 binding = "DB"
 database_name = "brainsait-stripe-identity"
 database_id = "1f1ae60a-3e0c-49d8-af2a-d15823bda8d3"
-
-[[durable_objects.bindings]]
-name = "SESSION_MANAGER"
-class_name = "SessionManager"
 
 [[analytics_engine_datasets]]
 binding = "AUTH_ANALYTICS"

@@ -13,11 +13,11 @@ workers_dev = true
 # Custom domains for production
 [env.production]
 name = "brainsait-backend-production"
-route = { pattern = "api.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
 
 [env.staging]
 name = "brainsait-backend-staging"
-route = { pattern = "staging-api.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
 
 [env.preview]
 name = "brainsait-backend-preview"

@@ -295,8 +295,11 @@ function PortalAcceptContent() {
                     <Box>
                       <Typography variant="body2">
                         After submitting, you&apos;ll land on your personalised incubator dashboard with your
-                        GitHub repos, CI/CD pipelines, program milestones, and mentor schedule.
+                        GitHub repos, CI/CD pipelines, program milestones, mentor schedule, and training hub.
                       </Typography>
+                      <Button size="small" href="/training" sx={{ mt: 1, px: 0 }}>
+                        Preview training hub
+                      </Button>
                       {githubRepo && (
                         <Button
                           size="small"

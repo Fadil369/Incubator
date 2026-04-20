@@ -49,6 +49,7 @@ import {
   Star,
   ArrowForward,
 } from '@mui/icons-material';
+import { featuredTrainingCourse } from '@/lib/training/catalog';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -227,6 +228,7 @@ function IncubatorPortalContent() {
             <Tab icon={<Rocket />} label="Program" />
             <Tab icon={<School />} label="Mentors" />
             <Tab icon={<MenuBook />} label="Resources" />
+            <Tab icon={<AutoAwesome />} label="Training" />
             <Tab icon={<Analytics />} label="KPIs" />
           </Tabs>
 
@@ -358,6 +360,76 @@ function IncubatorPortalContent() {
 
           <TabPanel value={tab} index={3}>
             <Box sx={{ px: 2 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} lg={7}>
+                  <Card sx={{ height: '100%' }}>
+                    <CardContent>
+                      <Chip icon={<AutoAwesome />} label="Featured Course" color="primary" sx={{ mb: 2 }} />
+                      <Typography variant="h5" fontWeight={700} gutterBottom>
+                        {featuredTrainingCourse.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {featuredTrainingCourse.description}
+                      </Typography>
+                      <Grid container spacing={2}>
+                        {featuredTrainingCourse.focusAreas.map((area) => (
+                          <Grid item xs={12} sm={4} key={area.title}>
+                            <Box sx={{ p: 2, borderRadius: 2.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', height: '100%' }}>
+                              <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                                {area.title}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {area.description}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </CardContent>
+                    <CardActions>
+                      <Button size="small" href="/training/courses/collective-brainpower" endIcon={<ArrowForward />}>
+                        Open Course
+                      </Button>
+                      <Button size="small" href={featuredTrainingCourse.classroomUrl} target="_blank" rel="noopener noreferrer" endIcon={<OpenInNew />}>
+                        Google Classroom
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} lg={5}>
+                  <Card sx={{ height: '100%' }}>
+                    <CardContent>
+                      <Typography variant="subtitle1" fontWeight={700} gutterBottom>
+                        Included in your program flow
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        Your team can now move from incubator milestones into structured course delivery without leaving the platform.
+                      </Typography>
+                      <List disablePadding>
+                        {featuredTrainingCourse.curriculum.map((module, index) => (
+                          <ListItem key={module.title} disableGutters sx={{ alignItems: 'flex-start', pb: 1.5 }}>
+                            <ListItemIcon sx={{ minWidth: 36, mt: 0.25 }}>
+                              <Avatar sx={{ width: 26, height: 26, fontSize: '0.75rem', bgcolor: 'primary.main' }}>
+                                {index + 1}
+                              </Avatar>
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={<Typography variant="body2" fontWeight={700}>{module.title}</Typography>}
+                              secondary={<Typography variant="caption" color="text.secondary">{module.description}</Typography>}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                      <Chip label={`Class code: ${featuredTrainingCourse.classroomCode}`} variant="outlined" sx={{ mt: 1 }} />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Box>
+          </TabPanel>
+
+          <TabPanel value={tab} index={4}>
+            <Box sx={{ px: 2 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 Track your startup&apos;s growth metrics and KPIs throughout the incubator program.
               </Typography>
@@ -416,6 +488,7 @@ function IncubatorPortalContent() {
             {[
               { label: 'Developer Portal', description: 'Manage repos, CI/CD, PRs', href: startupPortalHref, icon: <GitHub /> },
               { label: 'GitHub Automation', description: 'Create repos from templates', href: startupAutomateHref, icon: <AutoAwesome /> },
+              { label: 'Training Hub', description: 'Courses and premium learning tracks', href: '/training', icon: <MenuBook /> },
               { label: 'Template Gallery', description: 'Browse project templates', href: '/templates', icon: <Code /> },
               { label: 'All Projects', description: 'Org-wide project overview', href: '/projects', icon: <TrendingUp /> },
             ].map((link) => (

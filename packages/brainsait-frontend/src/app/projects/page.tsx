@@ -29,8 +29,8 @@ import {
   GitHub,
   FolderOpen,
   BugReport,
-  MergeType,
   AutoAwesome,
+  School,
 } from '@mui/icons-material';
 import { listOrgProjects, listOrgRepos, type GitHubProject, type GitHubRepo } from '@/services/githubService';
 
@@ -89,7 +89,7 @@ export default function ProjectsPage() {
         </Breadcrumbs>
 
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, flexWrap: 'wrap' }}>
           <GitHub sx={{ fontSize: 40, color: 'text.primary' }} />
           <Box sx={{ flex: 1 }}>
             <Typography variant="h4" fontWeight={600}>Incubator Projects</Typography>
@@ -97,10 +97,31 @@ export default function ProjectsPage() {
               {ORG} · {repos.length} repositories · {projects.length} GitHub Projects
             </Typography>
           </Box>
-          <Button variant="contained" href="/templates" startIcon={<FolderOpen />}>
-            Browse Templates
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <Button variant="contained" href="/templates" startIcon={<FolderOpen />}>
+              Browse Templates
+            </Button>
+            <Button variant="outlined" href="/training" startIcon={<School />}>
+              Training Hub
+            </Button>
+          </Box>
         </Box>
+
+        <Card sx={{ mb: 4, borderRadius: 4, background: 'linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%)' }}>
+          <CardContent sx={{ display: 'flex', alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between', flexDirection: { xs: 'column', md: 'row' }, gap: 2.5 }}>
+            <Box>
+              <Typography variant="h6" fontWeight={700} gutterBottom>
+                Product audit update: training is now part of the program surface.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Founders can move from repos and templates into structured learning without leaving BrainSAIT.
+              </Typography>
+            </Box>
+            <Button variant="contained" href="/training/courses/collective-brainpower" startIcon={<AutoAwesome />}>
+              Open first course
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Search */}
         <TextField

@@ -8,9 +8,7 @@ export interface Env {
   MODEL_STORE: R2Bucket;
   PREDICTION_LOGS: R2Bucket;
   BATCH_QUEUE: Queue;
-  SESSION_CONTEXT: DurableObjectNamespace;
   EMBEDDINGS: VectorizeIndex;
-  KNOWLEDGE_GRAPH: VectorizeIndex;
   AI: Ai;
   ML_ANALYTICS: AnalyticsEngineDataset;
   DEFAULT_MODEL: string;

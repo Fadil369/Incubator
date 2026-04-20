@@ -7,7 +7,44 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-ml-inference-prod"
-route = { pattern = "ml.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "ml.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+
+[env.production.vars]
+DEFAULT_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+EMBEDDING_MODEL = "@cf/baai/bge-base-en-v1.5"
+MAX_BATCH_SIZE = "100"
+INFERENCE_TIMEOUT_MS = "30000"
+
+[[env.production.kv_namespaces]]
+binding = "MODEL_CACHE"
+id = "9201cf6a9b1143d8822250dc24e8c8ba"
+
+[[env.production.kv_namespaces]]
+binding = "INFERENCE_CACHE"
+id = "079016c359c348e180724cdd76f29129"
+
+[[env.production.r2_buckets]]
+binding = "MODEL_STORE"
+bucket_name = "brainsait-storage"
+
+[[env.production.r2_buckets]]
+binding = "PREDICTION_LOGS"
+bucket_name = "brainsait-healthcare-audit"
+
+[[env.production.queues.producers]]
+binding = "BATCH_QUEUE"
+queue = "brainsait-claims"
+
+[[env.production.vectorize]]
+binding = "EMBEDDINGS"
+index_name = "brainsait-embeddings"
+
+[env.production.ai]
+binding = "AI"
+
+[[env.production.analytics_engine_datasets]]
+binding = "ML_ANALYTICS"
+dataset = "brainsait_ml_usage"
 
 [env.staging]
 name = "brainsait-ml-inference-staging"
@@ -33,17 +70,9 @@ bucket_name = "brainsait-healthcare-audit"
 binding = "BATCH_QUEUE"
 queue = "brainsait-claims"
 
-[[durable_objects.bindings]]
-name = "SESSION_CONTEXT"
-class_name = "AISessionContext"
-
 [[vectorize]]
 binding = "EMBEDDINGS"
 index_name = "brainsait-embeddings"
-
-[[vectorize]]
-binding = "KNOWLEDGE_GRAPH"
-index_name = "brainsait-knowledge"
 
 [ai]
 binding = "AI"

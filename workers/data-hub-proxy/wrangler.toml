@@ -7,7 +7,49 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-data-hub-prod"
-route = { pattern = "data-hub.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "data-hub.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+
+[env.production.vars]
+HASURA_URL = "https://hasura.brainsait.org"
+CACHE_TTL = "300"
+MAX_QUERY_DEPTH = "10"
+
+[[env.production.kv_namespaces]]
+binding = "SCHEMA_CACHE"
+id = "079016c359c348e180724cdd76f29129"
+
+[[env.production.kv_namespaces]]
+binding = "CONTRACT_REGISTRY"
+id = "a6ac3b1a6086420e95b14e51e78bc288"
+
+[[env.production.kv_namespaces]]
+binding = "SUBSCRIPTION_MAP"
+id = "7e559b5bf3f84271b679db018f59e6d9"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "brainsait-healthcare-d1"
+database_id = "0def24ea-658c-446a-bb05-61856eb5f3de"
+
+[[env.production.r2_buckets]]
+binding = "DATA_STORE"
+bucket_name = "brainsait-storage"
+
+[[env.production.r2_buckets]]
+binding = "CONTRACT_FILES"
+bucket_name = "brainsait-documents"
+
+[[env.production.queues.producers]]
+binding = "DATA_SYNC_QUEUE"
+queue = "brainsait-claims"
+
+[[env.production.queues.producers]]
+binding = "NOTIFICATION_QUEUE"
+queue = "brainsait-notifications"
+
+[[env.production.analytics_engine_datasets]]
+binding = "DATA_ANALYTICS"
+dataset = "brainsait_data_usage"
 
 [env.staging]
 name = "brainsait-data-hub-staging"

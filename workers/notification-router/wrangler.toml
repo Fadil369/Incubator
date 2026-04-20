@@ -6,7 +6,32 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-notifications-prod"
-route = { pattern = "notifications.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "notifications.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+
+[env.production.vars]
+MAX_RETRIES = "3"
+RETRY_DELAY_MS = "5000"
+
+[[env.production.kv_namespaces]]
+binding = "CHANNEL_CONFIG"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[env.production.kv_namespaces]]
+binding = "NOTIFICATION_LOG"
+id = "079016c359c348e180724cdd76f29129"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
+[[env.production.queues.producers]]
+binding = "RETRY_QUEUE"
+queue = "brainsait-notifications"
+
+[[env.production.durable_objects.bindings]]
+name = "WS_SESSIONS"
+class_name = "WebSocketSession"
 
 [env.staging]
 name = "brainsait-notifications-staging"
@@ -25,19 +50,17 @@ binding = "DB"
 database_name = "brainsait-metrics"
 database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
 
-# Consumer for existing notifications queue
-[[queues.consumers]]
-queue = "brainsait-notifications"
-max_batch_size = 10
-max_batch_timeout = 5
-
 [[queues.producers]]
 binding = "RETRY_QUEUE"
 queue = "brainsait-notifications"
 
 [[durable_objects.bindings]]
 name = "WS_SESSIONS"
-class_name = "WebSocketSessions"
+class_name = "WebSocketSession"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["WebSocketSession"]
 
 [vars]
 MAX_RETRIES = "3"
