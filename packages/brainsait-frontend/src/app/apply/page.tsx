@@ -79,12 +79,26 @@ const COUNTRIES = [
 
 const STEPS = ['Partnership Type', 'Your Details', 'Submit'];
 
+/** Response time commitment shown to applicants (keep in sync with partner team SLA). */
+const REVIEW_SLA = '5 business days';
+
+/**
+ * RFC 5321-aligned email validation.
+ * Checks for non-empty local part, @ separator, domain with at least one dot,
+ * and no whitespace. Covers the vast majority of real-world email addresses.
+ */
+function isValidEmail(email: string): boolean {
+  return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/.test(
+    email
+  );
+}
+
 function validate(form: FormData, step: number): string | null {
   if (step === 0 && !form.partnerType) return 'Please select a partnership type.';
   if (step === 1) {
     if (!form.firstName.trim()) return 'First name is required.';
     if (!form.lastName.trim()) return 'Last name is required.';
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'A valid email is required.';
+    if (!form.email.trim() || !isValidEmail(form.email.trim())) return 'A valid email is required.';
     if (!form.organization.trim()) return 'Organization name is required.';
     if (!form.country) return 'Please select your country.';
   }
@@ -154,7 +168,7 @@ export default function ApplyPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
             Thank you for applying to the BrainSAIT Incubator. We&apos;ll review your application and
-            reach out via email within 5 business days.
+            reach out via email within {REVIEW_SLA}.
           </Typography>
           <Card sx={{ mb: 4, textAlign: 'left' }}>
             <CardContent>
@@ -197,7 +211,7 @@ export default function ApplyPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 560, mx: 'auto' }}>
             Join the leading healthcare innovation platform in the Arab world. Tell us about your
-            organization and we&apos;ll be in touch within 5 business days.
+            organization and we&apos;ll be in touch within {REVIEW_SLA}.
           </Typography>
         </Box>
 

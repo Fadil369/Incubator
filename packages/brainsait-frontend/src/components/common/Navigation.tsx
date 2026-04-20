@@ -52,7 +52,7 @@ function ElevationScroll({ children }: { children: React.ReactElement }) {
       ...(children.props.sx ?? {}),
       borderBottom: trigger ? 'none' : '1px solid',
       borderColor: 'divider',
-      bgcolor: trigger ? 'background.paper' : 'background.paper',
+      bgcolor: 'background.paper',
       backdropFilter: trigger ? 'blur(8px)' : 'none',
     },
   });
