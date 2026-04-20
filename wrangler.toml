@@ -23,6 +23,7 @@ DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
 CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
+# GITHUB_REPO: set at deploy time to the org-owned repo hosting partner-provision.yml (e.g. "Fadil369/Incubator")
 
 # KV Namespaces
 [[kv_namespaces]]

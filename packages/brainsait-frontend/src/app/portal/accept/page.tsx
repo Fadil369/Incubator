@@ -266,7 +266,7 @@ function PortalAcceptContent() {
                     fullWidth
                     label="Timezone"
                     value={timezone}
-                    onChange={(e) => setTimezone(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTimezone(e.target.value)}
                     placeholder="e.g. Asia/Riyadh"
                     helperText="Helps us schedule mentor sessions"
                   />
@@ -274,7 +274,7 @@ function PortalAcceptContent() {
                     fullWidth
                     label="LinkedIn Profile (optional)"
                     value={linkedIn}
-                    onChange={(e) => setLinkedIn(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLinkedIn(e.target.value)}
                     placeholder="https://linkedin.com/in/your-name"
                   />
 

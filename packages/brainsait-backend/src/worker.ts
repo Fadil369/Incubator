@@ -55,6 +55,7 @@ interface Env {
   // GitHub Integration
   GITHUB_TOKEN: string;
   GITHUB_ORG: string;
+  GITHUB_REPO: string;        // e.g. "Fadil369/Incubator"
   GITHUB_APP_ID: string;
   GITHUB_APP_PRIVATE_KEY: string;
 }

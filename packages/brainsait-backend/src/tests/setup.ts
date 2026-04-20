@@ -4,11 +4,19 @@ const prisma = new PrismaClient();
 
 beforeAll(async () => {
   // Database setup for tests
+  if (process.env.SKIP_TEST_DB === 'true') {
+    return;
+  }
+
   await prisma.$connect();
 });
 
 afterAll(async () => {
   // Database cleanup after tests
+  if (process.env.SKIP_TEST_DB === 'true') {
+    return;
+  }
+
   await prisma.$disconnect();
 });
 

@@ -27,7 +27,7 @@
       "@/config/*": ["./src/config/*"],
       "@brainsait/shared": ["../brainsait-shared/dist"]
     },
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "@cloudflare/workers-types"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,

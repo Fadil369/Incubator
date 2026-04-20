@@ -1,6 +1,4 @@
 name: Deploy to Cloudflare
-permissions:
-  contents: read
 
 on:
   push:
@@ -102,6 +100,10 @@ jobs:
             SENDGRID_API_KEY
             ANTHROPIC_API_KEY
             OPENAI_API_KEY
+            CLAUDE_API_KEY
+            REDIS_URL
+            EMAIL_API_KEY
+            SAUDI_GOV_API_KEY
             ADMIN_KEY
             GITHUB_TOKEN
         env:
@@ -109,6 +111,10 @@ jobs:
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
+          SAUDI_GOV_API_KEY: ${{ secrets.SAUDI_GOV_API_KEY }}
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 

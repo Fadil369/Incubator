@@ -4,23 +4,25 @@
  * token never has to be exposed to the browser in production.
  */
 
+import { clearWorkerToken, getWorkerAuthHeaders } from '@/services/workerAuthService';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
 const EVENT_BRIDGE_URL = process.env.NEXT_PUBLIC_EVENT_BRIDGE_URL || 'https://events.brainsait.org';
 const GITHUB_ORG = process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator';
 
-function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(url, {
+  const performFetch = async (forceRefresh: boolean = false) => fetch(url, {
     ...options,
-    headers: { ...getAuthHeaders(), ...options.headers },
+    credentials: 'include',
+    headers: { ...(await getWorkerAuthHeaders(forceRefresh)), ...options.headers },
   });
+
+  let response = await performFetch();
+  if (response.status === 401) {
+    clearWorkerToken();
+    response = await performFetch(true);
+  }
+
   if (!response.ok) {
     const text = await response.text().catch(() => '');
     throw new Error(`GitHub service error ${response.status}: ${text}`);
