@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InnovateHub Mentorship</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#1193d4',
+              'background-light': '#f6f7f8',
+              'background-dark': '#101c22',
+              'accent-dark': '#00bcd4',
+              'surface-dark': '#1A2E3E',
+              'text-dark-secondary': '#A0B2C2',
+              'text-dark-primary': '#E0F0FF'
+            },
+            fontFamily: {
+              display: ['Manrope']
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px'
+            }
+          }
+        }
+      };
+    </script>
+<style>
+      .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
+<div class="flex h-screen flex-col">
+<header class="flex-shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark">
+<div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-slate-900 dark:text-text-dark-primary">
+<svg class="h-6 w-6 text-accent-dark" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+</svg>
+<h1 class="text-xl font-bold">InnovateHub</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-slate-600 dark:text-text-dark-secondary hover:text-accent-dark dark:hover:text-accent-dark" href="#">Home</a>
+<a class="text-sm font-bold text-accent-dark" href="#">Mentorship</a>
+<a class="text-sm font-medium text-slate-600 dark:text-text-dark-secondary hover:text-accent-dark dark:hover:text-accent-dark" href="#">Resources</a>
+<a class="text-sm font-medium text-slate-600 dark:text-text-dark-secondary hover:text-accent-dark dark:hover:text-accent-dark" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center rounded-lg bg-slate-800/50 px-2">
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-300"> search </span>
+<input class="w-32 bg-transparent px-2 py-2 text-sm text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-0 sm:w-40" placeholder="Search mentors..." type="text"/>
+</div>
+<button class="relative rounded-full p-2 text-slate-300 dark:text-slate-300 hover:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-accent-dark focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark">
+<span class="material-symbols-outlined"> notifications </span>
+<span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent-dark"></span>
+</button>
+<button>
+<div class="h-9 w-9 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBxKylBQY7HX4YYFe6VaNPSkQ13sH7lYd7_ehjanL3ePcePMmcK-WvTZ3eoN7kx2Fot9Qh3OYH2sIbqJz8h3zpsEdxHCzFF4bSQEjHb4mIirVKnS2b7rCH-L11cD6UqDkNYOwGTkhPxa0pU0zD6YLD57npV-919U8fIe5XIpABnEvN67RLUvPQqqUmQmHrPASJ9-KqqUMEfmoVAxy_YosoI4iXYu7vUvHmUpslH4JCjBLLUJe2oRrZpjVfI_qSckCC_VHcfrgXkDAc");'></div>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto">
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+<aside class="lg:col-span-1">
+<div class="rounded-lg bg-surface-dark p-6 shadow-sm">
+<h2 class="text-lg font-bold text-text-dark-primary mb-4">Messages</h2>
+<div class="space-y-4">
+<a class="flex items-center gap-3 rounded-lg bg-accent-dark/10 dark:bg-accent-dark/20 p-3" href="#">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvd6RSdc4gLVMNPLoOlV5aju2XKrB1ssfOC1NwnMGWuzDxjWuUj5TkrDMnzqNnOFW5CwnKugVabLsfzuE6q_6aBmzrsPp5yeWTwJj-dYSzleCFqjDF7mCM0hhHrU51sk0XhC8xlBQ4QxjfzCGc4LBIGQpVK7SMJMTbiDnJiWZrOj4OT9PwWwt5gjGD7Ef9T5hp_oDMu70JJGrB29lYAkCXEeIJ2TrAHrsKNdvHYJYK1C-B5Ysm2lhlbuQPM77Sk8WFsqXHlEV2bPM");'></div>
+<span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-surface-dark dark:ring-surface-dark"></span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-text-dark-primary text-sm">Sophia Carter</p>
+<p class="text-xs text-text-dark-secondary">Great! I've sent over the doc...</p>
+</div>
+<span class="flex h-5 w-5 items-center justify-center rounded-full bg-accent-dark text-xs font-bold text-white">1</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg p-3 hover:bg-slate-800/50" href="#">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFIagZVDOQbihg-vXY5lFKdwgElY33NsCSCCnxGo9w2KoB5MAePTOGofus-yR9iBAPvTTgANsHuB2nQ9ldcuAgzbAElt66A48KgNc9ujZYVK9jfqMkGMYa8k6b6UHegvNEMQXukbOcY4yX4w5I-mBKm39L6wME_JpZ6vrIIjvGnEg-0vYlCdwZxVBPOuXSV3Lel06Okyc6pvJ-75n3EffbpkO39spzfRvUgTxAAybh27OcaZbiT87IrsoFPc2vtSQFgp81oV-NbjE");'></div>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-text-dark-primary text-sm">Ethan Bennett</p>
+<p class="text-xs text-text-dark-secondary">Let's schedule a call for next week.</p>
+</div>
+</a>
+<a class="flex items-center gap-3 rounded-lg p-3 hover:bg-slate-800/50" href="#">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAej4cnFDYKpVNRU3NID0N5zkkulBOZwoD0MYEPVZVk9ONpt240cib4fo1d0FQ5iHVbN-4RY8s6wXUsdR-c0RtU3xijFrhn98XGsQ0yzkZKsC5aMx58dqQedhwzt-cqsFfSuts3U4zxfNtCLvfcOuNPvvhEjtGGsMnsX7FCXRWZ2NkHjmuDKF0lArBYDJxWdbpiH_-SDB8wereFAB1s_pxwen2YWEbJyxgmn3SuCp4I3qzbJIajBpA3G16rboxdZtkhM2SjlS0gr2g");'></div>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-text-dark-primary text-sm">Olivia Hayes</p>
+<p class="text-xs text-text-dark-secondary">Can you share the financial projections?</p>
+</div>
+</a>
+</div>
+</div>
+</aside>
+<div class="lg:col-span-3">
+<div class="flex h-full flex-col rounded-lg bg-surface-dark shadow-sm">
+<div class="flex items-center justify-between border-b border-slate-800 p-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvd6RSdc4gLVMNPLoOlV5aju2XKrB1ssfOC1NwnMGWuzDxjWuUj5TkrDMnzqNnOFW5CwnKugVabLsfzuE6q_6aBmzrsPp5yeWTwJj-dYSzleCFqjDF7mCM0hhHrU51sk0XhC8xlBQ4QxjfzCGc4LBIGQpVK7SMJMTbiDnJiWZrOj4OT9PwWwt5gjGD7Ef9T5hp_oDMu70JJGrB29lYAkCXEeIJ2TrAHrsKNdvHYJYK1C-B5Ysm2lhlbuQPM77Sk8WFsqXHlEV2bPM");'></div>
+<div>
+<h3 class="font-bold text-text-dark-primary">Sophia Carter</h3>
+<p class="text-sm text-green-500">Online</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="rounded-lg bg-accent-dark/10 dark:bg-accent-dark/20 px-4 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-dark/20 dark:hover:bg-accent-dark/30">Book Session</button>
+<button class="rounded-full p-2 text-slate-300 dark:text-slate-300 hover:bg-slate-800/50">
+<span class="material-symbols-outlined"> more_vert </span>
+</button>
+</div>
+</div>
+<div class="flex-1 space-y-6 overflow-y-auto p-6">
+<div class="flex items-start gap-3">
+<div class="h-8 w-8 flex-shrink-0 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvd6RSdc4gLVMNPLoOlV5aju2XKrB1ssfOC1NwnMGWuzDxjWuUj5TkrDMnzqNnOFW5CwnKugVabLsfzuE6q_6aBmzrsPp5yeWTwJj-dYSzleCFqjDF7mCM0hhHrU51sk0XhC8xlBQ4QxjfzCGc4LBIGQpVK7SMJMTbiDnJiWZrOj4OT9PwWwt5gjGD7Ef9T5hp_oDMu70JJGrB29lYAkCXEeIJ2TrAHrsKNdvHYJYK1C-B5Ysm2lhlbuQPM77Sk8WFsqXHlEV2bPM");'></div>
+<div class="max-w-xs rounded-lg bg-slate-800 p-3">
+<p class="text-sm text-text-dark-secondary">Hi there! I've reviewed your business plan. It's solid, but I have a few suggestions to strengthen the market entry strategy.</p>
+</div>
+</div>
+<div class="flex items-start justify-end gap-3">
+<div class="max-w-xs rounded-lg bg-accent-dark p-3 text-white">
+<p class="text-sm">That's great to hear, Sophia! I'm all ears. What are your thoughts?</p>
+</div>
+<div class="h-8 w-8 flex-shrink-0 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBxKylBQY7HX4YYFe6VaNPSkQ13sH7lYd7_ehjanL3ePcePMmcK-WvTZ3eoN7kx2Fot9Qh3OYH2sIbqJz8h3zpsEdxHCzFF4bSQEjHb4mIirVKnS2b7rCH-L11cD6UqDkNYOwGTkhPxa0pU0zD6YLD57npV-919U8fIe5XIpABnEvN67RLUvPQqqUmQmHrPASJ9-KqqUMEfmoVAxy_YosoI4iXYu7vUvHmUpslH4JCjBLLUJe2oRrZpjVfI_qSckCC_VHcfrgXkDAc");'></div>
+</div>
+<div class="flex items-start gap-3">
+<div class="h-8 w-8 flex-shrink-0 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvd6RSdc4gLVMNPLoOlV5aju2XKrB1ssfOC1NwnMGWuzDxjWuUj5TkrDMnzqNnOFW5CwnKugVabLsfzuE6q_6aBmzrsPp5yeWTwJj-dYSzleCFqjDF7mCM0hhHrU51sk0XhC8xlBQ4QxjfzCGc4LBIGQpVK7SMJMTbiDnJiWZrOj4OT9PwWwt5gjGD7Ef9T5hp_oDMu70JJGrB29lYAkCXEeIJ2TrAHrsKNdvHYJYK1C-B5Ysm2lhlbuQPM77Sk8WFsqXHlEV2bPM");'></div>
+<div class="space-y-2">
+<div class="max-w-xs rounded-lg bg-slate-800 p-3">
+<p class="text-sm text-text-dark-secondary">Great! I've sent over the document with my notes. Take a look and let me know what you think.</p>
+</div>
+<div class="flex items-center gap-2 rounded-lg border border-slate-700 p-2 max-w-xs">
+<span class="material-symbols-outlined text-accent-dark text-2xl"> description </span>
+<div class="flex-1">
+<p class="text-sm font-medium text-text-dark-primary">market-entry-notes.pdf</p>
+<p class="text-xs text-slate-400">128 KB</p>
+</div>
+<button class="rounded-full p-1.5 text-slate-400 dark:text-slate-300 hover:bg-slate-800/50">
+<span class="material-symbols-outlined text-base"> download </span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-800 bg-surface-dark p-4">
+<div class="relative">
+<input class="w-full rounded-lg border-slate-700 bg-slate-800 py-2.5 pl-4 pr-24 text-sm text-text-dark-primary focus:border-accent-dark focus:ring-accent-dark" placeholder="Type your message..." type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-2">
+<button class="rounded-full p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-700">
+<span class="material-symbols-outlined"> attach_file </span>
+</button>
+<button class="ml-1 rounded-lg bg-accent-dark px-3 py-1.5 text-sm font-semibold text-white hover:bg-accent-dark/80">
+                  Send
+                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

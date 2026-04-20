@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Incubator Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb597",
+                        "background": "#f8fafb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadb",
+                        "secondary-container": "#c6d3ff",
+                        "on-secondary-fixed-variant": "#394669",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#822f00",
+                        "secondary-fixed": "#dae2ff",
+                        "on-surface": "#191c1d",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed-dim": "#b8c6f0",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary-container": "#ffa27a",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#002e78",
+                        "primary-container": "#1044a0",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-container": "#4d5b7f",
+                        "on-primary-container": "#9eb8ff",
+                        "surface-container-low": "#f2f4f5",
+                        "tertiary": "#5d1f00",
+                        "on-primary-fixed": "#001847",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2f5ab6",
+                        "on-primary-fixed-variant": "#09419d",
+                        "secondary": "#505d82",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#0b1a3b",
+                        "outline": "#747783",
+                        "surface-bright": "#f8fafb",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8fafb",
+                        "surface-container": "#eceeef",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8e9",
+                        "inverse-on-surface": "#eff1f2",
+                        "outline-variant": "#c3c6d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-gradient {
+            background: linear-gradient(135deg, #002e78 0%, #1044a0 100%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar (Shared Component Strategy) -->
+<!-- Suppressed active state highlighting as this is an onboarding entry point -->
+<header class="fixed top-0 w-full z-50 bg-[#f8fafb]/80 dark:bg-[#191c1d]/80 backdrop-blur-lg flex items-center justify-between px-6 h-16 w-full shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+<div class="flex items-center gap-3">
+<span class="text-xl font-extrabold tracking-tighter text-[#002e78] dark:text-[#dae2ff] font-headline uppercase">INCUBATOR</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low hover:bg-surface-container-highest transition-colors active:scale-95 duration-200 ease-in-out">
+<span class="material-symbols-outlined text-[#434652] dark:text-[#c3c6d4] text-[20px]" data-icon="translate">translate</span>
+<span class="font-label text-[12px] font-semibold tracking-wider text-on-surface-variant uppercase">AR</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest border-2 border-surface-container-low shadow-sm">
+<img alt="User Profile" data-alt="professional portrait of a young entrepreneur in a modern office setting with soft natural window light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBow_UafMx71FoNJyXX91H75DpXMuWHxaUHlPV_4O-tAYzqqO5PjfQhHj551_vTpcEn3iLdEQY8d-4Ao9IE8QQbWENrg1NwJn-jTuobnXYNpT6UAL6LOU2AQ-XEfOF6g498ZFt80aR6qyf3wy2FYBX58exTOYiQ2jCW9XTMx3clbSAakht2hb5ecvLv5xC0IVWE4aL359wb2JVRRw0oTcb6hK4IjEZt25LrJ-S-4HkDCq-9lT_TpHCr7cYYO71qOBdk_Ut7l3fEhlY"/>
+</div>
+</div>
+</header>
+<main class="relative min-h-screen pt-16 pb-12 overflow-x-hidden">
+<!-- Hero Section: Editorial Asymmetry -->
+<section class="relative px-6 pt-12 pb-8">
+<div class="absolute -top-12 -right-24 w-64 h-64 bg-primary-fixed/30 rounded-full blur-[80px]"></div>
+<div class="relative z-10 flex flex-col gap-6">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 bg-secondary-fixed w-max rounded-full">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label text-[11px] font-bold tracking-widest text-on-primary-fixed-variant uppercase">Cohort 2024 Now Open</span>
+</div>
+<h1 class="font-headline font-extrabold text-5xl leading-[1.1] tracking-tight text-primary max-w-[90%]">
+                    Shape the <br/>
+<span class="text-surface-tint opacity-80 italic">Blueprint</span> <br/>
+                    of Tomorrow.
+                </h1>
+<p class="font-body text-lg text-on-surface-variant max-w-[85%] leading-relaxed">
+                    Join a world-class ecosystem designed to turn visionary concepts into market-leading ventures. High-performance mentorship for elite founders.
+                </p>
+<div class="flex flex-col gap-3 pt-4">
+<button class="editorial-gradient text-on-primary h-14 rounded-lg font-label font-bold text-[15px] tracking-wide shadow-lg active:scale-[0.98] transition-transform duration-200">
+                        Start Application
+                    </button>
+<button class="bg-surface-container-low text-on-surface-variant h-14 rounded-lg font-label font-semibold text-[15px] tracking-wide active:scale-[0.98] transition-transform duration-200">
+                        Explore the Program
+                    </button>
+</div>
+</div>
+</section>
+<!-- Dynamic Content: Bento Style Highlights -->
+<section class="px-6 space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<!-- Highlight Card 1: Growth -->
+<div class="col-span-2 bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden shadow-sm">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary mb-3 block" data-icon="rocket_launch">rocket_launch</span>
+<h3 class="font-headline font-bold text-xl text-on-surface">Accelerated Growth</h3>
+<p class="font-body text-sm text-on-surface-variant mt-2">Access seed capital up to $150k and strategic scaling resources.</p>
+</div>
+<div class="absolute bottom-0 right-0 w-32 h-32 opacity-10">
+<img alt="Growth chart" data-alt="minimalist abstract visualization of growth and upward trajectory using clean lines and cool blue tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuNuqbTq-cbgwAKKDssIwd8C4la3LBgsAuemkw-48K57Xs89Lz2GLbqniirt2hdHPE9HRfkiubILjJdleg_bgTALi3XAbQ1_3yGkHZgi6AMSfrjHhYKTAQ3NQaBJKFxeqAzaIIaEbcNgt4LaEPbq-9GEeO8uR4slB3AxbXCCqAxF1mWH8Fr2WshPFPJDmDGszJZCLaUa-f2wNjLUwHGk3tx7rEtlek2jo1gnjyIPRAcypfgRiE8-gDPsZOQb76qikLyRASbiSoR0Q"/>
+</div>
+</div>
+<!-- Highlight Card 2: Mentorship -->
+<div class="bg-surface-container-low p-5 rounded-xl flex flex-col justify-between h-48">
+<span class="material-symbols-outlined text-primary" data-icon="psychology">psychology</span>
+<div>
+<h4 class="font-headline font-bold text-base text-on-surface">Global Mentors</h4>
+<p class="font-body text-xs text-on-surface-variant mt-1 leading-tight">Connect with industry leaders and experts.</p>
+</div>
+</div>
+<!-- Highlight Card 3: Network -->
+<div class="bg-primary-container p-5 rounded-xl flex flex-col justify-between h-48 text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="hub" style="font-variation-settings: 'FILL' 1;">hub</span>
+<div>
+<h4 class="font-headline font-bold text-base">Elite Network</h4>
+<p class="font-body text-xs mt-1 leading-tight opacity-90">Unlock doors to institutional investors and partners.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Program Progress Tracker (Design System Component) -->
+<section class="mt-12 px-6">
+<h2 class="font-headline font-bold text-2xl mb-8">Application Stages</h2>
+<div class="flex flex-col gap-8 relative">
+<!-- Vertical Progress Line -->
+<div class="absolute left-4 top-2 bottom-2 w-1 bg-surface-container-highest rounded-full"></div>
+<!-- Stage 1 -->
+<div class="flex gap-6 relative z-10">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-[0_0_15px_rgba(0,46,120,0.3)]">
+<span class="material-symbols-outlined text-sm" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-base text-on-surface">Submission</h4>
+<p class="font-body text-xs text-on-surface-variant">Submit your pitch deck and business model</p>
+</div>
+</div>
+<!-- Stage 2 -->
+<div class="flex gap-6 relative z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border-2 border-primary flex items-center justify-center text-primary">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-base text-on-surface">Initial Review</h4>
+<p class="font-body text-xs text-on-surface-variant">Our team evaluates strategic alignment</p>
+</div>
+</div>
+<!-- Stage 3 -->
+<div class="flex gap-6 relative z-10 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="font-label text-xs font-bold">03</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-base text-on-surface">Founder Interview</h4>
+<p class="font-body text-xs text-on-surface-variant">Live pitch and technical discussion</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer / Testimonial Moment -->
+<section class="mt-16 mx-6 p-6 rounded-2xl bg-surface-container-low/50 relative border border-outline-variant/15">
+<span class="material-symbols-outlined text-surface-tint mb-4 opacity-40 text-4xl" data-icon="format_quote">format_quote</span>
+<p class="font-body italic text-on-surface-variant text-base leading-relaxed mb-6">
+                "INCUBATOR provided more than just funding; they gave us a blueprint for institutional scale."
+            </p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="Sarah Chen" data-alt="close up headshot of a smiling tech founder with short dark hair in a bright professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL6Hk3GZhretgyAuSPiZ0c_DK-pmWc_ptNn2bKejOhOivoXH6wiHoWnvi6HR6Nhe1tM4J2GU4OgA7R_Gl2Sadcf_qPnCw9yr_KlM5U-oG8oxskSpbDSJdonfJ3lKuXVgrI-b0l36rbKGpZIc1xkG4VQT6QlaY_zBK1ZD2cX0efC0VBFtxe17lwF7B465e_wy7M_TZsGPPmlAlboLRky4xfq57HI783gH9t-hPe-bfe44zrvDj-jR7Z8_lw1Lo7wDSWky9qm3X7bI"/>
+</div>
+<div>
+<p class="font-headline font-bold text-sm text-on-surface">Marcus Thorne</p>
+<p class="font-body text-[11px] text-on-surface-variant uppercase tracking-widest font-semibold">Founder, Nexus AI</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Suppressed as per UX Goal (Onboarding Focus) -->
+</body></html>

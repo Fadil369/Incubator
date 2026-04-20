@@ -1,0 +1,28 @@
+{
+  "id": "get_screen-1776672664261",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/06e72644cc8343a3a72bdd7130bc2a5a\",\"title\":\"Welcome Screen (Mobile)\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/2f9338bef2f84ab1832225d382a460ec\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0uiVlDinw74BHztHoaXxDJT54Rh1dw3Zsa33INy1-zva1RBUL4vfVXVrPgdbsXX4rg6L7a7yLpBTncI3F13KzWHT882Zf5pj68cu2Z3r2rB0nkwnbXjM7j4VvxAFeRm05ZgpcYxG1oOil-mCsR5Vmc7pSyAOgYcbE_pXulAdMnEoEfQqmtOXwMUaCNApRn70v8eG-1GGHGXL8hv_ivr7nWm03apmcjqkZC2ujUoL6xygCxkFrlzJzN-dzSY\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/f6740ed87f744f36875c763d8b481b03\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y0NWU5ZDQ4YzkwNDRjZTM4YzQxNmJjYTdhNDFkOTFhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086\",\"mimeType\":\"text/html\"},\"width\":\"780\",\"height\":\"3426\",\"deviceType\":\"MOBILE\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "MOBILE",
+      "height": "3426",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Y0NWU5ZDQ4YzkwNDRjZTM4YzQxNmJjYTdhNDFkOTFhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086",
+        "mimeType": "text/html",
+        "name": "projects/5561486881429584250/files/f6740ed87f744f36875c763d8b481b03"
+      },
+      "name": "projects/5561486881429584250/screens/06e72644cc8343a3a72bdd7130bc2a5a",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiVlDinw74BHztHoaXxDJT54Rh1dw3Zsa33INy1-zva1RBUL4vfVXVrPgdbsXX4rg6L7a7yLpBTncI3F13KzWHT882Zf5pj68cu2Z3r2rB0nkwnbXjM7j4VvxAFeRm05ZgpcYxG1oOil-mCsR5Vmc7pSyAOgYcbE_pXulAdMnEoEfQqmtOXwMUaCNApRn70v8eG-1GGHGXL8hv_ivr7nWm03apmcjqkZC2ujUoL6xygCxkFrlzJzN-dzSY",
+        "name": "projects/5561486881429584250/files/2f9338bef2f84ab1832225d382a460ec"
+      },
+      "title": "Welcome Screen (Mobile)",
+      "width": "780"
+    }
+  }
+}

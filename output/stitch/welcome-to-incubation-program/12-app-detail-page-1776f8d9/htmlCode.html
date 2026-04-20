@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1193d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              display: ["Inter"],
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+    </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200">
+<div class="relative flex min-h-screen w-full flex-col">
+<header class="sticky top-0 z-10 flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-gray-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-xl font-bold">InnovateHub</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-primary" href="#">Marketplace</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Resources</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"> search </span>
+<input class="form-input w-full min-w-0 flex-1 rounded-lg border-gray-300 bg-background-light dark:border-gray-700 dark:bg-gray-900/50 py-2 pl-10 pr-4 text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-primary focus:ring-primary" placeholder="Search" type="search"/>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined"> help </span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAWfQZ5bqAQ7tR6ZgTVIVYLM8yrb7UB5wy_sNXWyc3r5SIWs84TupEr61ISs0ch6Yx9vHH0FKPJh-BecHkJY6RSAd1lvwmBFQMjZCjdpbAlkVULRdmi5x-SmhkrgUuPwkEMjRZgmiFLFhZ0bm_SQs-Id9Ej3prHUUYSDAQQMzuF15ttDX-luMqlWQjrNcShPq-2I_-MTu7mHQ5yC4yjpDk3do3rq0wuetezu90smmt4kUjtCgA_v-8mZXU2WQIQY453bjeEI9JIGro");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">
+<div class="w-full max-w-5xl">
+<div class="mb-6 px-4">
+<nav class="flex items-center text-sm font-medium text-gray-500 dark:text-gray-400">
+<a class="hover:text-primary" href="#">Marketplace</a>
+<span class="mx-2">/</span>
+<span class="text-gray-800 dark:text-gray-200">App Details</span>
+</nav>
+</div>
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-8 p-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-4xl font-bold text-gray-900 dark:text-white">HealthConnect</h1>
+<p class="text-gray-600 dark:text-gray-300">Streamline patient data management and improve care coordination with HealthConnect.</p>
+</div>
+<div class="flex flex-shrink-0 items-center gap-3">
+<button class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                Purchase
+              </button>
+<button class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark px-5 py-2.5 text-sm font-semibold text-gray-800 dark:text-gray-200 shadow-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">
+<svg class="bi bi-github" fill="currentColor" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+<span>GitHub</span>
+</button>
+</div>
+</div>
+<div class="border-b border-gray-200 dark:border-gray-800 px-4">
+<nav aria-label="Tabs" class="-mb-px flex space-x-8">
+<a class="border-primary text-primary whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium" href="#">Overview</a>
+<a class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium" href="#">Reviews</a>
+<a class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium" href="#">Support</a>
+</nav>
+</div>
+<div class="space-y-12 px-4 py-8">
+<section>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">About</h2>
+<p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                HealthConnect is a comprehensive platform designed to enhance patient care through efficient data management and seamless communication. It integrates with existing healthcare systems, providing a unified view of patient information and facilitating collaboration among healthcare providers. With HealthConnect, you can improve patient outcomes, reduce administrative overhead, and ensure data security and compliance.
+              </p>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Key Features</h2>
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+<div class="flex flex-col gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-4">
+<span class="material-symbols-outlined text-primary text-3xl"> ecg_heart </span>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Patient Data Management</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Centralized access to patient records, including medical history, medications, and allergies.</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-4">
+<span class="material-symbols-outlined text-primary text-3xl"> group </span>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Care Coordination</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Tools for scheduling, task management, and secure messaging among care team members.</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-4">
+<span class="material-symbols-outlined text-primary text-3xl"> verified_user </span>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Security &amp; Compliance</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Robust security measures to protect patient data and ensure compliance with industry regulations.</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-4">
+<span class="material-symbols-outlined text-primary text-3xl"> integration_instructions </span>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Integration Support</h3>
+<p class="text-sm text-gray-600 dark:text-gray-400">Seamless integration with NPHIES and FHIR standards for interoperability.</p>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Screenshots</h2>
+<div class="grid grid-cols-2 grid-rows-2 gap-4">
+<div class="col-span-2 row-span-2 sm:col-span-1 rounded-lg overflow-hidden"><div class="h-full w-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCp_4nuZqF-ts_5tLFi3Sl6jh4Ab_90ZHRt6PBP74fRgKlhCv6jiK22pkFGao6NHH3I7Llgu3uV9fjDgZO24lZBoR-BT6SD_Hf-zsPbyx4foRHPekV9k4l3FJJdb0Dc3gXwGyXIOh4aAeEbSqvWVzBQgD7GTjVEuSrp7ec7Tx9S-LbKP4S7p36Q3u0pYFhkTyxpFh3U4pkJdtWvwaUJYfEbPbJVqbAQ6GE_tCwU2Ag6KHfX80l0VVQuWLfxM-uXdc_MiLQngf5rTso");'></div></div>
+<div class="col-span-2 sm:col-span-1 rounded-lg overflow-hidden"><div class="h-full w-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD35l2FXQJdPgTVxCXYh4t5tF645fO-vqrDJAMO3RWhhn-WnMgNei3HIJXm3Ry07Q7TPcJTAiaHsKIiE6GVnzFslNQGTQHCZMwVxD9oogX6eNzrXAbyRQezOk39berMKVDM67rwp-2GmEX_y7GMcrn3NIk1OFg9fZg4L74HgpJ4fg1BIQzU6n59K0lgpAgnep0l1hp7k8AZXbx-aSlGA7KjdNHra_zKZLPvT3wIHeRhfINHAFel_u6RXGPmwhlPuCQ6zd-QsZwR3cA");'></div></div>
+<div class="col-span-2 sm:col-span-1 rounded-lg overflow-hidden"><div class="h-full w-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5b_LwAwkZguyqTgEH7PQj6wkH_JYdoCyb9wP4wLi1YNYRNM7Bbd3p8FOz-kFPogsWjuG5Wk7kqVJe3fuyrsB9dHTKD0f8DDu-BdC5frs-5C6--WU6Ut_2Pweto1KUqgacbj8edhoRuGeiHl2AWx03Bq_7S48WoE14AuQy1jRGe-a0B53yIqZ608kdvxHx-pObUwIhPJ5uw8yNu0u_rBz-bSFT7rNxSer7L182G5BTizURsFT3MFnQUR6F2OeZqvJw-uuBkpfT928");'></div></div>
+</div>
+</section>
+<section>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Pricing</h2>
+<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+<div class="flex flex-col gap-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-6">
+<div class="space-y-1">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Basic</h3>
+<p class="text-4xl font-bold text-gray-900 dark:text-white">Free</p>
+</div>
+<button class="inline-flex items-center justify-center rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30">Get Started</button>
+<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Up to 100 patients</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Basic reporting</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Community support</li>
+</ul>
+</div>
+<div class="relative flex flex-col gap-6 rounded-lg border-2 border-primary bg-background-light dark:bg-background-dark p-6">
+<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">Most Popular</div>
+<div class="space-y-1">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Standard</h3>
+<p class="text-4xl font-bold text-gray-900 dark:text-white">$49<span class="text-base font-medium text-gray-500 dark:text-gray-400">/month</span></p>
+</div>
+<button class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Choose Plan</button>
+<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Unlimited patients</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Advanced reporting</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Priority support</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Integration with 3rd party apps</li>
+</ul>
+</div>
+<div class="flex flex-col gap-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark p-6">
+<div class="space-y-1">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white">Premium</h3>
+<p class="text-4xl font-bold text-gray-900 dark:text-white">$99<span class="text-base font-medium text-gray-500 dark:text-gray-400">/month</span></p>
+</div>
+<button class="inline-flex items-center justify-center rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30">Choose Plan</button>
+<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Unlimited patients</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Customizable dashboards</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>24/7 support</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Dedicated account manager</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg"> check_circle </span>Integration with all 3rd party apps</li>
+</ul>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

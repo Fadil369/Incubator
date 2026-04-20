@@ -1,0 +1,28 @@
+{
+  "id": "get_screen-1776672659880",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/737cc92bf4ec4dc0a9f3726bac5dd7c3\",\"title\":\"Application Form (Mobile)\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/f0fb6766838f4c80904546bd952b6fcd\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0uiWb8Pri-qhlSycMsiWpcf-MaJHo-vFaJ7Uu96oBVf2QLNSDs5KeTKmpcKuTCeVgGe-A6osHYY-4oyZld-GkEktS-kGG20mZjaHCEkWOPSYQGXHt3uNk-IaoKdBy6uzKFNyeFQYsBBwjj-scyoLQoTr2uE-mI4R9lj5FXyhPFx8A7QC8r3Dso4lovFDiSeRDjR0Ii6dk5hOXa_WFsS_5zxTWQW8gWBOOd7OjCh_KF6bKXwbL8nEUW9Uu3o\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/7fd624d0e4cf4534aa0b93b3e34681b1\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UxNmFiY2QxYTdlMDRiNmQ4ZTQ4MTE1YzM2YzRjODI5EgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086\",\"mimeType\":\"text/html\"},\"width\":\"780\",\"height\":\"2814\",\"deviceType\":\"MOBILE\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "MOBILE",
+      "height": "2814",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UxNmFiY2QxYTdlMDRiNmQ4ZTQ4MTE1YzM2YzRjODI5EgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086",
+        "mimeType": "text/html",
+        "name": "projects/5561486881429584250/files/7fd624d0e4cf4534aa0b93b3e34681b1"
+      },
+      "name": "projects/5561486881429584250/screens/737cc92bf4ec4dc0a9f3726bac5dd7c3",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiWb8Pri-qhlSycMsiWpcf-MaJHo-vFaJ7Uu96oBVf2QLNSDs5KeTKmpcKuTCeVgGe-A6osHYY-4oyZld-GkEktS-kGG20mZjaHCEkWOPSYQGXHt3uNk-IaoKdBy6uzKFNyeFQYsBBwjj-scyoLQoTr2uE-mI4R9lj5FXyhPFx8A7QC8r3Dso4lovFDiSeRDjR0Ii6dk5hOXa_WFsS_5zxTWQW8gWBOOd7OjCh_KF6bKXwbL8nEUW9Uu3o",
+        "name": "projects/5561486881429584250/files/f0fb6766838f4c80904546bd952b6fcd"
+      },
+      "title": "Application Form (Mobile)",
+      "width": "780"
+    }
+  }
+}

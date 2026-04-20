@@ -30,6 +30,7 @@
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
+    "stitch:export": "node scripts/stitch/export-screens.mjs",
     "clean": "npm run clean --workspaces && rm -rf node_modules",
     "deploy": "npm run deploy:frontend && npm run deploy:backend",
     "deploy:frontend": "npm run deploy:frontend --workspace=brainsait-frontend",

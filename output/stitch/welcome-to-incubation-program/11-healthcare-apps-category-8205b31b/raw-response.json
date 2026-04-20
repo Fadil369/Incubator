@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672633226",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/8205b31b1aa14c6dbbab30b9ad88d7f1\",\"title\":\"Healthcare Apps Category\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/d137908ac7fe441ca3757f0dfb0fb842\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0ujmUGLmXecbz0T5bGsCLsjFmQiuI56sKrUs0neXPwY2AiWgO4g-kAfwH1_Zasgxtvx2YmTIlDecrqI2V1_bNQF9fm3HXgyLoBGQ6i1gqiTkU1TzT_BPMOYLKJxqNPWpQNAdWYUMhhCwDDCKt9oRUg0-b8aJTWrbBFHp0MlyDZMTT8v8yfXyfcV07S_iLK6KIhUsg0TWWyVx6bCyc0Cipi0h_qVeCYHP62XWozzP_g4-45bFO5n7hIDS314\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/6c8fde6d18e3413d97bcb99469c3d8e8\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg5OGEzZmRlNTYwYzQ0OGQ5NTMxN2RiODgzMDA4ZDNhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"2388\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "2388",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg5OGEzZmRlNTYwYzQ0OGQ5NTMxN2RiODgzMDA4ZDNhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/6c8fde6d18e3413d97bcb99469c3d8e8"
+      },
+      "name": "projects/5561486881429584250/screens/8205b31b1aa14c6dbbab30b9ad88d7f1",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ujmUGLmXecbz0T5bGsCLsjFmQiuI56sKrUs0neXPwY2AiWgO4g-kAfwH1_Zasgxtvx2YmTIlDecrqI2V1_bNQF9fm3HXgyLoBGQ6i1gqiTkU1TzT_BPMOYLKJxqNPWpQNAdWYUMhhCwDDCKt9oRUg0-b8aJTWrbBFHp0MlyDZMTT8v8yfXyfcV07S_iLK6KIhUsg0TWWyVx6bCyc0Cipi0h_qVeCYHP62XWozzP_g4-45bFO5n7hIDS314",
+        "name": "projects/5561486881429584250/files/d137908ac7fe441ca3757f0dfb0fb842"
+      },
+      "title": "Healthcare Apps Category",
+      "width": "2560"
+    }
+  }
+}

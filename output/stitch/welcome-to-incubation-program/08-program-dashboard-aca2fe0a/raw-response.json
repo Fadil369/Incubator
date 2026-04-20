@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672625357",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/aca2fe0ae53f4d2cb7587d179f53d940\",\"title\":\"Program Dashboard\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/f40165c399c748ad9366828241e48082\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0ui4Gxwr9-0IibUjRaNi1zlN16xqInmUo0gODzCQ8_h9zMwMliFXqbfln1pSkk-tGdN_2XTF9alT-ulU58GyJzdtwvH0gjC6aZ80dlMQqT4HlQ4q6fRiMYwktSxfCCNK6JtSVYvVuMCabm92QC84SKnpGsQELs6hz_SxWsT9E9j7EiroveDmbsemg6P4i15SrUZ7zar1bsRNuNRyrf_D-rkc9Z9c1m17lCdgdgZump_mOhjXamGnCmatpQ\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/8ab83c0b42324174bd7f93fb7b5e3ed7\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzY2YWQ1ZTBhZjQ0YjQxYzZiYTgxNjUxNjc4Y2EyY2Y2EgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"1904\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "1904",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzY2YWQ1ZTBhZjQ0YjQxYzZiYTgxNjUxNjc4Y2EyY2Y2EgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/8ab83c0b42324174bd7f93fb7b5e3ed7"
+      },
+      "name": "projects/5561486881429584250/screens/aca2fe0ae53f4d2cb7587d179f53d940",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ui4Gxwr9-0IibUjRaNi1zlN16xqInmUo0gODzCQ8_h9zMwMliFXqbfln1pSkk-tGdN_2XTF9alT-ulU58GyJzdtwvH0gjC6aZ80dlMQqT4HlQ4q6fRiMYwktSxfCCNK6JtSVYvVuMCabm92QC84SKnpGsQELs6hz_SxWsT9E9j7EiroveDmbsemg6P4i15SrUZ7zar1bsRNuNRyrf_D-rkc9Z9c1m17lCdgdgZump_mOhjXamGnCmatpQ",
+        "name": "projects/5561486881429584250/files/f40165c399c748ad9366828241e48082"
+      },
+      "title": "Program Dashboard",
+      "width": "2560"
+    }
+  }
+}

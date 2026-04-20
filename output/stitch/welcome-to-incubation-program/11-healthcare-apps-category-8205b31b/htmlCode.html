@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch Design</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1193d4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex flex-col min-h-screen w-full">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-black/10 dark:border-white/10 px-10 py-4">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-black dark:text-white">
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold">App Store</h2>
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-primary" href="#">Categories</a>
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary transition-colors" href="#">My Apps</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-black/40 dark:text-white/40">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+</svg>
+</div>
+<input class="w-64 h-10 pl-10 pr-4 rounded-lg bg-black/5 dark:bg-white/5 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Search apps..." type="search"/>
+</div>
+<div class="w-10 h-10 bg-center bg-no-repeat bg-cover rounded-full" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBnuenOm4IxfwJjhs0PWwH_rMaRvYi7XafxCWBc9L-IKZmLYOK_3Yu1g8iDpm7pxZi4lLxn4-KecJOzM0Y6ZiD8MRnDyoo28oxgSuEVF7lpru9ICVMvybKebsSygFUa51tMzdLQoJk_XZbNEbJuvQXsd884HLhiM-P9m0hYaWXzeVWGH7hd7bM3hAHf3T9abxOfEX2w3HfGuf9YYj1OyWaqbsKEC-xIUumzYd1lTL7QMOuzpQAhgx1bs7a73NhZ8XG4VvgX1BJn2hI");'></div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="mb-10">
+<h1 class="text-4xl font-bold text-black dark:text-white">Healthcare Apps</h1>
+<p class="mt-2 text-base text-black/60 dark:text-white/60">Explore applications tailored for the healthcare industry.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBvpGjkSzSv30XsM6iHALKAqylKR2n5LPEK3lqdyxD3okpMVLyDVhdA_InNQL_EKMXZ0H5IVaUDSGw-07U-mYYTopup0n-DGtRCtv4I3fihh4ZRVziBys76P-0JabZ-nDyiDrvv1AXCLNJJHYndPNSrcLGGEzWnGK2jA-tVmZeNj2cWAFcouTnc1gW23JXXDtC--Q6u5MVmGiui8oiOet1iEg-oZOjczL6imf8VmKvcj9JIimnBWV1T2HREduFYicoYd_2LUXNL2AA");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">NPHIES Integration</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">HealthConnect</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Seamlessly integrates with NPHIES for secure data exchange.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">FHIR</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">API</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCP3x4tJKM2j9JyU8l35EGktLfiQ6LIswpv1QA6rHTaG0sm6lXvTBtE1ztwRYaYHbOh0XE13WDd9R6os2_TkD0QubEBdz-yVpS9vEiaBa2IatbmnnKJbwAZ2j4wid8pIJOMD2zaMM7qkje0gjF-S5ciLekB_gtlRGHGbwodSwH_Kin9iCzdF4gZlLxyE8an0bKsZbxXGYGEsODjD36u8vTXajJO-jx2G2CQPeFlPNz1NkvAne8QDFo_s1gX2y1oe4ZNspMg8IX9zl8");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">FHIR Resources</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">CareLink</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Access and manage FHIR resources efficiently.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">RCM Master</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Analytics</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPoKlnG2s0KEPS0BL5w_eVHRcHsdXwu_EGW5PEbnZht_05rvTg_We2Y_kTEAs0z3ne4iAabo1Iw2VNCFpJSH6rSy9xL1mRqzgJxMeScjbLjbDOUgXMicLRHL33OTEkhlIZYbRXk3NX05OjEpfsWhIlQhquV5XrBb487PA_Hg6wjOZPcRfbfv4khUCioNHqA1REdjX0ZUjDruT9MJyvaRpp3U1jTL7nLhrgTPxsR0Pqs1BdOLDYAT6HMwVES0LZ9lSzxIwETRivtuI");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">RCM Master</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">MediBill</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Streamline revenue cycle management with MediBill.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Billing</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Finance</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6GgvG3wh3QFMKkvy6eOdUfwxNoJAUjSXL59Tf6TUzSDUiuplZcPoxErDrH1y1n_v6BPcSe5OrU9muxR9r5ptXmlhZWajhZbECtVdqDkzVWYInsldZlWg83d5WiUGnkvfpvjcj3O5FpUOGMJprhin5PxXL1FhYKiZYIqvS_Z1pbWQ3aGEFRr3UyICdOz_bR8s-51QNxvemSt6ok2hhEXZqV-GagMIF0OhRstcMxMcgE4gsFmmsjyYHkzxtQS6MiGtI23DDL3CCvWw");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">Patient Engagement</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">MyHealth</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Engage patients with personalized health information.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Mobile</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Portal</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7B229godGywxOUGkE6ba6x5uoOIOmoUbSrzDf7XjIOsSstGuNC8elFPkFjoQ5uGsLOc7D69xBLsUX1LAoN46PY3uGnTeQCrFJfMinY2W7A0_EtdWMWn9w6ziq9E7GRHaEf0vNNMuF9OxuixQqs1HdMcxv1W1irLWYpruU1DATyFSVv-7E9xk99QsQbwqCXtoLZAuokMGPLiGwx7FyYmFZG62RLYK1x2nNYH3sM7pW4guRzYpboWNGy2dWgYxOH5JR3HL0ZMpdXdk");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">Clinical Decision Support</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">ClinAssist</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Enhance clinical decision-making with ClinAssist.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">AI</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">EHR</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark rounded-xl shadow-md overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
+<div class="relative h-48 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCnAPXuO_utp6qvTZIdikNH82seCq-X83lyxl-HdrQpUS1GpuPb7Wd4Hq0L_PhMbLBaa-NVbBa0ZqIc00uPZ7YOlvgRKiPT6HC48BlY8eVO60woDGKO2LDXGbfuY2M6IqODisK4EaAhkU3uXmK4D_Lrdhl7qSCIf8e2O8Nf_j2OH26LPHERrvoNYQ9svpomDF17b-oDVczvUE1QUGbRsPedF-z9n3LLONdEN3GMAhDLTpuWY_CfQgqADslXZATP1H_4qVDTKN0keaI");'></div>
+<div class="p-6 flex-1 flex flex-col justify-between">
+<div>
+<div class="tracking-wide text-sm text-primary font-semibold">Remote Monitoring</div>
+<h3 class="mt-1 text-lg leading-tight font-bold text-black dark:text-white">VitalTrack</h3>
+<p class="mt-2 text-sm text-black/60 dark:text-white/60">Monitor patient vitals remotely with VitalTrack.</p>
+<div class="mt-4 flex gap-2">
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">IoT</span>
+<span class="inline-block bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full">Wearables</span>
+</div>
+</div>
+<button class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M208.31,75.68,180.32,47.69a8,8,0,0,0-11.31,0L96.16,120.53a32.07,32.07,0,0,0-9,21.57L85.6,183.18a8,8,0,0,0,9.26,9.26l41.08-1.55a32.07,32.07,0,0,0,21.57-9L208.31,87a8,8,0,0,0,0-11.31ZM101.86,184l-11-1.25,1.25-11L144,120l12,12ZM188,80,176,92,164,80,152.7,68.7,164,57.39l12-12,12,12ZM224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Zm-16,0a80,80,0,1,0-80,80A80.09,80.09,0,0,0,208,128Z"></path></svg>
+              View App
+            </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

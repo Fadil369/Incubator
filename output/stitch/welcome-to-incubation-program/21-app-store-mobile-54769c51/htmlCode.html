@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Incubator App Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb597",
+                        "background": "#f8fafb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadb",
+                        "secondary-container": "#c6d3ff",
+                        "on-secondary-fixed-variant": "#394669",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#822f00",
+                        "secondary-fixed": "#dae2ff",
+                        "on-surface": "#191c1d",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed-dim": "#b8c6f0",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary-container": "#ffa27a",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#002e78",
+                        "primary-container": "#1044a0",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-container": "#4d5b7f",
+                        "on-primary-container": "#9eb8ff",
+                        "surface-container-low": "#f2f4f5",
+                        "tertiary": "#5d1f00",
+                        "on-primary-fixed": "#001847",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2f5ab6",
+                        "on-primary-fixed-variant": "#09419d",
+                        "secondary": "#505d82",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#0b1a3b",
+                        "outline": "#747783",
+                        "surface-bright": "#f8fafb",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8fafb",
+                        "surface-container": "#eceeef",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8e9",
+                        "inverse-on-surface": "#eff1f2",
+                        "outline-variant": "#c3c6d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8fafb]/80 dark:bg-[#191c1d]/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="professional male portrait with soft studio lighting and neutral background for profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP4RwQ_Pl8_cdfrNBhB87W7WYz8_eWajTjcrVqHW0RhQoypXhFkuPuMg0WDl34gsrkj4p3n1AWKce_xWR_CrLI6bi1O-CYzfAHDJSUx-NKe9ON-utD9c7mSPUOR7Tk6dFYzFOX5uqna731kPknx78nRz-vExvY4CFKGixXqIyM_S3C-Mrbksc9FvJTIZNll_Ury6M9NREFxsATDYBlFqi_2LEkC1nANh4ykBfGNy80MPYZryRT7D4fHFhCWATB31RzNfpjtlRfsQU"/>
+</div>
+<span class="text-xl font-extrabold tracking-tighter text-[#002e78] dark:text-[#dae2ff]">INCUBATOR</span>
+</div>
+<button class="material-symbols-outlined text-[#002e78] dark:text-[#dae2ff] p-2 hover:bg-[#f2f4f5]/50 transition-colors active:scale-95 duration-200">translate</button>
+</header>
+<main class="pt-20 px-6 space-y-10">
+<!-- Hero Section -->
+<section class="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-primary to-primary-container text-on-primary">
+<div class="relative z-10 max-w-sm">
+<h1 class="text-3xl font-extrabold leading-tight tracking-tight mb-2">Pioneering Health-Tech</h1>
+<p class="text-on-primary-container/90 text-sm mb-6">Advanced NPHIES integration modules for Saudi healthcare providers.</p>
+<button class="bg-surface-container-lowest text-primary px-6 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform">
+                    Explore Healthcare
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-20 transform translate-x-8 translate-y-4">
+<img class="w-full h-full object-cover" data-alt="abstract medical scientific research background with blue glowing molecular structures and DNA helix in soft focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVD58BkO2Z5NNYfYlH42DOdj3MS9iKCrig3R2iY9cF6I-2FlA8jVnm5cCDTQTlZaVqiu0MTsvn4zWhJw58rioRaTvJCFNEFLJgayFLvbHShTHBkwyNdpAz7CTjS9H3cm4qVi0IcY4eXRFmlsDmi-AhiPbUlkrqZ-8TCMKe5F29G-ATI-CPHY-LujBuB3XdFGeo_ZUef928z5QOJpTyDswWRmiK3rrsDwEeTR09IM2wEBqUPMHNrAEAHjq7xZKdcEhGy4gPXqypllQ"/>
+</div>
+</section>
+<!-- Category: HEALTHCARE (Focus) -->
+<section>
+<div class="flex items-baseline justify-between mb-6">
+<h2 class="text-2xl font-extrabold tracking-tight">HEALTHCARE</h2>
+<span class="text-xs font-semibold text-primary uppercase tracking-widest">Advanced Tiers</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- NPHIES Pro Card -->
+<div class="bg-surface-container-lowest rounded-3xl p-5 shadow-[0_32px_64px_rgba(25,28,29,0.04)] relative">
+<div class="flex justify-between items-start mb-4">
+<div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+<div class="flex gap-2">
+<a class="p-2 bg-surface-container-low rounded-full hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">code</span>
+</a>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="text-xl font-bold text-on-surface">NPHIES Core Pro</h3>
+<p class="text-on-surface-variant text-sm mt-1 leading-relaxed">Full-stack integration for clinical insurance claims and eligibility checks.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-transparent">
+<span class="text-xl font-extrabold text-on-surface">$1,499.00</span>
+<button class="bg-primary text-on-primary px-8 py-2.5 rounded-lg font-bold text-sm active:scale-95 transition-all">Buy</button>
+</div>
+</div>
+<!-- BioLink Card -->
+<div class="bg-surface-container-low rounded-3xl p-5 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 bg-secondary-container rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl">vital_signs</span>
+</div>
+<a class="p-2 bg-surface-container-lowest rounded-full" href="#">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">code</span>
+</a>
+</div>
+<h3 class="text-lg font-bold text-on-surface">BioLink SDK</h3>
+<p class="text-on-surface-variant text-xs mt-1 mb-6">Real-time vitals monitoring for ICU wards.</p>
+<div class="flex items-center justify-between">
+<span class="text-lg font-bold text-on-surface">$499.00</span>
+<button class="bg-secondary-fixed text-on-primary-fixed-variant px-6 py-2 rounded-lg font-bold text-sm active:scale-95 transition-all">Buy</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: BUSINESS -->
+<section>
+<div class="flex items-baseline justify-between mb-6">
+<h2 class="text-2xl font-extrabold tracking-tight">BUSINESS</h2>
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-widest">Enterprise</span>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar -mx-6 px-6">
+<!-- BizFlow Card -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-3xl p-5 shadow-[0_16px_32px_rgba(0,0,0,0.03)]">
+<div class="flex justify-between mb-4">
+<span class="material-symbols-outlined text-3xl text-tertiary-container" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="material-symbols-outlined text-outline-variant">code</span>
+</div>
+<h3 class="text-lg font-bold">BizFlow ERP</h3>
+<p class="text-on-surface-variant text-xs mb-6">Streamlined operations for growing startups.</p>
+<div class="flex items-center justify-between">
+<span class="font-extrabold">$299.00</span>
+<button class="bg-primary-container text-on-primary-container px-5 py-2 rounded-lg font-bold text-xs">Buy</button>
+</div>
+</div>
+<!-- TaxShield Card -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-3xl p-5 shadow-[0_16px_32px_rgba(0,0,0,0.03)]">
+<div class="flex justify-between mb-4">
+<span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="material-symbols-outlined text-outline-variant">code</span>
+</div>
+<h3 class="text-lg font-bold">TaxShield AI</h3>
+<p class="text-on-surface-variant text-xs mb-6">Localized VAT compliance for KSA markets.</p>
+<div class="flex items-center justify-between">
+<span class="font-extrabold">$189.00</span>
+<button class="bg-primary-container text-on-primary-container px-5 py-2 rounded-lg font-bold text-xs">Buy</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: TECH & DEV -->
+<section class="bg-surface-container-low rounded-[2rem] p-6 -mx-2">
+<h2 class="text-xl font-extrabold tracking-tight mb-6">TECH&amp;DEV</h2>
+<div class="space-y-4">
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl">
+<div class="w-12 h-12 bg-on-surface-variant/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">terminal</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">AuthMaster 2.0</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-bold text-on-surface-variant">$89.00</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="material-symbols-outlined text-[14px] text-outline">code</span>
+</div>
+</div>
+<button class="bg-primary text-on-primary h-9 px-4 rounded-lg font-bold text-xs">Buy</button>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl">
+<div class="w-12 h-12 bg-on-surface-variant/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">cloud_sync</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">CloudSync Engine</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-bold text-on-surface-variant">Free</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="material-symbols-outlined text-[14px] text-outline">code</span>
+</div>
+</div>
+<button class="bg-primary text-on-primary h-9 px-4 rounded-lg font-bold text-xs">Buy</button>
+</div>
+</div>
+</section>
+<!-- Category: Self Improvements -->
+<section class="pb-8">
+<div class="flex items-center gap-4 mb-6">
+<h2 class="text-2xl font-extrabold tracking-tight">Self Improvements</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-tertiary-fixed rounded-3xl p-5 h-56 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-3xl text-tertiary-container">psychology</span>
+<h3 class="font-bold mt-2 text-on-tertiary-fixed">MindFocus AI</h3>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-bold text-on-tertiary-fixed">$45.00</span>
+<button class="bg-tertiary-container text-on-tertiary-container w-full py-2 rounded-xl text-xs font-bold">Buy</button>
+</div>
+</div>
+<div class="bg-secondary-fixed rounded-3xl p-5 h-56 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-3xl text-on-secondary-fixed-variant">schedule</span>
+<h3 class="font-bold mt-2 text-on-secondary-fixed">Chronos Plan</h3>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-bold text-on-secondary-fixed">$12.00</span>
+<button class="bg-on-secondary-fixed-variant text-on-secondary py-2 rounded-xl text-xs font-bold">Buy</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 rounded-t-3xl bg-[#f8fafb]/90 dark:bg-[#191c1d]/90 backdrop-blur-2xl shadow-[0_-8px_40px_rgba(0,0,0,0.06)] flex justify-around items-center px-4 h-20 w-full pb-safe">
+<div class="flex flex-col items-center justify-center text-[#002e78] dark:text-[#dae2ff] bg-[#dae2ff]/50 dark:bg-[#004494]/30 rounded-2xl px-4 py-1.5 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-0.5">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-0.5">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]">
+<span class="material-symbols-outlined">store</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-0.5">Apps</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-0.5">Mentors</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-0.5">Profile</span>
+</div>
+</nav>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</body></html>

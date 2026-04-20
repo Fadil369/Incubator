@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InnovateHub - Business Incubation Program</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1193d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "foreground-light": "#111827",
+                        "foreground-dark": "#f9fafb",
+                        "muted-light": "#6b7280",
+                        "muted-dark": "#9ca3af",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Cairo", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        :lang(ar) {
+            font-family: 'Cairo', 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen" id="container">
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border-light dark:border-border-dark">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg">
+<svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.44L19.36 9L12 13.56L4.64 9L12 4.44ZM4 9.88L11 14.17V19.76L4 15.48V9.88ZM13 19.76V14.17L20 9.88V15.48L13 19.76Z"></path></svg>
+</div>
+<h2 class="text-xl font-bold text-foreground-light dark:text-foreground-dark" data-ar="مركز الإبتكار" data-en="InnovateHub">InnovateHub</h2>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors" data-ar="عنا" data-en="About" href="#">About</a>
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors" data-ar="البرامج" data-en="Programs" href="#">Programs</a>
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors" data-ar="المصادر" data-en="Resources" href="#">Resources</a>
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors" data-ar="اتصل بنا" data-en="Contact" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors" data-ar="قدم الآن" data-en="Apply Now">
+                    Apply Now
+                </button>
+<div class="relative">
+<button class="flex items-center gap-1 text-muted-light dark:text-muted-dark hover:text-primary transition-colors" id="lang-toggle">
+<span class="material-symbols-outlined">language</span>
+<span id="lang-text">EN</span>
+</button>
+</div>
+</div>
+</nav>
+</header>
+<main class="flex-grow">
+<section class="relative h-[60vh] min-h-[400px] flex items-center justify-center text-center text-white bg-cover bg-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCopnn1HnEeZ0wIhoZ5Ot7zAcK5wIT8UbCYQG_y3Ay5SiM2G48paKJR_Z7pXt_muXYS1PWlEgYBfTNVKs2tffu2IBWMNvRqmuHQzK02BIwiWIxxvHg1jkZiOwQa46fTO2imj_TMm_T1bQAlAu3SN2I0GzGam2DrCavNjIM-xSmGB6yLmUe7FPCZ6WkivmOBeZ-EInyLwSuo0W_iDoFrdZO_tfwNGqW6E5myVYLgI5QKu_34LjPTb9bz6YWakYxu1nusxn2izV7-TPQ")'>
+<div class="container mx-auto px-6 z-10">
+<h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight" data-ar="حوّل رؤيتك إلى عمل مزدهر" data-en="Turn Your Vision into a Thriving Business">Turn Your Vision into a Thriving Business</h1>
+<p class="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-white/90" data-ar="انضم إلى برنامج الحضانة لدينا واحصل على الإرشاد والموارد والمجتمع لتسريع نموك." data-en="Join our incubation program and gain the mentorship, resources, and community to accelerate your growth.">Join our incubation program and gain the mentorship, resources, and community to accelerate your growth.</p>
+<button class="bg-primary text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-primary/90 transition-all transform hover:scale-105" data-ar="ابدأ طلبك" data-en="Start Your Application">
+                        Start Your Application
+                    </button>
+</div>
+</section>
+<section class="py-16 md:py-24 bg-background-light dark:bg-background-dark">
+<div class="container mx-auto px-6">
+<div class="text-center mb-12">
+<h2 class="text-3xl md:text-4xl font-bold text-foreground-light dark:text-foreground-dark mb-4" data-ar="ماذا نقدم" data-en="What We Offer">What We Offer</h2>
+<p class="text-lg text-muted-light dark:text-muted-dark max-w-2xl mx-auto" data-ar="نظام بيئي متكامل مصمم لنجاح شركتك الناشئة." data-en="A complete ecosystem designed for your startup's success.">A complete ecosystem designed for your startup's success.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="bg-white dark:bg-background-dark-800 p-8 rounded-xl border border-border-light dark:border-border-dark text-center flex flex-col items-center shadow-sm hover:shadow-lg transition-shadow">
+<div class="bg-primary/10 dark:bg-primary/20 p-4 rounded-full mb-6">
+<svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2" data-ar="توجيه الخبراء" data-en="Expert Mentorship">Expert Mentorship</h3>
+<p class="text-muted-light dark:text-muted-dark" data-ar="تواصل مع قدامى المحاربين في الصناعة والمؤسسين الناجحين للحصول على إرشادات لا تقدر بثمن." data-en="Connect with industry veterans and successful founders for invaluable guidance.">Connect with industry veterans and successful founders for invaluable guidance.</p>
+</div>
+<div class="bg-white dark:bg-background-dark-800 p-8 rounded-xl border border-border-light dark:border-border-dark text-center flex flex-col items-center shadow-sm hover:shadow-lg transition-shadow">
+<div class="bg-primary/10 dark:bg-primary/20 p-4 rounded-full mb-6">
+<svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2" data-ar="فرص التمويل" data-en="Funding Opportunities">Funding Opportunities</h3>
+<p class="text-muted-light dark:text-muted-dark" data-ar="احصل على إمكانية الوصول إلى شبكتنا من المستثمرين الملائكة وأصحاب رؤوس الأموال المستعدين للاستثمار." data-en="Get access to our network of angel investors and venture capitalists ready to invest.">Get access to our network of angel investors and venture capitalists ready to invest.</p>
+</div>
+<div class="bg-white dark:bg-background-dark-800 p-8 rounded-xl border border-border-light dark:border-border-dark text-center flex flex-col items-center shadow-sm hover:shadow-lg transition-shadow">
+<div class="bg-primary/10 dark:bg-primary/20 p-4 rounded-full mb-6">
+<svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="text-xl font-bold text-foreground-light dark:text-foreground-dark mb-2" data-ar="مجتمع نابض بالحياة" data-en="Vibrant Community">Vibrant Community</h3>
+<p class="text-muted-light dark:text-muted-dark" data-ar="تعاون مع مجتمع متنوع من رواد الأعمال الطموحين مثلك تمامًا." data-en="Collaborate with a diverse community of ambitious entrepreneurs just like you.">Collaborate with a diverse community of ambitious entrepreneurs just like you.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark">
+<div class="container mx-auto px-6 py-8">
+<div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+<p class="text-muted-light dark:text-muted-dark text-sm" data-ar="© 2024 مركز الإبتكار. كل الحقوق محفوظة." data-en="© 2024 InnovateHub. All rights reserved.">© 2024 InnovateHub. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors text-sm" data-ar="سياسة الخصوصية" data-en="Privacy Policy" href="#">Privacy Policy</a>
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors text-sm" data-ar="شروط الخدمة" data-en="Terms of Service" href="#">Terms of Service</a>
+<a class="text-muted-light dark:text-muted-dark hover:text-primary transition-colors text-sm" data-ar="اتصل بنا" data-en="Contact" href="#">Contact</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<script>
+    const langToggle = document.getElementById('lang-toggle');
+    const langText = document.getElementById('lang-text');
+    const container = document.getElementById('container');
+    const htmlEl = document.documentElement;
+    const translations = new Map();
+    document.querySelectorAll('[data-en]').forEach(el => {
+        translations.set(el, { en: el.dataset.en, ar: el.dataset.ar });
+    });
+    langToggle.addEventListener('click', () => {
+        if (htmlEl.lang === 'en') {
+            htmlEl.lang = 'ar';
+            htmlEl.dir = 'rtl';
+            langText.textContent = 'AR';
+            translate('ar');
+        } else {
+            htmlEl.lang = 'en';
+            htmlEl.dir = 'ltr';
+            langText.textContent = 'EN';
+            translate('en');
+        }
+    });
+    function translate(lang) {
+        translations.forEach((value, key) => {
+            key.textContent = value[lang];
+        });
+    }
+    // Initialize with English
+    translate('en');
+</script>
+</body></html>
