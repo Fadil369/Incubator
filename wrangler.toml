@@ -22,7 +22,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -34,15 +34,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.production.kv_namespaces]]
 binding = "SESSIONS"
@@ -50,7 +50,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.production.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.production.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -62,15 +62,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.production.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.production.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.production.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.staging.kv_namespaces]]
 binding = "SESSIONS"
@@ -78,7 +78,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.staging.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.staging.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -90,15 +90,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.staging.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.staging.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.staging.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.preview.kv_namespaces]]
 binding = "SESSIONS"
@@ -106,7 +106,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.preview.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.preview.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -118,15 +118,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.preview.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.preview.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.preview.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 # R2 Storage
 [[r2_buckets]]

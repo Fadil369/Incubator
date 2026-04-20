@@ -30,7 +30,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -42,15 +42,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.production.kv_namespaces]]
 binding = "SESSIONS"
@@ -58,7 +58,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.production.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.production.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -70,15 +70,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.production.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.production.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.production.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.staging.kv_namespaces]]
 binding = "SESSIONS"
@@ -86,7 +86,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.staging.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.staging.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -98,15 +98,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.staging.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.staging.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.staging.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 [[env.preview.kv_namespaces]]
 binding = "SESSIONS"
@@ -114,7 +114,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[env.preview.kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[env.preview.kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -126,15 +126,15 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[env.preview.kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[env.preview.kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[env.preview.kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 # ── D1 Databases (reusing existing) ──
 [[d1_databases]]
@@ -226,55 +226,6 @@ bucket_name = "brainsait-files"
 binding = "DATA_CONTRACTS"
 bucket_name = "brainsait-storage"
 
-# ── Queues (reusing existing) ──
-[[queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
-
-[[queues.producers]]
-binding = "NOTIFICATION_QUEUE"
-queue = "brainsait-notifications"
-
-[[queues.producers]]
-binding = "CLAIMS_QUEUE"
-queue = "brainsait-claims"
-
-[[env.production.queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
-
-[[env.production.queues.producers]]
-binding = "NOTIFICATION_QUEUE"
-queue = "brainsait-notifications"
-
-[[env.production.queues.producers]]
-binding = "CLAIMS_QUEUE"
-queue = "brainsait-claims"
-
-[[env.staging.queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
-
-[[env.staging.queues.producers]]
-binding = "NOTIFICATION_QUEUE"
-queue = "brainsait-notifications"
-
-[[env.staging.queues.producers]]
-binding = "CLAIMS_QUEUE"
-queue = "brainsait-claims"
-
-[[env.preview.queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
-
-[[env.preview.queues.producers]]
-binding = "NOTIFICATION_QUEUE"
-queue = "brainsait-notifications"
-
-[[env.preview.queues.producers]]
-binding = "CLAIMS_QUEUE"
-queue = "brainsait-claims"
-
 # ── Analytics Engine ──
 [[analytics_engine_datasets]]
 binding = "API_ANALYTICS"
@@ -291,23 +242,6 @@ dataset = "brainsait_api_usage"
 [[env.preview.analytics_engine_datasets]]
 binding = "API_ANALYTICS"
 dataset = "brainsait_api_usage"
-
-# ── Vectorize ──
-[[vectorize]]
-binding = "KNOWLEDGE_INDEX"
-index_name = "brainsait-knowledge"
-
-[[env.production.vectorize]]
-binding = "KNOWLEDGE_INDEX"
-index_name = "brainsait-knowledge"
-
-[[env.staging.vectorize]]
-binding = "KNOWLEDGE_INDEX"
-index_name = "brainsait-knowledge"
-
-[[env.preview.vectorize]]
-binding = "KNOWLEDGE_INDEX"
-index_name = "brainsait-knowledge"
 
 # ── AI Gateway ──
 [ai]

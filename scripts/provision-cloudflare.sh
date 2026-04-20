@@ -53,6 +53,7 @@ echo ""
 info "Phase 1: Creating missing KV Namespaces..."
 
 MISSING_KV=(
+  "PARTNER_APPLICATIONS"
   "brainsait-feature-flags"
   "brainsait-startup-registry"
   "brainsait-ai-model-registry"
