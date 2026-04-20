@@ -10,12 +10,18 @@ import {
   CardContent,
   Button,
   Avatar,
+  Chip,
+  Paper,
 } from '@mui/material';
 import {
   Business,
   Analytics,
   People,
   TrendingUp,
+  School,
+  AutoAwesome,
+  OpenInNew,
+  Star,
 } from '@mui/icons-material';
 
 export default function HomePage() {
@@ -133,6 +139,214 @@ export default function HomePage() {
             </Grid>
           ))}
         </Grid>
+
+        {/* 🎓 New Course Announcement */}
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 8,
+            p: { xs: 3, md: 5 },
+            borderRadius: 4,
+            background: 'linear-gradient(135deg, #1B5E20 0%, #1565C0 60%, #0D47A1 100%)',
+            color: '#fff',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Decorative glow circles */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: -60,
+              right: -60,
+              width: 220,
+              height: 220,
+              borderRadius: '50%',
+              bgcolor: 'rgba(255,255,255,0.07)',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: -40,
+              left: -40,
+              width: 160,
+              height: 160,
+              borderRadius: '50%',
+              bgcolor: 'rgba(255,255,255,0.05)',
+            }}
+          />
+
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            {/* Badge row */}
+            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 3, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+              <Chip
+                icon={<AutoAwesome sx={{ color: '#FFD700 !important' }} />}
+                label="NEW COURSE — دورة جديدة"
+                sx={{
+                  bgcolor: 'rgba(255,215,0,0.18)',
+                  color: '#FFD700',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  letterSpacing: 0.5,
+                  border: '1px solid rgba(255,215,0,0.4)',
+                }}
+              />
+              <Chip
+                icon={<Star sx={{ color: '#fff !important' }} />}
+                label="Google Classroom"
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.12)',
+                  color: '#fff',
+                  fontWeight: 600,
+                  border: '1px solid rgba(255,255,255,0.25)',
+                }}
+              />
+            </Box>
+
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={7}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Avatar
+                    sx={{
+                      width: 60,
+                      height: 60,
+                      bgcolor: 'rgba(255,255,255,0.15)',
+                      fontSize: '1.8rem',
+                    }}
+                  >
+                    🎓
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h4" component="h2" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+                      BrainSAIT Learning Hub
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ opacity: 0.85 }}>
+                      منصة برين سايت التعليمية
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Typography variant="h5" component="p" sx={{ mb: 1.5, fontWeight: 700 }}>
+                  🚀 New Course Now Open for Enrollment!
+                </Typography>
+                <Typography variant="h6" component="p" sx={{ mb: 3, opacity: 0.9, fontWeight: 500 }}>
+                  دورة جديدة — التسجيل مفتوح الآن!
+                </Typography>
+
+                <Typography variant="body1" sx={{ mb: 1.5, opacity: 0.9, maxWidth: 520 }}>
+                  Unlock your potential with our latest course on healthcare digital transformation,
+                  AI adoption, and SME innovation — designed for the Arab world's emerging healthcare ecosystem.
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 4, opacity: 0.85, maxWidth: 520 }}>
+                  طوّر مهاراتك في التحول الرقمي للرعاية الصحية واعتماد الذكاء الاصطناعي وابتكار المشاريع الصغيرة
+                  والمتوسطة — مصممة لبيئة الرعاية الصحية الناشئة في العالم العربي.
+                </Typography>
+
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<OpenInNew />}
+                    href="https://classroom.google.com/c/ODYwNTAyNzAzMTky?cjc=4oc22gvm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      bgcolor: '#FFD700',
+                      color: '#1B3A1F',
+                      fontWeight: 800,
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      '&:hover': {
+                        bgcolor: '#FFC200',
+                        boxShadow: '0 4px 20px rgba(255,215,0,0.4)',
+                      },
+                    }}
+                  >
+                    Enroll Now — سجّل الآن
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    href="https://classroom.google.com/c/ODYwNTAyNzAzMTky?cjc=4oc22gvm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      borderColor: 'rgba(255,255,255,0.6)',
+                      color: '#fff',
+                      px: 3,
+                      py: 1.5,
+                      '&:hover': {
+                        borderColor: '#fff',
+                        bgcolor: 'rgba(255,255,255,0.08)',
+                      },
+                    }}
+                  >
+                    Learn More — اعرف أكثر
+                  </Button>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} md={5}>
+                <Box
+                  sx={{
+                    bgcolor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 3,
+                    p: 3,
+                    border: '1px solid rgba(255,255,255,0.2)',
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <School fontSize="small" /> What you&apos;ll gain
+                  </Typography>
+                  {[
+                    { en: 'Healthcare AI & Digital Tools', ar: 'الذكاء الاصطناعي والأدوات الرقمية للرعاية الصحية' },
+                    { en: 'SME Incubation Strategies', ar: 'استراتيجيات احتضان الشركات الصغيرة' },
+                    { en: 'Regulatory Compliance (SFDA, CBAHI)', ar: 'الامتثال التنظيمي (هيئة الغذاء والدواء، CBAHI)' },
+                    { en: 'Pitch & Fundraising Skills', ar: 'مهارات العرض وجمع التمويل' },
+                  ].map((item, i) => (
+                    <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}>
+                      <Box
+                        sx={{
+                          mt: 0.4,
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          bgcolor: '#FFD700',
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+                          {item.en}
+                        </Typography>
+                        <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                          {item.ar}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                  <Box
+                    sx={{
+                      mt: 2.5,
+                      pt: 2,
+                      borderTop: '1px solid rgba(255,255,255,0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    <TrendingUp fontSize="small" />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Join Code: <strong>4oc22gvm</strong>
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
 
         {/* Call to Action */}
         <Box textAlign="center" sx={{ mt: 8, py: 6, bgcolor: 'background.paper', borderRadius: 2 }}>
