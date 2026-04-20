@@ -222,4 +222,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || vars.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/${{ matrix.worker }}
           environment: ${{ steps.resolve-environment.outputs.deploy_environment }}
-        run: echo "Deployment health check failed!"
+        
