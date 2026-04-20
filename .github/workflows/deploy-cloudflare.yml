@@ -171,8 +171,6 @@ jobs:
         if: success()
         run: echo "Selected Cloudflare services deployed successfully!"
 
-      - name: Notify Failure
-        if: failure()
 
   deploy-cf-workers:
     runs-on: ubuntu-latest
