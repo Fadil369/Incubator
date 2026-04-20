@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
+import Navigation from '@/components/common/Navigation';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -290,8 +291,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <CacheProvider value={isArabic ? cacheRtl : cacheLtr}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box sx={{ minHeight: '100vh' }}>
-              {children}
+            <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+              <Navigation />
+              <Box component="main" sx={{ flex: 1 }}>
+                {children}
+              </Box>
             </Box>
           </ThemeProvider>
         </CacheProvider>

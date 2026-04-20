@@ -13,7 +13,6 @@ import {
   Alert
 } from '@mui/material';
 import {
-  Dashboard,
   TrendingUp,
   Assessment,
   MonetizationOn,
@@ -61,12 +60,11 @@ const AIDashboardPage: React.FC = () => {
   // Mock SME ID - in production this would come from authentication
   const smeId = 'sme-123';
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
 
-  const handleInsightAction = (insight: any, action: string) => {
-    console.log('Insight action:', action, insight);
+  const handleInsightAction = (_insight: unknown, _action: string) => {
     // In production, implement specific actions like:
     // - Navigate to detailed analysis
     // - Create action items

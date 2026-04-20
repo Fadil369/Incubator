@@ -10,12 +10,14 @@ import {
   CardContent,
   Button,
   Avatar,
+  Stack,
 } from '@mui/material';
 import {
   Business,
   Analytics,
   People,
   TrendingUp,
+  ArrowForward,
 } from '@mui/icons-material';
 
 export default function HomePage() {
@@ -52,56 +54,96 @@ export default function HomePage() {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: { xs: 4, md: 8 } }}>
         {/* Hero Section */}
-        <Box textAlign="center" sx={{ mb: 8 }}>
+        <Box textAlign="center" sx={{ mb: { xs: 5, md: 8 } }}>
           <Avatar
             sx={{
-              width: 80,
-              height: 80,
+              width: { xs: 64, md: 80 },
+              height: { xs: 64, md: 80 },
               bgcolor: 'primary.main',
               mx: 'auto',
               mb: 3,
-              fontSize: '2rem',
+              fontSize: { xs: '1.75rem', md: '2rem' },
             }}
           >
             🧠
           </Avatar>
-          <Typography variant="h1" component="h1" gutterBottom>
+          <Typography
+            variant="h1"
+            component="h1"
+            gutterBottom
+            sx={{ fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' } }}
+          >
             BrainSAIT Platform
           </Typography>
-          <Typography variant="h2" component="h2" color="text.secondary" gutterBottom>
+          <Typography
+            variant="h2"
+            component="h2"
+            color="text.secondary"
+            gutterBottom
+            sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}
+          >
             منصة برين سايت
           </Typography>
-          <Typography variant="h5" component="p" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+          <Typography
+            variant="h5"
+            component="p"
+            color="text.secondary"
+            sx={{ mb: 2, maxWidth: 600, mx: 'auto', fontSize: { xs: '1rem', md: '1.25rem' } }}
+          >
             Empowering Healthcare SMEs through Digital Transformation and Innovation
           </Typography>
-          <Typography variant="h6" component="p" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+          <Typography
+            variant="h6"
+            component="p"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: 600, mx: 'auto', fontSize: { xs: '0.9rem', md: '1rem' } }}
+          >
             تمكين الشركات الصغيرة والمتوسطة في مجال الرعاية الصحية من خلال التحول الرقمي والابتكار
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button variant="contained" size="large" color="primary">
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              href="/apply"
+              endIcon={<ArrowForward />}
+              fullWidth={false}
+              sx={{ minWidth: 180 }}
+            >
               Get Started
             </Button>
-            <Button variant="outlined" size="large" color="primary">
+            <Button
+              variant="outlined"
+              size="large"
+              color="primary"
+              href="/apply"
+              sx={{ minWidth: 180 }}
+            >
               ابدأ الآن
             </Button>
-          </Box>
+          </Stack>
         </Box>
 
         {/* Features Section */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 2, md: 4 }}>
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card 
-                sx={{ 
-                  height: '100%', 
-                  display: 'flex', 
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
                   flexDirection: 'column',
                   transition: 'transform 0.2s',
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                  }
+                  },
                 }}
               >
                 <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 3 }}>
@@ -135,18 +177,37 @@ export default function HomePage() {
         </Grid>
 
         {/* Call to Action */}
-        <Box textAlign="center" sx={{ mt: 8, py: 6, bgcolor: 'background.paper', borderRadius: 2 }}>
-          <Typography variant="h4" component="h2" gutterBottom>
+        <Box
+          textAlign="center"
+          sx={{ mt: { xs: 5, md: 8 }, py: { xs: 4, md: 6 }, bgcolor: 'background.paper', borderRadius: 2 }}
+        >
+          <Typography variant="h4" component="h2" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }}>
             Ready to Transform Your Healthcare Business?
           </Typography>
-          <Typography variant="h5" component="h2" gutterBottom color="text.secondary">
+          <Typography
+            variant="h5"
+            component="h2"
+            gutterBottom
+            color="text.secondary"
+            sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' } }}
+          >
             هل أنت مستعد لتحويل عملك في مجال الرعاية الصحية؟
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
-            Join our platform and access comprehensive tools, expert guidance, and a supportive community 
-            to accelerate your healthcare SME's growth and digital transformation journey.
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
+          >
+            Join our platform and access comprehensive tools, expert guidance, and a supportive community
+            to accelerate your healthcare SME&apos;s growth and digital transformation journey.
           </Typography>
-          <Button variant="contained" size="large" color="primary">
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            href="/apply"
+            endIcon={<ArrowForward />}
+          >
             Join BrainSAIT Today
           </Button>
         </Box>
