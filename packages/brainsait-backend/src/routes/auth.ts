@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
+import rateLimit from 'express-rate-limit';
 import { authenticate } from '../middleware/auth';
 import {
   register,
@@ -15,6 +16,25 @@ import {
 } from '../controllers/authController';
 
 const router = Router();
+
+// Strict rate limiter for sensitive auth endpoints (5 req / 15 min per IP)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: { message: 'Too many attempts. Please wait 15 minutes.' } },
+});
+
+// More generous limiter for non-sensitive endpoints (30 req / 15 min)
+const softLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: { message: 'Too many requests. Please slow down.' } },
+});
 
 // Validation schemas
 const registerValidation = [
@@ -53,12 +73,12 @@ const refreshTokenValidation = [
 ];
 
 // Public routes
-router.post('/register', registerValidation, register);
-router.post('/verify-email', verifyEmailValidation, verifyEmail);
-router.post('/login', loginValidation, login);
-router.post('/refresh', refreshTokenValidation, refresh);
-router.post('/forgot-password', forgotPasswordValidation, forgotPassword);
-router.post('/reset-password', resetPasswordValidation, resetPassword);
+router.post('/register', authLimiter, registerValidation, register);
+router.post('/verify-email', softLimiter, verifyEmailValidation, verifyEmail);
+router.post('/login', authLimiter, loginValidation, login);
+router.post('/refresh', softLimiter, refreshTokenValidation, refresh);
+router.post('/forgot-password', authLimiter, forgotPasswordValidation, forgotPassword);
+router.post('/reset-password', authLimiter, resetPasswordValidation, resetPassword);
 
 // Protected routes
 router.post('/logout', authenticate, logout);

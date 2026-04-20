@@ -149,6 +149,8 @@ export declare const PROGRAM_TYPES_AR: {
     readonly WORKSHOP: "ورشة عمل";
     readonly MASTERCLASS: "فئة رئيسية";
 };
+export * from './training';
+export * from './incubator';
 export declare const STATUS_TYPES: {
     readonly ACTIVE: "Active";
     readonly INACTIVE: "Inactive";

@@ -166,6 +166,8 @@ model ProgramEnrollment {
   generatedDocuments GeneratedDocument[]
 
   @@unique([smeId, programId])
+  @@index([programId, enrolledAt])
+  @@index([status])
   @@map("program_enrollments")
 }
 
@@ -193,6 +195,9 @@ model Mentorship {
   mentee      User?           @relation(fields: [menteeId], references: [id])
   sessions    MentorSession[]
 
+  @@index([smeId])
+  @@index([mentorId])
+  @@index([status])
   @@map("mentorships")
 }
 
@@ -217,6 +222,8 @@ model MentorSession {
   // Relations
   mentorship    Mentorship  @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
 
+  @@index([mentorshipId])
+  @@index([scheduledAt])
   @@map("mentor_sessions")
 }
 
@@ -244,6 +251,8 @@ model Session {
   // Relations
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([expiresAt])
   @@map("sessions")
 }
 

@@ -13,6 +13,7 @@
  */
 
 import { Hono } from 'hono';
+import type { Context } from 'hono';
 
 interface Env {
   PARTNER_APPLICATIONS: KVNamespace;
@@ -53,6 +54,18 @@ export interface PartnerApplication {
   createdAt: string;
   updatedAt: string;
 }
+
+type PartnerApplicationRequestBody = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  organization: string;
+  country: string;
+  partnerType: string;
+  description: string;
+};
+
+type PartnerContext = Context<{ Bindings: Env }>;
 
 /** Maximum number of healthcare SMEs accepted into the Ultimate Incubator Program. */
 const MAX_ACCEPTED_SMES = 32;
@@ -146,6 +159,7 @@ function isValidEmail(email: string): boolean {
 }
 
 const partners = new Hono<{ Bindings: Env }>();
+export const publicPartnerIntakeRoutes = new Hono<{ Bindings: Env }>();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -411,9 +425,7 @@ async function checkRateLimit(kv: KVNamespace, ip: string): Promise<boolean> {
   return true;
 }
 
-// Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
-partners.post('/application', async (c) => {
-  // ── Rate limiting ──────────────────────────────────────────────────────────
+async function handlePartnerApplicationSubmission(c: PartnerContext) {
   const clientIp =
     c.req.header('cf-connecting-ip') ??
     c.req.header('x-forwarded-for')?.split(',')[0].trim() ??
@@ -423,16 +435,7 @@ partners.post('/application', async (c) => {
     return c.json({ error: 'Too many applications from this IP. Please try again later.' }, 429);
   }
 
-  type Body = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    organization: string;
-    country: string;
-    partnerType: string;
-    description: string;
-  };
-  const body = await c.req.json<Body>().catch(() => null);
+  const body = await c.req.json<PartnerApplicationRequestBody>().catch(() => null);
   if (!body) return c.json({ error: 'Invalid JSON' }, 400);
 
   const required = ['firstName', 'lastName', 'email', 'organization', 'country', 'partnerType', 'description'] as const;
@@ -442,12 +445,10 @@ partners.post('/application', async (c) => {
     }
   }
 
-  // ── Validate email format ──────────────────────────────────────────────────
   if (!isValidEmail(body.email.trim())) {
     return c.json({ error: 'Invalid email address' }, 400);
   }
 
-  // ── Validate partner type ──────────────────────────────────────────────────
   if (!VALID_PARTNER_TYPES.has(body.partnerType.trim())) {
     return c.json({ error: `Invalid partnerType. Must be one of: ${[...VALID_PARTNER_TYPES].join(', ')}` }, 400);
   }
@@ -470,10 +471,20 @@ partners.post('/application', async (c) => {
   };
 
   await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(application), {
-    expirationTtl: 365 * 24 * 60 * 60, // 1 year
+    expirationTtl: 365 * 24 * 60 * 60,
   });
 
   return c.json({ success: true, applicationId: id, referenceId: application.referenceId });
+}
+
+// Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
+partners.post('/application', async (c) => {
+  return handlePartnerApplicationSubmission(c);
+});
+
+// Browser-facing compatibility route used by brainsait.org/partners.
+publicPartnerIntakeRoutes.post('/apply', async (c) => {
+  return handlePartnerApplicationSubmission(c);
 });
 
 // Admin: list applications

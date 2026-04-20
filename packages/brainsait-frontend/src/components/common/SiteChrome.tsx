@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import NextLink from 'next/link';
 import {
   AppBar,
   Box,
@@ -26,9 +27,13 @@ interface SiteChromeProps {
 const NAV_ITEMS = [
   { label: 'Home', href: '/' },
   { label: 'Apply', href: '/apply' },
+  { label: 'Resources', href: '/resources' },
+  { label: 'Mentorship', href: '/mentorship' },
+  { label: 'App Store', href: '/app-store' },
+  { label: 'Showcase', href: '/showcase' },
   { label: 'Projects', href: '/projects' },
   { label: 'Training', href: '/training' },
-  { label: 'Portal', href: '/portal/accept' },
+  { label: 'Portal', href: '/portal' },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -108,6 +113,7 @@ export default function SiteChrome({ children }: SiteChromeProps) {
                 return (
                   <Button
                     key={item.href}
+                    component={NextLink}
                     href={item.href}
                     color="inherit"
                     sx={{
@@ -153,7 +159,7 @@ export default function SiteChrome({ children }: SiteChromeProps) {
             {NAV_ITEMS.map((item) => (
               <ListItemButton
                 key={item.href}
-                component="a"
+                component={NextLink}
                 href={item.href}
                 onClick={() => setDrawerOpen(false)}
                 selected={isActivePath(pathname, item.href)}
@@ -164,7 +170,7 @@ export default function SiteChrome({ children }: SiteChromeProps) {
             ))}
           </List>
           <Divider sx={{ my: 2 }} />
-          <Button fullWidth variant="contained" href="/training" onClick={() => setDrawerOpen(false)}>
+          <Button fullWidth variant="contained" component={NextLink} href="/training" onClick={() => setDrawerOpen(false)}>
             Explore Training
           </Button>
         </Box>
@@ -194,8 +200,10 @@ export default function SiteChrome({ children }: SiteChromeProps) {
             </Box>
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }}>
-              <Button color="inherit" href="/training">Training Hub</Button>
-              <Button color="inherit" href="/projects">Projects</Button>
+              <Button color="inherit" component={NextLink} href="/resources">Resources</Button>
+              <Button color="inherit" component={NextLink} href="/app-store">App Store</Button>
+              <Button color="inherit" component={NextLink} href="/training">Training Hub</Button>
+              <Button color="inherit" component={NextLink} href="/showcase">Showcase</Button>
               <Button color="inherit" href="https://calendly.com/fadil369" target="_blank" rel="noopener noreferrer">
                 Book Consultation
               </Button>

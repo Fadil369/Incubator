@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
+import NextLink from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Box,
@@ -26,6 +27,7 @@ import {
   Business,
   ArrowForward,
   GitHub,
+  MailOutline,
 } from '@mui/icons-material';
 import {
   validateInviteToken,
@@ -48,7 +50,7 @@ function PortalAcceptContent() {
   const token = params.get('token') ?? '';
   const appId = params.get('app') ?? '';
 
-  const [step, setStep] = useState<'validating' | 'onboarding' | 'done' | 'error'>('validating');
+  const [step, setStep] = useState<'entry' | 'validating' | 'onboarding' | 'done' | 'error'>('validating');
   const [application, setApplication] = useState<PartnerApplication | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -65,8 +67,8 @@ function PortalAcceptContent() {
 
   useEffect(() => {
     if (!token || !appId) {
-      setError('Invalid invitation link. Please check your email and try again.');
-      setStep('error');
+      setError(null);
+      setStep('entry');
       return;
     }
 
@@ -114,6 +116,72 @@ function PortalAcceptContent() {
     );
   }
 
+  // ── Entry / no token yet ───────────────────────────────────────────────────
+  if (step === 'entry') {
+    return (
+      <Container maxWidth="md">
+        <Box sx={{ py: 8 }}>
+          <Card sx={{ borderRadius: 4, overflow: 'hidden' }}>
+            <Box sx={{ p: 4, background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #1e1b4b 100%)', color: 'white' }}>
+              <Chip icon={<MailOutline />} label="Invitation Required" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+              <Typography variant="h4" fontWeight={700} gutterBottom>
+                Complete onboarding from your email link
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.76)', maxWidth: 720 }}>
+                This step is token-protected. Accepted partners receive a personalized link by email to validate their invitation and finish onboarding.
+              </Typography>
+            </Box>
+            <CardContent sx={{ p: 4 }}>
+              <Alert severity="info" sx={{ mb: 3 }}>
+                If you have already been accepted, open the invitation email from BrainSAIT and continue from that link. If you are still applying, return to the partner application page.
+              </Alert>
+              <Grid container spacing={2.5} sx={{ mb: 3 }}>
+                {[
+                  {
+                    title: 'Check your acceptance email',
+                    description: 'Look for the BrainSAIT invitation message sent to your work email after admin approval.',
+                  },
+                  {
+                    title: 'Continue to the portal',
+                    description: 'If your startup is already onboarded, use the portal entry page and projects directory to open your workspace.',
+                  },
+                  {
+                    title: 'Need a new application?',
+                    description: 'Start the partner workflow from the public application form if you have not been accepted yet.',
+                  },
+                ].map((item) => (
+                  <Grid item xs={12} md={4} key={item.title}>
+                    <Card variant="outlined" sx={{ height: '100%' }}>
+                      <CardContent>
+                        <Typography variant="subtitle1" fontWeight={700} gutterBottom>
+                          {item.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                <Button variant="contained" component={NextLink} href="/portal">
+                  Open Portal Entry
+                </Button>
+                <Button variant="outlined" component={NextLink} href="/apply">
+                  Apply to Program
+                </Button>
+                <Button variant="text" href="mailto:partner@brainsait.org">
+                  Contact Partner Team
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+    );
+  }
+
   // ── Error ───────────────────────────────────────────────────────────────────
   if (step === 'error') {
     return (
@@ -124,7 +192,7 @@ function PortalAcceptContent() {
             If you believe this is a mistake, please contact{' '}
             <a href="mailto:partner@brainsait.org" style={{ color: 'inherit' }}>partner@brainsait.org</a>.
           </Typography>
-          <Button variant="outlined" href="https://brainsait.org/partners">
+          <Button variant="outlined" component={NextLink} href="/partners">
             Return to Partners Page
           </Button>
         </Box>

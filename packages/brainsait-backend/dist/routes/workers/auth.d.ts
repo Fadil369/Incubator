@@ -3,7 +3,7 @@
  */
 import { Hono } from 'hono';
 interface Env {
-    SESSIONS: any;
+    SESSIONS: KVNamespace;
     DB: D1Database;
     JWT_SECRET: string;
     NODE_ENV: string;

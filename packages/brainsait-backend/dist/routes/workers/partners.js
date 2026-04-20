@@ -83,6 +83,7 @@ function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 const partners = new Hono();
+export const publicPartnerIntakeRoutes = new Hono();
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function generateReferenceId() {
     return `BSP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -321,9 +322,7 @@ async function checkRateLimit(kv, ip) {
     await kv.put(key, String(count + 1), { expirationTtl: 3600 });
     return true;
 }
-// Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
-partners.post('/application', async (c) => {
-    // ── Rate limiting ──────────────────────────────────────────────────────────
+async function handlePartnerApplicationSubmission(c) {
     const clientIp = c.req.header('cf-connecting-ip') ??
         c.req.header('x-forwarded-for')?.split(',')[0].trim() ??
         'unknown';
@@ -340,11 +339,9 @@ partners.post('/application', async (c) => {
             return c.json({ error: `Missing required field: ${field}` }, 400);
         }
     }
-    // ── Validate email format ──────────────────────────────────────────────────
     if (!isValidEmail(body.email.trim())) {
         return c.json({ error: 'Invalid email address' }, 400);
     }
-    // ── Validate partner type ──────────────────────────────────────────────────
     if (!VALID_PARTNER_TYPES.has(body.partnerType.trim())) {
         return c.json({ error: `Invalid partnerType. Must be one of: ${[...VALID_PARTNER_TYPES].join(', ')}` }, 400);
     }
@@ -365,9 +362,17 @@ partners.post('/application', async (c) => {
         updatedAt: now,
     };
     await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(application), {
-        expirationTtl: 365 * 24 * 60 * 60, // 1 year
+        expirationTtl: 365 * 24 * 60 * 60,
     });
     return c.json({ success: true, applicationId: id, referenceId: application.referenceId });
+}
+// Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
+partners.post('/application', async (c) => {
+    return handlePartnerApplicationSubmission(c);
+});
+// Browser-facing compatibility route used by brainsait.org/partners.
+publicPartnerIntakeRoutes.post('/apply', async (c) => {
+    return handlePartnerApplicationSubmission(c);
 });
 // Admin: list applications
 partners.get('/applications', async (c) => {
@@ -560,7 +565,8 @@ partners.get('/validate', async (c) => {
         return c.json({ error: 'This invitation link is no longer valid' }, 403);
     }
     // Return safe subset (no token)
-    const { inviteToken: _tok, ...safeApp } = app;
+    const safeApp = { ...app };
+    delete safeApp.inviteToken;
     return c.json({ valid: true, application: safeApp });
 });
 // Complete onboarding — partner sets password and any additional profile info

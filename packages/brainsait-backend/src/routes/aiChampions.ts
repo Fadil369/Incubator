@@ -471,14 +471,14 @@ router.get('/dashboard', authenticate, async (req: AuthenticatedRequest, res: Re
 });
 
 // Helper functions
-async function sendMentorshipApplicationNotification(champion: any, application: any) {
-  // Implementation would send email/notification to champion
-  console.log(`Mentorship application notification sent to champion ${champion.id}`);
+async function sendMentorshipApplicationNotification(champion: { id: string }, application: unknown) {
+  // TODO: implement email/notification
+  void champion; void application;
 }
 
-async function sendApplicationStatusNotification(user: any, status: string, message?: string) {
-  // Implementation would send email/notification to user
-  console.log(`Application status notification sent to user ${user.id}: ${status}`);
+async function sendApplicationStatusNotification(user: { id: string }, status: string, message?: string) {
+  // TODO: implement email/notification
+  void user; void status; void message;
 }
 
 function calculateEndDate(duration: string): Date {
@@ -497,9 +497,9 @@ function calculateEndDate(duration: string): Date {
   }
 }
 
-async function scheduleFirstSession(mentorship: any) {
-  // Implementation would schedule first mentorship session
-  console.log(`First session scheduled for mentorship ${mentorship.id}`);
+async function scheduleFirstSession(mentorship: { id: string }) {
+  // TODO: implement session scheduling
+  void mentorship;
 }
 
 export default router;

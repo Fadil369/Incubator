@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import NextLink from 'next/link';
 import {
   Box,
   Container,
@@ -391,13 +392,13 @@ export default function ApplyPage() {
         {/* CTA row */}
         <Box sx={{ mt: 6, textAlign: 'center', borderTop: '1px solid', borderColor: 'divider', pt: 4 }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            Already have an invitation? Access your onboarding link directly.
+            Already accepted? Open the portal entry and continue with the invitation link from your email.
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-            <Button variant="outlined" href="/portal/accept" endIcon={<ArrowForward />}>
-              Complete Onboarding
+            <Button variant="outlined" component={NextLink} href="/portal" endIcon={<ArrowForward />}>
+              Open Portal Entry
             </Button>
-            <Button variant="text" href="/training">
+            <Button variant="text" component={NextLink} href="/training">
               Preview Training Hub
             </Button>
           </Box>

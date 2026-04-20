@@ -6,6 +6,7 @@ import {
   Launch,
   Memory,
   MenuBook,
+  PlayCircleOutline,
   NorthEast,
   ShowChart,
 } from '@mui/icons-material';
@@ -92,6 +93,15 @@ export default function CollectiveBrainpowerCoursePage() {
                   <Button href="#curriculum" sx={{ color: 'white' }}>Curriculum</Button>
                   <Button href="#instructor" sx={{ color: 'white' }}>Instructor</Button>
                 </Stack>
+
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'flex-start', sm: 'center' }} sx={{ mt: 3 }}>
+                  <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.74)' }}>
+                    Class code: <Box component="span" sx={{ color: 'white', fontWeight: 700, letterSpacing: 1.2 }}>{course.classroomCode}</Box>
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
+                    Powered by Google Classroom with guided implementation support.
+                  </Typography>
+                </Stack>
               </Grid>
 
               <Grid item xs={12} lg={5}>
@@ -116,6 +126,47 @@ export default function CollectiveBrainpowerCoursePage() {
                 </Card>
               </Grid>
             </Grid>
+
+            <Card sx={{ mt: 5, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.10)' }}>
+              <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                <Grid container spacing={3} alignItems="center">
+                  <Grid item xs={12} md={7}>
+                    <Chip icon={<MenuBook />} label="Course preview" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', mb: 2 }} />
+                    <Typography variant="h4" fontWeight={800} sx={{ color: 'white', mb: 1.5 }}>
+                      Built as BrainSAIT’s first premium course experience.
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.72)', maxWidth: 720 }}>
+                      This course now lives directly inside the training hub while still linking into Google Classroom for delivery. The experience mirrors the premium launch page design with a clear focus on healthcare, technology, and AI transformation.
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={5}>
+                    <Box
+                      sx={{
+                        minHeight: 220,
+                        borderRadius: 4,
+                        display: 'grid',
+                        placeItems: 'center',
+                        bgcolor: 'rgba(2,6,23,0.65)',
+                        border: '1px solid rgba(255,255,255,0.10)',
+                        background: 'linear-gradient(135deg, rgba(14,165,233,0.14) 0%, rgba(99,102,241,0.14) 100%)',
+                      }}
+                    >
+                      <Stack spacing={2} alignItems="center">
+                        <Box sx={{ width: 84, height: 84, borderRadius: '50%', display: 'grid', placeItems: 'center', bgcolor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)' }}>
+                          <PlayCircleOutline sx={{ fontSize: 42, color: 'white' }} />
+                        </Box>
+                        <Typography variant="subtitle1" fontWeight={700} sx={{ color: 'white' }}>
+                          Watch Course Trailer
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.68)', textAlign: 'center', maxWidth: 260 }}>
+                          Preview the premium course experience and then enter the classroom directly with the live class code.
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           </Box>
         </Container>
       </Box>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useState } from 'react';
+import NextLink from 'next/link';
 import {
   Box,
   Container,
@@ -109,14 +110,64 @@ function IncubatorPortalContent() {
 
   if (!startupId) {
     return (
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
         <Box sx={{ py: 8 }}>
-          <Alert severity="error" sx={{ mb: 3 }}>
-            Startup ID is missing from the portal URL.
-          </Alert>
-          <Button variant="contained" href="/projects">
-            Open Projects
-          </Button>
+          <Card sx={{ borderRadius: 4, overflow: 'hidden' }}>
+            <Box sx={{ p: 4, background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #1e1b4b 100%)', color: 'white' }}>
+              <Chip label="Portal Entry" sx={{ mb: 2, bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+              <Typography variant="h4" fontWeight={700} gutterBottom>
+                Enter the BrainSAIT Portal
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.76)', maxWidth: 720 }}>
+                Use this entry page to continue from your invitation email, open your workspace from the projects directory, or return to the partner application flow.
+              </Typography>
+            </Box>
+            <CardContent sx={{ p: 4 }}>
+              <Alert severity="info" sx={{ mb: 3 }}>
+                Accepted partners should continue from the invitation link sent to their email. Existing startups can open their workspace from the projects directory.
+              </Alert>
+              <Grid container spacing={2.5} sx={{ mb: 3 }}>
+                {[
+                  {
+                    title: 'Use invitation email',
+                    description: 'Open the onboarding link from your acceptance email to validate your token and complete setup.',
+                  },
+                  {
+                    title: 'Open projects directory',
+                    description: 'Find your startup workspace, repos, and automation entry points from the shared projects view.',
+                  },
+                  {
+                    title: 'Need access?',
+                    description: 'Apply to the incubator if you have not started the partner workflow yet.',
+                  },
+                ].map((item) => (
+                  <Grid item xs={12} md={4} key={item.title}>
+                    <Card variant="outlined" sx={{ height: '100%' }}>
+                      <CardContent>
+                        <Typography variant="subtitle1" fontWeight={700} gutterBottom>
+                          {item.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                <Button variant="contained" component={NextLink} href="/projects">
+                  Open Projects
+                </Button>
+                <Button variant="outlined" component={NextLink} href="/portal/accept">
+                  Invitation Help
+                </Button>
+                <Button variant="text" component={NextLink} href="/apply">
+                  Apply to Program
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
       </Container>
     );
@@ -488,6 +539,10 @@ function IncubatorPortalContent() {
             {[
               { label: 'Developer Portal', description: 'Manage repos, CI/CD, PRs', href: startupPortalHref, icon: <GitHub /> },
               { label: 'GitHub Automation', description: 'Create repos from templates', href: startupAutomateHref, icon: <AutoAwesome /> },
+                { label: 'Resource Library', description: 'Shared course bundle, templates, and contracts', href: '/resources', icon: <MenuBook /> },
+                { label: 'Mentorship Hub', description: 'Live chat rooms and mentor coordination', href: '/mentorship', icon: <People /> },
+                { label: 'App Marketplace', description: 'Install incubator apps and launch kits', href: '/app-store', icon: <Rocket /> },
+                { label: 'Graduation Showcase', description: 'Public cohort outcomes and startup stories', href: '/showcase', icon: <EmojiEvents /> },
               { label: 'Training Hub', description: 'Courses and premium learning tracks', href: '/training', icon: <MenuBook /> },
               { label: 'Template Gallery', description: 'Browse project templates', href: '/templates', icon: <Code /> },
               { label: 'All Projects', description: 'Org-wide project overview', href: '/projects', icon: <TrendingUp /> },

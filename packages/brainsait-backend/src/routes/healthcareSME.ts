@@ -366,9 +366,10 @@ function validateLicenseNumber(licenseNumber: string, country: string): { valid:
   return { valid: true };
 }
 
-async function sendVerificationEmail(sme: any) {
+async function sendVerificationEmail(sme: { id: string; [key: string]: unknown }) {
   // Implementation would send verification email
-  console.log(`Verification email sent to SME ${sme.id}`);
+  // logger.info('Verification email sent', { smeId: sme.id });
+  void sme;
 }
 
 async function generateLearningPath(sme: any, survey: any) {

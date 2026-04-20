@@ -28,14 +28,14 @@ export interface EventMessage {
 
 export async function publishEvent(
   subject: string,
-  event: Omit<EventMessage, 'id' | 'timestamp' | 'correlationId'>
+  event: Omit<EventMessage, 'id' | 'timestamp' | 'correlationId'> & { correlationId?: string }
 ): Promise<void> {
   const nats = await getNatsConnection();
   const fullEvent: EventMessage = {
     ...event,
     id: crypto.randomUUID(),
     timestamp: new Date().toISOString(),
-    correlationId: event.correlationId || crypto.randomUUID(),
+    correlationId: event.correlationId ?? crypto.randomUUID(),
   };
   nats.publish(subject, sc.encode(JSON.stringify(fullEvent)));
 }
@@ -53,7 +53,19 @@ export async function subscribeToEvents(
         const event = JSON.parse(sc.decode(msg.data)) as EventMessage;
         await handler(event);
       } catch (err) {
-        console.error(`[event-bus] Error handling ${subject}:`, err);
+        // Structured error logging — do NOT silently swallow
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.error(JSON.stringify({
+          level: 'error',
+          service: 'event-bus',
+          subject,
+          error: errMsg,
+          ts: new Date().toISOString(),
+        }));
+        // Re-publish to a dead-letter subject so operators can inspect
+        try {
+          nats.publish(`${subject}.dlq`, sc.encode(JSON.stringify({ error: errMsg, subject, ts: new Date().toISOString() })));
+        } catch { /* best-effort DLQ */ }
       }
     }
   })();

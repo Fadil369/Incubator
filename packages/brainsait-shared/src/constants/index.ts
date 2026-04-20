@@ -190,6 +190,9 @@ export const PROGRAM_TYPES_AR = {
   MASTERCLASS: 'فئة رئيسية',
 } as const;
 
+export * from './training';
+export * from './incubator';
+
 // Status Types
 export const STATUS_TYPES = {
   ACTIVE: 'Active',

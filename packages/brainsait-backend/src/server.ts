@@ -57,29 +57,32 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/health', async (req, res) => {
+  const checks: Record<string, string> = {};
+  let healthy = true;
+
+  // Database check
   try {
-    // Check database connection
     await prisma.$queryRaw`SELECT 1`;
-    
-    // Check Redis connection
-    await redisClient.ping();
-    
-    res.status(200).json({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      services: {
-        database: 'connected',
-        redis: 'connected',
-      },
-    });
-  } catch (error) {
-    logger.error('Health check failed', error);
-    res.status(503).json({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: 'Service unavailable',
-    });
+    checks.database = 'connected';
+  } catch {
+    checks.database = 'disconnected';
+    healthy = false;
   }
+
+  // Redis check (non-fatal — degrade gracefully)
+  try {
+    await redisClient.ping();
+    checks.redis = 'connected';
+  } catch {
+    checks.redis = 'degraded';
+    // Redis degradation is non-fatal for health checks — app still serves requests
+  }
+
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'healthy' : 'unhealthy',
+    timestamp: new Date().toISOString(),
+    services: checks,
+  });
 });
 
 // API routes

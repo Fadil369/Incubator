@@ -2,6 +2,33 @@
  * BrainSAIT Auth Gateway
  * JWT verification, session management, Keycloak proxy
  */
+
+const ALLOWED_ORIGINS = [
+  'https://brainsait.org',
+  'https://partners.brainsait.org',
+  'https://portal.elfadil.com',
+  'https://incubator.brainsait.org',
+];
+
+function corsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get('Origin') ?? '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]!;
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Vary': 'Origin',
+  };
+}
+
+function withCors(response: Response, request: Request): Response {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(corsHeaders(request))) {
+    headers.set(key, value);
+  }
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 export interface Env {
   JWKS_CACHE: KVNamespace;
   SESSION_STORE: KVNamespace;
@@ -17,24 +44,29 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders(request) });
+    }
+
     // Health
     if (url.pathname === '/health') {
-      return Response.json({ status: 'ok', service: 'auth-gateway' });
+      return withCors(Response.json({ status: 'ok', service: 'auth-gateway' }), request);
     }
 
     // OIDC Discovery
     if (url.pathname === '/.well-known/openid-configuration') {
-      return proxyToKeycloak(`${env.KEYCLOAK_URL}/realms/${env.REALM}/.well-known/openid-configuration`, env);
+      return withCors(await proxyToKeycloak(`${env.KEYCLOAK_URL}/realms/${env.REALM}/.well-known/openid-configuration`, env), request);
     }
 
     // JWKS endpoint (cached)
     if (url.pathname === '/jwks' || url.pathname === '/protocol/openid-connect/certs') {
-      return getJWKS(env);
+      return withCors(await getJWKS(env), request);
     }
 
     // Token verification
     if (url.pathname === '/api/v1/verify' && request.method === 'POST') {
-      return verifyToken(request, env);
+      return withCors(await verifyToken(request, env), request);
     }
 
     // Login redirect
@@ -48,12 +80,12 @@ export default {
 
     // Token exchange
     if (url.pathname === '/callback' && request.method === 'POST') {
-      return handleCallback(request, env);
+      return withCors(await handleCallback(request, env), request);
     }
 
     // Session info
     if (url.pathname === '/api/v1/session' && request.method === 'GET') {
-      return getSession(request, env);
+      return withCors(await getSession(request, env), request);
     }
 
     // Logout
@@ -67,11 +99,11 @@ export default {
     // Startup roles
     if (url.pathname.startsWith('/api/v1/roles/') && request.method === 'GET') {
       const startup = url.pathname.split('/')[3];
-      const roles = await env.STARTUP_ROLES.get(startup);
-      return Response.json({ startup, roles: roles ? JSON.parse(roles) : [] });
+      const roles = await env.STARTUP_ROLES.get(startup ?? '');
+      return withCors(Response.json({ startup, roles: roles ? JSON.parse(roles) : [] }), request);
     }
 
-    return Response.json({ error: 'Not found' }, { status: 404 });
+    return withCors(Response.json({ error: 'Not found' }, { status: 404 }), request);
   },
 };
 

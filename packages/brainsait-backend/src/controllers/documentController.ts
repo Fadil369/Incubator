@@ -408,17 +408,21 @@ export const getUserDocuments = asyncHandler(async (req: AuthenticatedRequest, r
 export const downloadDocument = asyncHandler(async (req: Request, res: Response) => {
   const { fileName } = req.params;
 
-  // Basic security check - ensure filename doesn't contain path traversal
-  if (fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) {
+  // SECURITY: allow only safe filename characters — no path separators, no dots at start
+  const safeNamePattern = /^[a-zA-Z0-9_\-\.]+$/;
+  if (!safeNamePattern.test(fileName) || fileName.startsWith('.') || fileName.includes('..')) {
     return res.status(400).json({
       success: false,
-      error: {
-        message: 'Invalid filename',
-      },
+      error: { message: 'Invalid filename' },
     });
   }
 
-  const filePath = path.join(process.cwd(), 'uploads', 'generated-documents', fileName);
+  // SECURITY: resolve and assert the resolved path is inside the uploads directory
+  const uploadsDir = path.resolve(process.cwd(), 'uploads', 'generated-documents');
+  const filePath   = path.resolve(uploadsDir, fileName);
+  if (!filePath.startsWith(uploadsDir + path.sep) && filePath !== uploadsDir) {
+    return res.status(400).json({ success: false, error: { message: 'Invalid filename' } });
+  }
 
   try {
     // Check if file exists
@@ -427,6 +431,8 @@ export const downloadDocument = asyncHandler(async (req: Request, res: Response)
     // Set appropriate headers
     res.setHeader('Content-Type', 'text/html');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    // Prevent the browser from inferring a different MIME type
+    res.setHeader('X-Content-Type-Options', 'nosniff');
 
     // Stream the file
     const fileStream = fs.createReadStream(filePath);

@@ -52,5 +52,8 @@ export interface PartnerApplication {
 declare const partners: Hono<{
     Bindings: Env;
 }, import("hono/types").BlankSchema, "/">;
+export declare const publicPartnerIntakeRoutes: Hono<{
+    Bindings: Env;
+}, import("hono/types").BlankSchema, "/">;
 export default partners;
 //# sourceMappingURL=partners.d.ts.map

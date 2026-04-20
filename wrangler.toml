@@ -13,7 +13,10 @@ workers_dev = true
 
 [env.production]
 name = "brainsait-backend-production"
-routes = [{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+routes = [
+	{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" },
+	{ pattern = "partners-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }
+]
 
 # KV Namespaces
 [[kv_namespaces]]
@@ -262,7 +265,10 @@ ENABLE_DEBUG = "true"
 
 [env.staging]
 name = "brainsait-backend-staging"
-routes = [{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+routes = [
+	{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" },
+	{ pattern = "staging-partners-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }
+]
 
 [env.staging.vars]
 NODE_ENV = "staging"
@@ -292,6 +298,6 @@ FRONTEND_URL = "https://brainsait.org"
 AI_SERVICE_URL = "https://ai.brainsait.org"
 DOCS_SERVICE_URL = "https://docs.brainsait.org"
 DOMAIN = "brainsait.org"
-CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org"
+CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
 GITHUB_REPO = "Fadil369/Incubator"

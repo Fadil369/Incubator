@@ -14,7 +14,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import authRoutes from './routes/workers/auth';
 import healthRoutes from './routes/workers/health';
 import githubRoutes from './routes/workers/github';
-import partnersRoutes from './routes/workers/partners';
+import partnersRoutes, { publicPartnerIntakeRoutes } from './routes/workers/partners';
 
 interface Env {
   // KV Namespaces
@@ -85,6 +85,7 @@ app.route('/api/v1', healthRoutes);
 app.route('/api/v1/auth', authRoutes);
 app.route('/api/v1/github', githubRoutes);
 app.route('/api/v1/partners', partnersRoutes);
+app.route('/', publicPartnerIntakeRoutes);
 
 // Placeholder routes for other services (to be implemented)
 app.get('/api/v1/users/profile', (c) => {

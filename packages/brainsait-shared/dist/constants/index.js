@@ -2,6 +2,20 @@
 /**
  * Application constants for BrainSAIT platform
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SUCCESS_MESSAGES_AR = exports.SUCCESS_MESSAGES = exports.ERROR_CODES = exports.STORAGE_KEYS = exports.ROUTES = exports.STATUS_TYPES_AR = exports.STATUS_TYPES = exports.PROGRAM_TYPES_AR = exports.PROGRAM_TYPES = exports.INDUSTRY_FOCUS_AR = exports.INDUSTRY_FOCUS = exports.BUSINESS_TYPES_AR = exports.BUSINESS_TYPES = exports.THEME_COLORS = exports.LOCALES = exports.DATE_FORMATS = exports.RATING_CONFIG = exports.PROGRAM_CONFIG = exports.VALIDATION_RULES = exports.FILE_UPLOAD = exports.PAGINATION = exports.API_CONFIG = void 0;
 // API Configuration
@@ -177,6 +191,8 @@ exports.PROGRAM_TYPES_AR = {
     WORKSHOP: 'ورشة عمل',
     MASTERCLASS: 'فئة رئيسية',
 };
+__exportStar(require("./training"), exports);
+__exportStar(require("./incubator"), exports);
 // Status Types
 exports.STATUS_TYPES = {
     ACTIVE: 'Active',

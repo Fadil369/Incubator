@@ -12,7 +12,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import authRoutes from './routes/workers/auth';
 import healthRoutes from './routes/workers/health';
 import githubRoutes from './routes/workers/github';
-import partnersRoutes from './routes/workers/partners';
+import partnersRoutes, { publicPartnerIntakeRoutes } from './routes/workers/partners';
 const app = new Hono();
 // Middleware
 app.use('*', logger());
@@ -35,6 +35,7 @@ app.route('/api/v1', healthRoutes);
 app.route('/api/v1/auth', authRoutes);
 app.route('/api/v1/github', githubRoutes);
 app.route('/api/v1/partners', partnersRoutes);
+app.route('/', publicPartnerIntakeRoutes);
 // Placeholder routes for other services (to be implemented)
 app.get('/api/v1/users/profile', (c) => {
     return c.json({ message: 'Users service - Coming soon!' });

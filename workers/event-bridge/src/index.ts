@@ -20,50 +20,71 @@ interface GitHubWebhookEvent {
   [key: string]: unknown;
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://brainsait.org',
+  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-hub-signature-256, x-github-event, x-github-delivery',
+};
+
+// Dynamic CORS helper — allows known origins
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get('Origin') || '';
+  const allowed = ['https://brainsait.org', 'https://partners.brainsait.org', 'https://portal.elfadil.com'];
+  return {
+    ...corsHeaders,
+    'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : 'https://brainsait.org',
+  };
+}
+
+let eventSchemaReady = false;
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders });
+    }
+
     const url = new URL(request.url);
 
-    // Health check
     if (url.pathname === '/health') {
-      return Response.json({ status: 'ok', service: 'event-bridge', timestamp: new Date().toISOString() });
+      return withCors(Response.json({ status: 'ok', service: 'event-bridge', timestamp: new Date().toISOString() }));
     }
 
-    // GitHub webhook endpoint
     if (url.pathname === '/webhooks/github' && request.method === 'POST') {
-      return handleGitHubWebhook(request, env);
+      return withCors(await handleGitHubWebhook(request, env));
     }
 
-    // Generic event ingestion
     if (url.pathname === '/api/v1/events' && request.method === 'POST') {
-      return handleGenericEvent(request, env);
+      return withCors(await handleGenericEvent(request, env));
     }
 
-    // GitHub automation via portal
     if (url.pathname === '/api/v1/github/automation' && request.method === 'POST') {
-      return handlePortalAutomation(request, env);
+      return withCors(await handlePortalAutomation(request, env));
     }
 
-    // Event query
     if (url.pathname.startsWith('/api/v1/events/') && request.method === 'GET') {
       const eventId = url.pathname.split('/').pop()!;
       const event = await env.EVENT_LOG.get(eventId);
-      if (!event) return Response.json({ error: 'Not found' }, { status: 404 });
-      return Response.json(JSON.parse(event));
+      if (!event) return withCors(Response.json({ error: 'Not found' }, { status: 404 }));
+      return withCors(Response.json(JSON.parse(event)));
     }
 
-    return Response.json({ error: 'Not found' }, { status: 404 });
+    return withCors(Response.json({ error: 'Not found' }, { status: 404 }));
   },
 
-  // Queue consumer for processing events
   async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
     for (const message of batch.messages) {
       try {
-        const event = message.body as Record<string, string>;
+        const event = message.body as Record<string, unknown>;
         await processEvent(event, env);
         message.ack();
-      } catch (err) {
-        message.retry();
+      } catch {
+        // Cap retries at 3 to prevent infinite retry loops
+        if ((message as unknown as { attempts: number }).attempts >= 3) {
+          message.ack(); // Dead-letter — acknowledge to drop after max retries
+        } else {
+          message.retry();
+        }
       }
     }
   },
@@ -78,7 +99,6 @@ async function handleGitHubWebhook(request: Request, env: Env): Promise<Response
     return Response.json({ error: 'Missing webhook headers' }, { status: 400 });
   }
 
-  // Verify signature
   const secret = await env.WEBHOOK_SECRETS.get('github-webhook-secret');
   if (secret) {
     const body = await request.clone().arrayBuffer();
@@ -90,7 +110,6 @@ async function handleGitHubWebhook(request: Request, env: Env): Promise<Response
 
   const payload = await request.json<GitHubWebhookEvent>();
 
-  // Build normalized event
   const event = {
     id: deliveryId,
     type: eventType,
@@ -102,10 +121,8 @@ async function handleGitHubWebhook(request: Request, env: Env): Promise<Response
     payload,
   };
 
-  // Store in KV (7-day TTL)
   await env.EVENT_LOG.put(deliveryId, JSON.stringify(event), { expirationTtl: 604800 });
 
-  // Route to appropriate queue
   switch (eventType) {
     case 'push':
     case 'pull_request':
@@ -122,14 +139,12 @@ async function handleGitHubWebhook(request: Request, env: Env): Promise<Response
       await env.GITHUB_EVENTS.send(event);
   }
 
-  // Always notify
   await env.NOTIFICATION_QUEUE.send({
     type: `github.${eventType}.${payload.action || 'received'}`,
     source: 'event-bridge',
     data: event,
   });
 
-  // Analytics
   env.EVENT_ANALYTICS.writeDataPoint({
     blobs: [eventType, payload.repository?.full_name || 'unknown', payload.sender?.login || 'unknown'],
     doubles: [Date.now()],
@@ -140,8 +155,19 @@ async function handleGitHubWebhook(request: Request, env: Env): Promise<Response
 }
 
 async function handleGenericEvent(request: Request, env: Env): Promise<Response> {
-  const event = await request.json<Record<string, string>>();
+  // Enforce max payload size (1 MB)
+  const contentLength = parseInt(request.headers.get('Content-Length') || '0');
+  if (contentLength > 1_048_576) {
+    return Response.json({ error: 'Payload too large' }, { status: 413 });
+  }
+
+  const event = await request.json<Record<string, unknown>>();
   const eventId = crypto.randomUUID();
+
+  // Validate required fields
+  if (!event.type || typeof event.type !== 'string') {
+    return Response.json({ error: 'Event type required' }, { status: 400 });
+  }
 
   const normalized = {
     id: eventId,
@@ -155,19 +181,26 @@ async function handleGenericEvent(request: Request, env: Env): Promise<Response>
   return Response.json({ status: 'queued', eventId });
 }
 
-async function processEvent(event: Record<string, string>, env: Env): Promise<void> {
-  // Store in D1 for querying
+async function processEvent(event: Record<string, unknown>, env: Env): Promise<void> {
+  await ensureEventSchema(env);
+
   await env.DB.prepare(
     'INSERT INTO events (id, type, source, repo, payload, created_at) VALUES (?, ?, ?, ?, ?, ?)'
   )
-    .bind(event.id, event.type, event.source, event.repo || '', JSON.stringify(event.payload), event.timestamp)
+    .bind(
+      typeof event.id === 'string' ? event.id : crypto.randomUUID(),
+      typeof event.type === 'string' ? event.type : 'unknown',
+      typeof event.source === 'string' ? event.source : 'unknown',
+      typeof event.repo === 'string' ? event.repo : '',
+      JSON.stringify(event.payload ?? event),
+      typeof event.timestamp === 'string' ? event.timestamp : new Date().toISOString(),
+    )
     .run();
 }
 
 async function handlePortalAutomation(request: Request, env: Env): Promise<Response> {
   const body = await request.json<Record<string, unknown>>();
 
-  // Validate required fields to prevent arbitrary payloads from being queued
   const eventType = body.type;
   const startup = body.startup;
   if (typeof eventType !== 'string' || !eventType) {
@@ -177,7 +210,6 @@ async function handlePortalAutomation(request: Request, env: Env): Promise<Respo
     return Response.json({ error: 'Missing required field: startup' }, { status: 400 });
   }
 
-  // Only include known safe top-level fields in the queued event
   const safePayload: Record<string, unknown> = {
     type: eventType,
     startup,
@@ -218,4 +250,35 @@ async function verifySignature(signature: string, body: ArrayBuffer, secret: str
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
   return signature === `sha256=${hash}`;
+}
+
+async function ensureEventSchema(env: Env): Promise<void> {
+  if (eventSchemaReady) {
+    return;
+  }
+
+  await env.DB.exec(`
+    CREATE TABLE IF NOT EXISTS events (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      source TEXT NOT NULL,
+      repo TEXT,
+      payload TEXT,
+      created_at TEXT NOT NULL
+    );
+  `);
+
+  eventSchemaReady = true;
+}
+
+function withCors(response: Response): Response {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(corsHeaders)) {
+    headers.set(key, value);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }

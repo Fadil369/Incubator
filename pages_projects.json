@@ -1,0 +1,230 @@
+[
+  {
+    "Project Name": "brainsait-frontend",
+    "Project Domains": "brainsait-frontend-3kv.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "6 minutes ago"
+  },
+  {
+    "Project Name": "brainsait-org",
+    "Project Domains": "brainsait-org.pages.dev, brainsait.org",
+    "Git Provider": "Yes",
+    "Last Modified": "1 hour ago"
+  },
+  {
+    "Project Name": "elfadil-com",
+    "Project Domains": "elfadil-com.pages.dev, elfadil.com, www.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "5 days ago"
+  },
+  {
+    "Project Name": "elfadil-page",
+    "Project Domains": "elfadil-page.pages.dev, dr.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "5 days ago"
+  },
+  {
+    "Project Name": "clinics-pages",
+    "Project Domains": "clinics-pages.pages.dev, clinics.brainsait.org",
+    "Git Provider": "Yes",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "specialized-medical-center-site",
+    "Project Domains": "specialized-medical-center-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "first-clinic-site",
+    "Project Domains": "first-clinic-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "dallah-health-site",
+    "Project Domains": "dallah-health-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "consulting-clinics-site",
+    "Project Domains": "consulting-clinics-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "renewal-reshape-site",
+    "Project Domains": "renewal-reshape-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "medica-clinics-site",
+    "Project Domains": "medica-clinics-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "kaya-skin-clinic-site",
+    "Project Domains": "kaya-skin-clinic-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "elite-medical-center-site",
+    "Project Domains": "elite-medical-center-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "derma-clinic-site",
+    "Project Domains": "derma-clinic-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "star-smiles-site",
+    "Project Domains": "star-smiles-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "avicena-dental-center-site",
+    "Project Domains": "avicena-dental-center-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "imtiaz-dental-center-site",
+    "Project Domains": "imtiaz-dental-center-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "sigal-dental-clinic-site",
+    "Project Domains": "sigal-dental-clinic-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "ram-clinics-site",
+    "Project Domains": "ram-clinics-site.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "okclinics",
+    "Project Domains": "okclinics.pages.dev, okclinics.brainsait.org",
+    "Git Provider": "No",
+    "Last Modified": "1 week ago"
+  },
+  {
+    "Project Name": "givc-core-academy",
+    "Project Domains": "givc-core-academy.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "3 weeks ago"
+  },
+  {
+    "Project Name": "sbs-landing",
+    "Project Domains": "sbs-landing.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "3 weeks ago"
+  },
+  {
+    "Project Name": "browser-ui",
+    "Project Domains": "browser-ui-f4s.pages.dev, browser.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "3 weeks ago"
+  },
+  {
+    "Project Name": "sudan",
+    "Project Domains": "sudan-2rs.pages.dev, sudan.elfadil.com",
+    "Git Provider": "Yes",
+    "Last Modified": "3 weeks ago"
+  },
+  {
+    "Project Name": "brainsait-healthcare-platform",
+    "Project Domains": "brainsait-healthcare-platform-1n0.pages.dev, care.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "1 month ago"
+  },
+  {
+    "Project Name": "travel-code-secure-vault",
+    "Project Domains": "travel-code-secure-vault.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "1 month ago"
+  },
+  {
+    "Project Name": "brainsait-healthcare-directory",
+    "Project Domains": "brainsait-healthcare-directory.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "3 months ago"
+  },
+  {
+    "Project Name": "cloud-elfadil",
+    "Project Domains": "cloud-elfadil.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "3 months ago"
+  },
+  {
+    "Project Name": "brainsait-cloud",
+    "Project Domains": "brainsait-cloud.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "3 months ago"
+  },
+  {
+    "Project Name": "neural-cloud",
+    "Project Domains": "neural-cloud.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-neural-cloud",
+    "Project Domains": "brainsait-neural-cloud.pages.dev, call.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-healthcare",
+    "Project Domains": "brainsait-healthcare-c6e.pages.dev, map.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-doctor-hub",
+    "Project Domains": "brainsait-doctor-hub.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "elfadil-booking",
+    "Project Domains": "elfadil-booking.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-booking",
+    "Project Domains": "brainsait-booking.pages.dev, book.elfadil.com",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "givc-his-ui",
+    "Project Domains": "givc-his-ui.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-verification",
+    "Project Domains": "brainsait-verification.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  },
+  {
+    "Project Name": "brainsait-webstudio",
+    "Project Domains": "brainsait-webstudio.pages.dev",
+    "Git Provider": "No",
+    "Last Modified": "4 months ago"
+  }
+]

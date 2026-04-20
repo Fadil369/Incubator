@@ -19,9 +19,10 @@ import validator from 'validator';
 const prisma = new PrismaClient();
 
 // Security configuration
+const _nodeEnv = process.env.NODE_ENV || 'development';
 const SECURITY_CONFIG = {
-  JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'refresh-secret-key',
+  JWT_SECRET: process.env.JWT_SECRET || (_nodeEnv !== 'production' ? 'dev-only-secret' : (() => { throw new Error('JWT_SECRET required'); })()),
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || (_nodeEnv !== 'production' ? 'dev-only-refresh' : (() => { throw new Error('JWT_REFRESH_SECRET required'); })()),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '15m',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex'),
@@ -594,12 +595,12 @@ export const logSecurityEvent = async (event: SecurityAuditLog) => {
       });
     }
     
-    // Also log to console in development
+    // Structured log in development (never in production)
     if (process.env.NODE_ENV === 'development') {
-      console.log('[SECURITY AUDIT]', event);
+      process.stdout.write(JSON.stringify({ level: 'warn', category: 'SECURITY_AUDIT', ...event }) + '\n');
     }
   } catch (error) {
-    console.error('Failed to log security event:', error);
+    process.stderr.write(JSON.stringify({ level: 'error', msg: 'Failed to log security event', error: String(error) }) + '\n');
   }
 };
 

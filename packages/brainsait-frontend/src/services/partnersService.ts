@@ -4,6 +4,7 @@
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+const PARTNER_APPLY_URL = process.env.NEXT_PUBLIC_PARTNER_APPLY_URL || `${API_BASE_URL}/api/v1/partners/application`;
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -60,10 +61,26 @@ export async function submitPartnerApplication(data: {
   partnerType: string;
   description: string;
 }): Promise<{ success: boolean; applicationId: string; referenceId: string }> {
-  return apiFetch('/api/v1/partners/application', {
+  const response = await fetch(PARTNER_APPLY_URL, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    let message: string;
+    try {
+      message = (JSON.parse(text) as { error?: string }).error ?? `HTTP ${response.status}`;
+    } catch {
+      message = text || `HTTP ${response.status}`;
+    }
+    throw new Error(message);
+  }
+
+  return response.json() as Promise<{ success: boolean; applicationId: string; referenceId: string }>;
 }
 
 export async function validateInviteToken(

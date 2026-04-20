@@ -53,7 +53,7 @@ router.post('/certificate', authenticate, certificateValidation, generateCertifi
 router.get('/my-documents', authenticate, getUserDocuments);
 router.delete('/:fileName', authenticate, deleteDocument);
 
-// Public download route (with security checks in controller)
+// Public download route — requires a valid signed token via ?token= query param (validated in controller)
 router.get('/download/:fileName', downloadDocument);
 
 // Admin-only routes

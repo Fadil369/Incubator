@@ -2,10 +2,20 @@ import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig();
 
+// Fail fast on missing critical secrets in production
+const nodeEnv = process.env.NODE_ENV || 'development';
+if (nodeEnv === 'production') {
+  const required = ['JWT_SECRET', 'DATABASE_URL', 'REDIS_URL'];
+  const missing = required.filter((k) => !process.env[k]);
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+  }
+}
+
 export const config = {
   server: {
     port: parseInt(process.env.PORT || '5000', 10),
-    nodeEnv: process.env.NODE_ENV || 'development',
+    nodeEnv,
   },
   database: {
     url: process.env.DATABASE_URL || 'postgresql://brainsait:password@localhost:5432/brainsait_db',
@@ -14,7 +24,7 @@ export const config = {
     url: process.env.REDIS_URL || 'redis://localhost:6379',
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+    secret: process.env.JWT_SECRET || (nodeEnv !== 'production' ? 'dev-only-secret-change-in-production' : ''),
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
   cors: {

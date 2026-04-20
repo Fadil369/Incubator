@@ -65,13 +65,9 @@ const AIDashboardPage: React.FC = () => {
     setCurrentTab(newValue);
   };
 
-  const handleInsightAction = (insight: any, action: string) => {
-    console.log('Insight action:', action, insight);
-    // In production, implement specific actions like:
-    // - Navigate to detailed analysis
-    // - Create action items
-    // - Schedule follow-ups
-    // - Export insights
+  const handleInsightAction = (insight: unknown, action: string) => {
+    // Insight actions: navigate, create task, schedule follow-up, export
+    void insight; void action;
   };
 
   return (

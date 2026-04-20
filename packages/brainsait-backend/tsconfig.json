@@ -40,6 +40,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "src/tests/**/*",
     "../brainsait-shared/src/**/*"
   ],
   "ts-node": {

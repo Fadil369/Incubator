@@ -338,10 +338,3 @@ export default {
   validateHijriDate,
   parseArabicDateString
 };
-
-// Example usage for testing
-console.log('🗓️ Hijri Calendar Integration Ready');
-console.log('Current Hijri Date:', formatSaudiBusinessDate(new Date()));
-console.log('Arabic Numerals Example:', toArabicNumerals(12345));
-console.log('Is Ramadan?', isRamadan());
-console.log('Saudi Weekend Today?', isSaudiWeekend(new Date()));

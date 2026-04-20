@@ -4,7 +4,7 @@ import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import React from 'react';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
@@ -27,8 +27,10 @@ const cacheLtr = createCache({
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const params = useParams();
+  const pathname = usePathname() ?? '/';
   const locale = Array.isArray(params?.locale) ? params.locale[0] : params?.locale;
   const isArabic = locale === 'ar';
+  const useSiteChrome = pathname !== '/';
 
   // Create theme with RTL support and Arabic typography
   const theme = createTheme({
@@ -277,14 +279,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang={locale || 'en'} dir={isArabic ? 'rtl' : 'ltr'}>
       <head>
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="BrainSAIT Healthcare SME Digital Transformation Platform" />
-        <title>BrainSAIT Platform</title>
+        <meta name="description" content="BrainSAIT — AI-native healthcare SME incubator for Saudi Arabia & MENA. NPHIES compliance, FHIR R4 SDKs, mentorship, and acceleration programs." />
+        <meta name="keywords" content="healthcare incubator, BrainSAIT, Saudi Arabia, NPHIES, FHIR, digital health, AI healthcare" />
+        <meta name="robots" content="index, follow" />
+        <meta name="theme-color" content="#2E7D32" />
+        <meta property="og:site_name" content="BrainSAIT" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content={isArabic ? 'ar_SA' : 'en_US'} />
+        <title>BrainSAIT — Healthcare SME Incubator</title>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href="https://brainsait.org" />
         {isArabic && (
-          <link 
-            href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" 
-            rel="stylesheet" 
+          <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
           />
         )}
       </head>
@@ -292,9 +302,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <CacheProvider value={isArabic ? cacheRtl : cacheLtr}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <SiteChrome>
-              {children}
-            </SiteChrome>
+            {useSiteChrome ? <SiteChrome>{children}</SiteChrome> : children}
           </ThemeProvider>
         </CacheProvider>
       </body>

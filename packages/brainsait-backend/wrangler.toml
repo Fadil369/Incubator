@@ -13,11 +13,17 @@ workers_dev = true
 # Custom domains for production
 [env.production]
 name = "brainsait-backend-production"
-routes = [{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+routes = [
+	{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" },
+	{ pattern = "partners-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }
+]
 
 [env.staging]
 name = "brainsait-backend-staging"
-routes = [{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+routes = [
+	{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" },
+	{ pattern = "staging-partners-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }
+]
 
 [env.preview]
 name = "brainsait-backend-preview"
@@ -270,7 +276,7 @@ PLATFORM_VERSION = "2.0.0"
 [env.production.vars]
 NODE_ENV = "production"
 LOG_LEVEL = "info"
-CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
+CORS_ORIGINS = "https://brainsait.org,https://www.brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
 GITHUB_REPO = "Fadil369/Incubator"
 FRONTEND_URL = "https://brainsait.org"
@@ -281,7 +287,7 @@ PLATFORM_VERSION = "2.0.0"
 [env.staging.vars]
 NODE_ENV = "staging"
 LOG_LEVEL = "debug"
-CORS_ORIGINS = "https://staging.brainsait.org,http://localhost:3000"
+CORS_ORIGINS = "https://staging.brainsait.org,https://staging-www.brainsait.org,http://localhost:3000"
 GITHUB_ORG = "brainsait-incubator"
 GITHUB_REPO = "Fadil369/Incubator"
 FRONTEND_URL = "https://staging.brainsait.org"
