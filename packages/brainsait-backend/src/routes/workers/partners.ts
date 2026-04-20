@@ -719,7 +719,8 @@ partners.get('/validate', async (c) => {
   }
 
   // Return safe subset (no token)
-  const { inviteToken: _tok, ...safeApp } = app;
+  const safeApp = { ...app };
+  delete safeApp.inviteToken;
   return c.json({ valid: true, application: safeApp });
 });
 

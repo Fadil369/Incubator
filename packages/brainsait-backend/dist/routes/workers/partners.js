@@ -1,0 +1,629 @@
+/**
+ * Partner Lifecycle Management Routes
+ *
+ * Covers the full partner journey from application receipt to incubator access:
+ *
+ *  POST  /api/v1/partners/application              — Receive application (webhook from brainsait-org or direct)
+ *  GET   /api/v1/partners/applications             — Admin: list applications (requires X-Admin-Key)
+ *  GET   /api/v1/partners/applications/:id         — Admin: get one application
+ *  POST  /api/v1/partners/applications/:id/accept  — Admin: accept → generate magic link → send email + provision GitHub repo
+ *  POST  /api/v1/partners/applications/:id/reject  — Admin: reject → send rejection email
+ *  GET   /api/v1/partners/validate?token=xxx       — Validate invitation token, return partner info
+ *  POST  /api/v1/partners/complete-onboarding      — Partner completes onboarding and persists profile details after clicking magic link
+ */
+import { Hono } from 'hono';
+/** Maximum number of healthcare SMEs accepted into the Ultimate Incubator Program. */
+const MAX_ACCEPTED_SMES = 32;
+/**
+ * Hash a password using PBKDF2-HMAC-SHA256 with a random salt.
+ * Returns a "$pbkdf2-sha256$<iter>$<saltHex>$<hashHex>" string.
+ */
+async function hashPassword(password) {
+    const ITERATIONS = 100_000;
+    const SALT_BYTES = 16;
+    const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
+    const keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+    const derived = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: salt.buffer, iterations: ITERATIONS }, keyMaterial, 256);
+    const toHex = (buf) => {
+        const arr = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+        return Array.from(arr)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('');
+    };
+    return `$pbkdf2-sha256$${ITERATIONS}$${toHex(salt)}$${toHex(derived)}`;
+}
+const PARTNER_TYPE_NAMES = {
+    sme: 'Healthcare SME Startup',
+    tech: 'Technology Partner',
+    health: 'Healthcare Provider',
+    dist: 'Distribution Partner',
+    integ: 'Integration Partner',
+};
+/**
+ * Dispatch the `partner-provision` GitHub Actions workflow via
+ * repository_dispatch so the startup's GitHub repos and Cloudflare
+ * resources are automatically provisioned after onboarding.
+ */
+async function dispatchProvisioningWorkflow(app, githubToken, githubRepo) {
+    if (!githubToken || !githubRepo)
+        return;
+    if (!app.startupSlug) {
+        console.warn('dispatchProvisioningWorkflow: startupSlug is empty, skipping dispatch');
+        return;
+    }
+    const res = await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${githubToken}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json',
+            'User-Agent': 'brainsait-incubator/2.0',
+        },
+        body: JSON.stringify({
+            event_type: 'startup_onboarded',
+            client_payload: {
+                startup_slug: app.startupSlug,
+                organization: app.organization,
+                partner_type: app.partnerType,
+                contact_email: app.email,
+                reference_id: app.referenceId,
+            },
+        }),
+    });
+    // GitHub returns 204 No Content on success for repository_dispatch
+    if (!res.ok && res.status !== 204) {
+        const body = await res.text().catch(() => '');
+        console.warn(`dispatchProvisioningWorkflow: GitHub API error ${res.status}: ${body}`);
+    }
+}
+const VALID_PARTNER_TYPES = new Set(Object.keys(PARTNER_TYPE_NAMES));
+/** Basic RFC 5321 / HTML5 email pattern check. */
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+const partners = new Hono();
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function generateReferenceId() {
+    return `BSP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+}
+async function generateInviteToken(applicationId, secret) {
+    const payload = `${applicationId}:${Date.now()}`;
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+    const hex = Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    // Encode payload as base64url without Node.js Buffer
+    const payloadB64Url = btoa(payload).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return `${payloadB64Url}.${hex}`;
+}
+async function verifyInviteToken(token, secret) {
+    const dot = token.lastIndexOf('.');
+    if (dot === -1)
+        return null;
+    const payloadB64Url = token.slice(0, dot);
+    const providedHex = token.slice(dot + 1);
+    let payload;
+    try {
+        // Decode base64url (RFC 4648 §5) without Node.js Buffer: restore standard base64
+        const base64 = payloadB64Url.replace(/-/g, '+').replace(/_/g, '/').padEnd(payloadB64Url.length + ((4 - (payloadB64Url.length % 4)) % 4), '=');
+        payload = atob(base64);
+    }
+    catch {
+        return null;
+    }
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+    const expectedHex = Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    if (providedHex !== expectedHex)
+        return null;
+    // payload = "applicationId:timestamp" — token valid for 7 days
+    const parts = payload.split(':');
+    if (parts.length < 2)
+        return null;
+    const ts = parseInt(parts[parts.length - 1]);
+    if (Date.now() - ts > 7 * 24 * 60 * 60 * 1000)
+        return null;
+    return parts.slice(0, -1).join(':'); // applicationId
+}
+async function sendEmail(to, toName, subject, html, text, apiKey) {
+    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            personalizations: [{ to: [{ email: to, name: toName }] }],
+            from: { email: 'partner@brainsait.org', name: 'BrainSAIT Partners' },
+            subject,
+            content: [
+                { type: 'text/plain', value: text },
+                { type: 'text/html', value: html },
+            ],
+        }),
+    });
+    if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`SendGrid error ${res.status}: ${body}`);
+    }
+}
+function buildAcceptanceEmailHtml(app, portalUrl) {
+    const partnerTypeName = PARTNER_TYPE_NAMES[app.partnerType] ?? app.partnerType;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Welcome to BrainSAIT Incubator</title></head>
+<body style="margin:0;padding:0;background:#0f0f1a;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f0f1a;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#1e1b4b 100%);border-radius:16px 16px 0 0;padding:40px;text-align:center;">
+            <div style="display:inline-block;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:12px;padding:10px 20px;margin-bottom:20px;">
+              <span style="color:#fff;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">✅ Application Accepted</span>
+            </div>
+            <h1 style="margin:0 0 12px;color:#f8fafc;font-size:28px;font-weight:700;">Welcome to BrainSAIT Incubator!</h1>
+            <p style="margin:0;color:#94a3b8;font-size:15px;">You've been accepted as a <strong style="color:#a78bfa;">${partnerTypeName}</strong></p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1e1e3a;padding:36px 40px 24px;">
+            <p style="margin:0 0 16px;color:#e2e8f0;font-size:16px;line-height:1.7;">Dear <strong style="color:#f8fafc;">${app.firstName}</strong>,</p>
+            <p style="margin:0 0 16px;color:#cbd5e1;font-size:15px;line-height:1.7;">
+              We are thrilled to welcome <strong style="color:#f8fafc;">${app.organization}</strong> to the <strong style="color:#a78bfa;">BrainSAIT Ultimate Incubator Program</strong>. Your application has been reviewed and accepted by our team.
+            </p>
+            <p style="margin:0 0 24px;color:#cbd5e1;font-size:15px;line-height:1.7;">
+              Click the button below to access your personalized incubator portal and complete your onboarding. This link is valid for <strong style="color:#d4a574;">7 days</strong>.
+            </p>
+            <div style="text-align:center;margin:32px 0;">
+              <a href="${portalUrl}" style="display:inline-block;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 40px;border-radius:10px;letter-spacing:-0.3px;">
+                Access My Incubator Portal →
+              </a>
+            </div>
+            <p style="margin:0;color:#64748b;font-size:12px;text-align:center;word-break:break-all;">
+              Or copy this link: <a href="${portalUrl}" style="color:#8b5cf6;">${portalUrl}</a>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1e1e3a;padding:0 40px 28px;">
+            <div style="background:#16213e;border:1px solid #2d3a5e;border-radius:12px;padding:24px;">
+              <p style="margin:0 0 16px;color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">What's Waiting For You</p>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                ${[
+        ['🚀', 'Incubator Program Dashboard', 'Track milestones, access resources, book mentor sessions'],
+        ['🔧', 'GitHub Repository Setup', 'Auto-provisioned repos, CI/CD pipelines, and templates'],
+        ['🤝', 'Dedicated Mentor Assignment', 'Weekly 1-on-1 sessions with a BrainSAIT domain expert'],
+        ['📊', 'Analytics & KPI Tracking', 'Real-time dashboards for your startup growth metrics'],
+    ].map(([icon, title, desc]) => `
+                <tr>
+                  <td style="padding:10px 0;border-bottom:1px solid #1e2d4a;vertical-align:top;">
+                    <table cellpadding="0" cellspacing="0"><tr>
+                      <td style="width:32px;font-size:20px;vertical-align:middle;">${icon}</td>
+                      <td style="padding-left:12px;vertical-align:middle;">
+                        <strong style="color:#e2e8f0;font-size:14px;">${title}</strong><br>
+                        <span style="color:#64748b;font-size:12px;">${desc}</span>
+                      </td>
+                    </tr></table>
+                  </td>
+                </tr>`).join('')}
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#16213e;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;">
+            <p style="margin:0;color:#475569;font-size:12px;line-height:1.6;">
+              © ${new Date().getFullYear()} BrainSAIT · <a href="https://brainsait.org" style="color:#8b5cf6;">brainsait.org</a><br>
+              Reference: <code style="color:#64748b;">${app.referenceId}</code>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+function buildAcceptanceEmailText(app, portalUrl) {
+    const partnerTypeName = PARTNER_TYPE_NAMES[app.partnerType] ?? app.partnerType;
+    return `Welcome to BrainSAIT Incubator, ${app.firstName}!
+
+Your application for ${app.organization} has been ACCEPTED as a ${partnerTypeName}.
+
+Access your personalized incubator portal here (valid for 7 days):
+${portalUrl}
+
+What's waiting for you:
+  • Incubator Program Dashboard
+  • GitHub Repository Setup (auto-provisioned)
+  • Dedicated Mentor Assignment
+  • Analytics & KPI Tracking
+
+Reference: ${app.referenceId}
+© ${new Date().getFullYear()} BrainSAIT · brainsait.org
+`;
+}
+function buildRejectionEmailHtml(app) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>BrainSAIT Partner Application Update</title></head>
+<body style="margin:0;padding:0;background:#0f0f1a;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f0f1a;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px 16px 0 0;padding:40px;text-align:center;">
+            <h1 style="margin:0 0 12px;color:#f8fafc;font-size:26px;font-weight:700;">Application Update</h1>
+            <p style="margin:0;color:#94a3b8;font-size:15px;">BrainSAIT Partner Program</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1e1e3a;padding:36px 40px;">
+            <p style="margin:0 0 16px;color:#e2e8f0;font-size:16px;line-height:1.7;">Dear ${app.firstName},</p>
+            <p style="margin:0 0 16px;color:#cbd5e1;font-size:15px;line-height:1.7;">
+              Thank you for your interest in partnering with BrainSAIT. After careful review of your application for <strong style="color:#f8fafc;">${app.organization}</strong>, we are unable to move forward at this time.
+            </p>
+            <p style="margin:0 0 16px;color:#cbd5e1;font-size:15px;line-height:1.7;">
+              We encourage you to reapply in the future as the program evolves. In the meantime, you're welcome to explore our platform and documentation at <a href="https://brainsait.org" style="color:#8b5cf6;">brainsait.org</a>.
+            </p>
+            <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.7;">
+              If you have questions, please reply to this email or reach out to <a href="mailto:partner@brainsait.org" style="color:#8b5cf6;">partner@brainsait.org</a>.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#16213e;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;">
+            <p style="margin:0;color:#475569;font-size:12px;">
+              © ${new Date().getFullYear()} BrainSAIT · <a href="https://brainsait.org" style="color:#8b5cf6;">brainsait.org</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+function buildRejectionEmailText(app) {
+    return `BrainSAIT Partner Program — Application Update
+
+Dear ${app.firstName},
+
+Thank you for your interest in partnering with BrainSAIT.
+
+After careful review of your application for ${app.organization}, we are unable to move forward at this time.
+
+We encourage you to reapply in the future. You can also explore our platform at https://brainsait.org.
+
+Questions? Contact partner@brainsait.org.
+
+© ${new Date().getFullYear()} BrainSAIT · brainsait.org
+`;
+}
+// ── Routes ────────────────────────────────────────────────────────────────────
+/**
+ * Rate-limit helper using the RATE_LIMIT KV namespace.
+ * Returns true if the caller is within limits.
+ * Window: 1 hour / 5 submissions per IP.
+ *
+ * Note: KV get-check-put is not atomic. Under high concurrency a small number of
+ * extra requests may slip through. For a fully atomic counter, replace with a
+ * Durable Object. This is acceptable for the current low-volume partner flow.
+ */
+async function checkRateLimit(kv, ip) {
+    if (!kv)
+        return true; // namespace not bound — allow (graceful degradation)
+    const key = `rate:application:${ip}`;
+    const raw = await kv.get(key);
+    const count = raw ? parseInt(raw) : 0;
+    if (count >= 5)
+        return false;
+    await kv.put(key, String(count + 1), { expirationTtl: 3600 });
+    return true;
+}
+// Receive application (from brainsait-org email-worker webhook or direct POST from partners.html)
+partners.post('/application', async (c) => {
+    // ── Rate limiting ──────────────────────────────────────────────────────────
+    const clientIp = c.req.header('cf-connecting-ip') ??
+        c.req.header('x-forwarded-for')?.split(',')[0].trim() ??
+        'unknown';
+    const allowed = await checkRateLimit(c.env.RATE_LIMIT, clientIp);
+    if (!allowed) {
+        return c.json({ error: 'Too many applications from this IP. Please try again later.' }, 429);
+    }
+    const body = await c.req.json().catch(() => null);
+    if (!body)
+        return c.json({ error: 'Invalid JSON' }, 400);
+    const required = ['firstName', 'lastName', 'email', 'organization', 'country', 'partnerType', 'description'];
+    for (const field of required) {
+        if (typeof body[field] !== 'string' || !body[field].trim()) {
+            return c.json({ error: `Missing required field: ${field}` }, 400);
+        }
+    }
+    // ── Validate email format ──────────────────────────────────────────────────
+    if (!isValidEmail(body.email.trim())) {
+        return c.json({ error: 'Invalid email address' }, 400);
+    }
+    // ── Validate partner type ──────────────────────────────────────────────────
+    if (!VALID_PARTNER_TYPES.has(body.partnerType.trim())) {
+        return c.json({ error: `Invalid partnerType. Must be one of: ${[...VALID_PARTNER_TYPES].join(', ')}` }, 400);
+    }
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+    const application = {
+        id,
+        firstName: body.firstName.trim(),
+        lastName: body.lastName.trim(),
+        email: body.email.toLowerCase().trim(),
+        organization: body.organization.trim(),
+        country: body.country.trim(),
+        partnerType: body.partnerType.trim(),
+        description: body.description.trim(),
+        status: 'PENDING',
+        referenceId: generateReferenceId(),
+        createdAt: now,
+        updatedAt: now,
+    };
+    await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(application), {
+        expirationTtl: 365 * 24 * 60 * 60, // 1 year
+    });
+    return c.json({ success: true, applicationId: id, referenceId: application.referenceId });
+});
+// Admin: list applications
+partners.get('/applications', async (c) => {
+    const adminKey = c.req.header('x-admin-key');
+    if (!c.env.ADMIN_KEY || adminKey !== c.env.ADMIN_KEY) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    const status = c.req.query('status');
+    const keys = [];
+    let cursor = undefined;
+    do {
+        const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
+        keys.push(...page.keys.map((key) => key.name));
+        cursor = 'cursor' in page ? page.cursor : undefined;
+    } while (cursor);
+    const applications = (await Promise.all(keys.map(async (key) => {
+        const raw = await c.env.PARTNER_APPLICATIONS.get(key);
+        return raw ? JSON.parse(raw) : null;
+    })))
+        .filter((a) => a !== null)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const filtered = status ? applications.filter((a) => a.status === status) : applications;
+    return c.json({ applications: filtered, total: filtered.length });
+});
+// Admin: get single application
+partners.get('/applications/:id', async (c) => {
+    const adminKey = c.req.header('x-admin-key');
+    if (!c.env.ADMIN_KEY || adminKey !== c.env.ADMIN_KEY) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    const { id } = c.req.param();
+    const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${id}`);
+    if (!raw)
+        return c.json({ error: 'Not found' }, 404);
+    return c.json(JSON.parse(raw));
+});
+// Admin: accept application → generate magic link → send acceptance email + provision GitHub repo
+partners.post('/applications/:id/accept', async (c) => {
+    const adminKey = c.req.header('x-admin-key');
+    if (!c.env.ADMIN_KEY || adminKey !== c.env.ADMIN_KEY) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    const { id } = c.req.param();
+    const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${id}`);
+    if (!raw)
+        return c.json({ error: 'Application not found' }, 404);
+    const app = JSON.parse(raw);
+    if (app.status === 'ACCEPTED' || app.status === 'ONBOARDED') {
+        return c.json({ error: `Application is already ${app.status}` }, 409);
+    }
+    // ── Enforce the 32-SME enrollment cap ─────────────────────────────────────
+    // Note: This count is performed with a KV list+get approach which is not
+    // atomic. Under concurrent admin accept requests (extremely unlikely), the
+    // cap could be exceeded by at most the number of concurrent requests. For
+    // strict atomicity a Durable Object counter would be required.
+    const allKeys = [];
+    let cursor = undefined;
+    do {
+        const page = await c.env.PARTNER_APPLICATIONS.list({ prefix: 'application:', cursor });
+        allKeys.push(...page.keys.map((k) => k.name));
+        cursor = 'cursor' in page ? page.cursor : undefined;
+    } while (cursor);
+    const acceptedCount = (await Promise.all(allKeys.map(async (key) => {
+        const r = await c.env.PARTNER_APPLICATIONS.get(key);
+        return r ? JSON.parse(r) : null;
+    }))).filter((a) => a !== null && (a.status === 'ACCEPTED' || a.status === 'ONBOARDED')).length;
+    if (acceptedCount >= MAX_ACCEPTED_SMES) {
+        return c.json({
+            error: `The Ultimate Incubator Program has reached its maximum capacity of ${MAX_ACCEPTED_SMES} startups.`,
+        }, 422);
+    }
+    // Derive startup slug from organization name
+    const slug = app.organization
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    // Generate signed invitation token
+    const inviteToken = await generateInviteToken(id, c.env.JWT_SECRET);
+    const now = new Date().toISOString();
+    // ── Auto-provision GitHub repository ──────────────────────────────────────
+    let githubRepo;
+    const githubToken = c.env.GITHUB_TOKEN;
+    const githubOrg = c.env.GITHUB_ORG;
+    if (githubToken && githubOrg) {
+        const repoName = `startup-${slug}`;
+        const ghRes = await fetch(`https://api.github.com/orgs/${githubOrg}/repos`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${githubToken}`,
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+                'User-Agent': 'brainsait-incubator/2.0',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: repoName,
+                description: `BrainSAIT Incubator — ${app.organization} (${app.referenceId})`,
+                private: true,
+                auto_init: true,
+                gitignore_template: 'Node',
+            }),
+        });
+        if (ghRes.ok) {
+            const ghData = await ghRes.json();
+            githubRepo = ghData.full_name;
+        }
+        else {
+            // Non-fatal: log warning but continue with acceptance
+            const errBody = await ghRes.text().catch(() => '');
+            console.warn(`GitHub repo creation failed for ${slug}: ${ghRes.status}`, errBody);
+        }
+    }
+    const updated = {
+        ...app,
+        status: 'ACCEPTED',
+        inviteToken,
+        inviteSentAt: now,
+        acceptedAt: now,
+        startupSlug: slug,
+        updatedAt: now,
+        ...(githubRepo ? { githubRepo } : {}),
+    };
+    await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(updated));
+    // Build portal URL with magic token
+    const frontendUrl = c.env.FRONTEND_URL || 'https://brainsait.org';
+    const portalUrl = `${frontendUrl}/portal/accept?token=${encodeURIComponent(inviteToken)}&app=${id}`;
+    const emailSent = Boolean(c.env.SENDGRID_API_KEY);
+    // Send acceptance email
+    if (emailSent) {
+        await sendEmail(updated.email, `${updated.firstName} ${updated.lastName}`, '🎉 Your BrainSAIT Incubator Application is Accepted!', buildAcceptanceEmailHtml(updated, portalUrl), buildAcceptanceEmailText(updated, portalUrl), c.env.SENDGRID_API_KEY);
+    }
+    return c.json({
+        success: true,
+        applicationId: id,
+        startupSlug: slug,
+        portalUrl,
+        emailSent,
+        githubRepo: githubRepo ?? null,
+        enrolledCount: acceptedCount + 1,
+        spotsRemaining: MAX_ACCEPTED_SMES - (acceptedCount + 1),
+        message: emailSent
+            ? `Application accepted and invitation email sent to ${updated.email}`
+            : `Application accepted, but invitation email was not sent because SENDGRID_API_KEY is not configured`,
+    });
+});
+// Admin: reject application → send rejection email
+partners.post('/applications/:id/reject', async (c) => {
+    const adminKey = c.req.header('x-admin-key');
+    if (!c.env.ADMIN_KEY || adminKey !== c.env.ADMIN_KEY) {
+        return c.json({ error: 'Unauthorized' }, 401);
+    }
+    const { id } = c.req.param();
+    const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${id}`);
+    if (!raw)
+        return c.json({ error: 'Application not found' }, 404);
+    const app = JSON.parse(raw);
+    if (app.status === 'REJECTED') {
+        return c.json({ error: 'Application is already rejected' }, 409);
+    }
+    const now = new Date().toISOString();
+    const updated = { ...app, status: 'REJECTED', rejectedAt: now, updatedAt: now };
+    await c.env.PARTNER_APPLICATIONS.put(`application:${id}`, JSON.stringify(updated));
+    const emailSent = Boolean(c.env.SENDGRID_API_KEY);
+    if (emailSent) {
+        await sendEmail(updated.email, `${updated.firstName} ${updated.lastName}`, 'BrainSAIT Partner Application — Update', buildRejectionEmailHtml(updated), buildRejectionEmailText(updated), c.env.SENDGRID_API_KEY);
+    }
+    return c.json({
+        success: true,
+        emailSent,
+        message: emailSent
+            ? `Application rejected and notification sent to ${updated.email}`
+            : `Application rejected, but notification email was not sent because SENDGRID_API_KEY is not configured`,
+    });
+});
+// Validate invitation token (called by frontend /portal/accept page)
+partners.get('/validate', async (c) => {
+    const token = c.req.query('token');
+    const appId = c.req.query('app');
+    if (!token || !appId)
+        return c.json({ error: 'Missing token or app parameter' }, 400);
+    const applicationId = await verifyInviteToken(token, c.env.JWT_SECRET);
+    if (!applicationId || applicationId !== appId) {
+        return c.json({ error: 'Invalid or expired invitation link' }, 401);
+    }
+    const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${applicationId}`);
+    if (!raw)
+        return c.json({ error: 'Application not found' }, 404);
+    const app = JSON.parse(raw);
+    if (app.status !== 'ACCEPTED' && app.status !== 'ONBOARDED') {
+        return c.json({ error: 'This invitation link is no longer valid' }, 403);
+    }
+    // Return safe subset (no token)
+    const { inviteToken: _tok, ...safeApp } = app;
+    return c.json({ valid: true, application: safeApp });
+});
+// Complete onboarding — partner sets password and any additional profile info
+partners.post('/complete-onboarding', async (c) => {
+    const body = await c.req.json().catch(() => null);
+    if (!body?.token || !body?.appId)
+        return c.json({ error: 'Missing token or appId' }, 400);
+    const applicationId = await verifyInviteToken(body.token, c.env.JWT_SECRET);
+    if (!applicationId || applicationId !== body.appId) {
+        return c.json({ error: 'Invalid or expired invitation link' }, 401);
+    }
+    const raw = await c.env.PARTNER_APPLICATIONS.get(`application:${applicationId}`);
+    if (!raw)
+        return c.json({ error: 'Application not found' }, 404);
+    const app = JSON.parse(raw);
+    if (app.status === 'ONBOARDED') {
+        return c.json({ success: true, startupSlug: app.startupSlug, message: 'Already onboarded' });
+    }
+    const now = new Date().toISOString();
+    const trimmedTimezone = body.timezone?.trim();
+    const trimmedLinkedIn = body.linkedIn?.trim();
+    const trimmedPassword = body.password?.trim();
+    const passwordHash = trimmedPassword ? await hashPassword(trimmedPassword) : undefined;
+    const updated = {
+        ...app,
+        status: 'ONBOARDED',
+        onboardedAt: now,
+        updatedAt: now,
+        ...(trimmedTimezone ? { timezone: trimmedTimezone } : {}),
+        ...(trimmedLinkedIn ? { linkedIn: trimmedLinkedIn } : {}),
+        ...(passwordHash ? { passwordHash } : {}),
+    };
+    await c.env.PARTNER_APPLICATIONS.put(`application:${applicationId}`, JSON.stringify(updated));
+    // Register startup in the startup registry KV
+    const STARTUP_REGISTRY_TTL_SECONDS = 5 * 365 * 24 * 60 * 60; // 5 years
+    if (c.env.STARTUP_REGISTRY && updated.startupSlug) {
+        const registryEntry = {
+            slug: updated.startupSlug,
+            organization: updated.organization,
+            partnerType: updated.partnerType,
+            email: updated.email,
+            referenceId: updated.referenceId,
+            onboardedAt: now,
+            status: 'active',
+        };
+        await c.env.STARTUP_REGISTRY.put(`startup:${updated.startupSlug}`, JSON.stringify(registryEntry), { expirationTtl: STARTUP_REGISTRY_TTL_SECONDS }).catch((err) => {
+            console.warn('STARTUP_REGISTRY put failed:', err);
+        });
+    }
+    // Fire-and-forget: dispatch GitHub Actions provisioning workflow
+    const githubRepo = c.env.GITHUB_REPO;
+    const githubToken = c.env.GITHUB_TOKEN;
+    if (githubToken && githubRepo) {
+        dispatchProvisioningWorkflow(updated, githubToken, githubRepo).catch((err) => {
+            console.warn('Failed to dispatch provisioning workflow:', err);
+        });
+    }
+    return c.json({
+        success: true,
+        startupSlug: updated.startupSlug,
+        referenceId: updated.referenceId,
+        message: 'Onboarding complete. Your workspace is being provisioned. Redirecting to your portal…',
+    });
+});
+export default partners;
+//# sourceMappingURL=partners.js.map

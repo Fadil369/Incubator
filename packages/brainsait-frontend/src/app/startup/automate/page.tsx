@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -8,9 +8,7 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
   Button,
-  Chip,
   TextField,
   Switch,
   FormControlLabel,
@@ -32,6 +30,7 @@ import {
   ListItemText,
   ListItemIcon,
 } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
 import {
   ExpandMore,
   ContentCopy,
@@ -55,12 +54,9 @@ import {
   type GitHubRepo,
 } from '@/services/githubService';
 
-interface AutomatePageProps {
-  params: { id: string };
-}
-
-export default function AutomatePage({ params }: AutomatePageProps) {
-  const { id } = params;
+function AutomateContent() {
+  const searchParams = useSearchParams();
+  const startupId = searchParams.get('startupId')?.trim() ?? '';
 
   const [templates, setTemplates] = useState<RepoTemplate[]>([]);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -68,7 +64,7 @@ export default function AutomatePage({ params }: AutomatePageProps) {
   const [selectedRepo, setSelectedRepo] = useState('');
   const [selectedWorkflow, setSelectedWorkflow] = useState('');
   const [workflowRef, setWorkflowRef] = useState('main');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
@@ -76,23 +72,26 @@ export default function AutomatePage({ params }: AutomatePageProps) {
     severity: 'success',
   });
 
-  // Create repo from template state
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [newRepoName, setNewRepoName] = useState('');
   const [repoDescription, setRepoDescription] = useState('');
   const [repoPrivate, setRepoPrivate] = useState(true);
 
   useEffect(() => {
+    if (!startupId) {
+      return;
+    }
+
     setLoading(true);
     const org = process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator';
-    Promise.all([listTemplates(org), listStartupRepos(id)])
-      .then(([t, r]) => {
-        setTemplates(t);
-        setRepos(r);
-        if (r.length > 0) setSelectedRepo(r[0].full_name);
+    Promise.all([listTemplates(org), listStartupRepos(startupId)])
+      .then(([templateRepos, startupRepos]) => {
+        setTemplates(templateRepos);
+        setRepos(startupRepos);
+        if (startupRepos.length > 0) setSelectedRepo(startupRepos[0].full_name);
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [startupId]);
 
   useEffect(() => {
     if (!selectedRepo) return;
@@ -149,13 +148,28 @@ export default function AutomatePage({ params }: AutomatePageProps) {
     const org = process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator';
     setSubmitting(true);
     try {
-      const result = await requestAppInstall(org, id);
+      const result = await requestAppInstall(org, startupId);
       notify(result.message || 'App install requested', result.success ? 'success' : 'error');
     } catch (err: unknown) {
       notify(err instanceof Error ? err.message : 'Failed to request App install', 'error');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!startupId) {
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ py: 8 }}>
+          <Alert severity="error" sx={{ mb: 3 }}>
+            Startup ID is missing from the automation URL.
+          </Alert>
+          <Button variant="contained" href="/projects">
+            Open Projects
+          </Button>
+        </Box>
+      </Container>
+    );
   }
 
   if (loading) {
@@ -166,18 +180,18 @@ export default function AutomatePage({ params }: AutomatePageProps) {
     );
   }
 
+  const startupPortalHref = `/startup?startupId=${encodeURIComponent(startupId)}`;
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
-        {/* Breadcrumbs */}
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit" href="/">BrainSAIT</Link>
           <Link underline="hover" color="inherit" href="/projects">Projects</Link>
-          <Link underline="hover" color="inherit" href={`/startup/${id}`}>{id}</Link>
+          <Link underline="hover" color="inherit" href={startupPortalHref}>{startupId}</Link>
           <Typography color="text.primary">Automate</Typography>
         </Breadcrumbs>
 
-        {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
           <AutoAwesome color="primary" sx={{ fontSize: 40 }} />
           <Box>
@@ -188,10 +202,7 @@ export default function AutomatePage({ params }: AutomatePageProps) {
           </Box>
         </Box>
 
-        {/* Action cards */}
         <Grid container spacing={3}>
-
-          {/* ── Create repo from template ── */}
           <Grid item xs={12}>
             <Accordion defaultExpanded>
               <AccordionSummary expandIcon={<ExpandMore />}>
@@ -210,12 +221,12 @@ export default function AutomatePage({ params }: AutomatePageProps) {
                         label="Template"
                         onChange={(e) => setSelectedTemplate(e.target.value)}
                       >
-                        {templates.map((t) => (
-                          <MenuItem key={t.full_name} value={t.full_name}>
+                        {templates.map((template) => (
+                          <MenuItem key={template.full_name} value={template.full_name}>
                             <Box>
-                              <Typography variant="body2">{t.name}</Typography>
-                              {t.description && (
-                                <Typography variant="caption" color="text.secondary">{t.description}</Typography>
+                              <Typography variant="body2">{template.name}</Typography>
+                              {template.description && (
+                                <Typography variant="caption" color="text.secondary">{template.description}</Typography>
                               )}
                             </Box>
                           </MenuItem>
@@ -232,7 +243,7 @@ export default function AutomatePage({ params }: AutomatePageProps) {
                       label="New Repository Name"
                       value={newRepoName}
                       onChange={(e) => setNewRepoName(e.target.value)}
-                      placeholder={`${id}-new-service`}
+                      placeholder={`${startupId}-new-service`}
                     />
                   </Grid>
                   <Grid item xs={12} sm={8}>
@@ -266,7 +277,6 @@ export default function AutomatePage({ params }: AutomatePageProps) {
             </Accordion>
           </Grid>
 
-          {/* ── Trigger CI/CD workflow ── */}
           <Grid item xs={12}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
@@ -285,8 +295,8 @@ export default function AutomatePage({ params }: AutomatePageProps) {
                         label="Repository"
                         onChange={(e) => setSelectedRepo(e.target.value)}
                       >
-                        {repos.map((r) => (
-                          <MenuItem key={r.id} value={r.full_name}>{r.name}</MenuItem>
+                        {repos.map((repo) => (
+                          <MenuItem key={repo.id} value={repo.full_name}>{repo.name}</MenuItem>
                         ))}
                         {repos.length === 0 && <MenuItem disabled>No repositories</MenuItem>}
                       </Select>
@@ -300,8 +310,8 @@ export default function AutomatePage({ params }: AutomatePageProps) {
                         label="Workflow"
                         onChange={(e) => setSelectedWorkflow(e.target.value)}
                       >
-                        {workflows.map((w) => (
-                          <MenuItem key={w.id} value={String(w.id)}>{w.name}</MenuItem>
+                        {workflows.map((workflow) => (
+                          <MenuItem key={workflow.id} value={String(workflow.id)}>{workflow.name}</MenuItem>
                         ))}
                         {workflows.length === 0 && <MenuItem disabled>No workflows found</MenuItem>}
                       </Select>
@@ -331,7 +341,6 @@ export default function AutomatePage({ params }: AutomatePageProps) {
             </Accordion>
           </Grid>
 
-          {/* ── GitHub App ── */}
           <Grid item xs={12}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
@@ -372,7 +381,6 @@ export default function AutomatePage({ params }: AutomatePageProps) {
             </Accordion>
           </Grid>
 
-          {/* ── Template gallery shortcut ── */}
           <Grid item xs={12}>
             <Card sx={{ background: 'linear-gradient(135deg, #2E7D32 0%, #1976D2 100%)', color: '#fff' }}>
               <CardContent>
@@ -382,11 +390,9 @@ export default function AutomatePage({ params }: AutomatePageProps) {
                   Next.js portals, Workers APIs, AI services, and more.
                 </Typography>
               </CardContent>
-              <CardActions>
-                <Button variant="contained" sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} href="/templates">
-                  View Templates
-                </Button>
-              </CardActions>
+              <Button variant="contained" sx={{ bgcolor: 'rgba(255,255,255,0.2)', m: 2, alignSelf: 'flex-start' }} href="/templates">
+                View Templates
+              </Button>
             </Card>
           </Grid>
         </Grid>
@@ -395,12 +401,26 @@ export default function AutomatePage({ params }: AutomatePageProps) {
       <Snackbar
         open={feedback.open}
         autoHideDuration={5000}
-        onClose={() => setFeedback((f) => ({ ...f, open: false }))}
+        onClose={() => setFeedback((current) => ({ ...current, open: false }))}
       >
-        <Alert severity={feedback.severity} onClose={() => setFeedback((f) => ({ ...f, open: false }))}>
+        <Alert severity={feedback.severity} onClose={() => setFeedback((current) => ({ ...current, open: false }))}>
           {feedback.message}
         </Alert>
       </Snackbar>
     </Container>
+  );
+}
+
+export default function AutomatePage() {
+  return (
+    <Suspense
+      fallback={
+        <Box display="flex" justifyContent="center" mt={8}>
+          <CircularProgress />
+        </Box>
+      }
+    >
+      <AutomateContent />
+    </Suspense>
   );
 }

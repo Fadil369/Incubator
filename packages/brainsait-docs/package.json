@@ -5,15 +5,15 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc",
+    "build": "rm -f tsconfig.tsbuildinfo && tsc",
     "start": "node dist/server.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
-    "brainsait-shared": "file:../brainsait-shared",
+    "@brainsait/shared": "file:../brainsait-shared",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",

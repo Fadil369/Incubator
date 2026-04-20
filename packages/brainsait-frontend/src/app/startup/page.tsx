@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -27,6 +27,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
 import {
   GitHub,
   Code,
@@ -81,12 +82,9 @@ function runStatusChip(run: GitHubWorkflowRun) {
   return <Chip label={run.conclusion ?? run.status ?? 'unknown'} size="small" />;
 }
 
-interface StartupPortalPageProps {
-  params: { id: string };
-}
-
-export default function StartupPortalPage({ params }: StartupPortalPageProps) {
-  const { id } = params;
+function StartupPortalContent() {
+  const searchParams = useSearchParams();
+  const startupId = searchParams.get('startupId')?.trim() ?? '';
 
   const [tab, setTab] = useState(0);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -95,22 +93,27 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
   const [issues, setIssues] = useState<GitHubIssue[]>([]);
   const [prs, setPRs] = useState<GitHubPullRequest[]>([]);
   const [releases, setReleases] = useState<GitHubRelease[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!startupId) {
+      return;
+    }
+
     setLoading(true);
-    listStartupRepos(id)
+    listStartupRepos(startupId)
       .then((data) => {
         setRepos(data);
-        if (data.length > 0) setSelectedRepo(data[0]);
+        setSelectedRepo(data[0] ?? null);
       })
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [startupId]);
 
   useEffect(() => {
     if (!selectedRepo) return;
+
     const [owner, repo] = selectedRepo.full_name.split('/');
     setLoading(true);
     setError(null);
@@ -120,11 +123,11 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
       listRepoPRs(owner, repo),
       listReleases(owner, repo),
     ])
-      .then(([r, i, p, rel]) => {
-        setRuns(r);
-        setIssues(i);
-        setPRs(p);
-        setReleases(rel);
+      .then(([workflowRuns, repoIssues, repoPRs, repoReleases]) => {
+        setRuns(workflowRuns);
+        setIssues(repoIssues);
+        setPRs(repoPRs);
+        setReleases(repoReleases);
       })
       .catch((err: Error) => {
         setError(err.message);
@@ -136,9 +139,25 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
       .finally(() => setLoading(false));
   }, [selectedRepo]);
 
-  const openIssues = issues.filter((i) => i.state === 'open' && !i.pull_request);
-  const openPRs = prs.filter((p) => p.state === 'open');
+  if (!startupId) {
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ py: 8 }}>
+          <Alert severity="error" sx={{ mb: 3 }}>
+            Startup ID is missing from the developer portal URL.
+          </Alert>
+          <Button variant="contained" href="/projects">
+            Open Projects
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
+  const openIssues = issues.filter((issue) => issue.state === 'open' && !issue.pull_request);
+  const openPRs = prs.filter((pr) => pr.state === 'open');
   const latestRun = runs[0];
+  const startupAutomateHref = `/startup/automate?startupId=${encodeURIComponent(startupId)}`;
 
   if (loading) {
     return (
@@ -151,34 +170,28 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
   return (
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
-        {/* Breadcrumbs */}
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit" href="/">BrainSAIT</Link>
           <Link underline="hover" color="inherit" href="/projects">Projects</Link>
-          <Typography color="text.primary">{id}</Typography>
+          <Typography color="text.primary">{startupId}</Typography>
         </Breadcrumbs>
 
-        {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
           <Avatar sx={{ width: 56, height: 56, bgcolor: 'primary.main' }}>
             <GitHub sx={{ fontSize: 32 }} />
           </Avatar>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h4" fontWeight={600}>{id}</Typography>
+            <Typography variant="h4" fontWeight={600}>{startupId}</Typography>
             <Typography variant="body2" color="text.secondary">
               {repos.length} repositor{repos.length !== 1 ? 'ies' : 'y'} · Startup Portal
             </Typography>
           </Box>
-          <Button
-            variant="contained"
-            startIcon={<AutoAwesome />}
-            href={`/startup/${id}/automate`}
-          >
+          <Button variant="contained" startIcon={<AutoAwesome />} href={startupAutomateHref}>
             Automate
           </Button>
           <Tooltip title="Open in GitHub">
             <IconButton
-              href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_ORG}/${id}-platform`}
+              href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_ORG}/${startupId}-platform`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -189,7 +202,6 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
 
         {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
 
-        {/* Stats row */}
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {[
             { label: 'Repositories', value: repos.length, icon: <Code /> },
@@ -209,27 +221,25 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
           ))}
         </Grid>
 
-        {/* Repository selector + details */}
         <Grid container spacing={3}>
-          {/* Repo list */}
           <Grid item xs={12} md={3}>
             <Paper sx={{ p: 1 }}>
               <Typography variant="subtitle2" sx={{ px: 1, py: 1 }}>Repositories</Typography>
               <Divider />
               <List dense>
-                {repos.map((r) => (
+                {repos.map((repo) => (
                   <ListItem
-                    key={r.id}
-                    selected={selectedRepo?.id === r.id}
-                    onClick={() => setSelectedRepo(r)}
+                    key={repo.id}
+                    selected={selectedRepo?.id === repo.id}
+                    onClick={() => setSelectedRepo(repo)}
                     sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                   >
                     <ListItemIcon sx={{ minWidth: 32 }}>
                       <Code fontSize="small" />
                     </ListItemIcon>
                     <ListItemText
-                      primary={r.name}
-                      secondary={r.language ?? 'unknown'}
+                      primary={repo.name}
+                      secondary={repo.language ?? 'unknown'}
                       primaryTypographyProps={{ variant: 'body2' }}
                       secondaryTypographyProps={{ variant: 'caption' }}
                     />
@@ -244,7 +254,6 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
             </Paper>
           </Grid>
 
-          {/* Details */}
           <Grid item xs={12} md={9}>
             {selectedRepo ? (
               <>
@@ -265,14 +274,13 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                 )}
 
                 <Paper sx={{ mb: 3 }}>
-                  <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tab icon={<PlayArrow />} label={`CI/CD (${runs.length})`} />
                     <Tab icon={<BugReport />} label={`Issues (${openIssues.length})`} />
                     <Tab icon={<MergeType />} label={`PRs (${openPRs.length})`} />
                     <Tab icon={<Rocket />} label={`Releases (${releases.length})`} />
                   </Tabs>
 
-                  {/* CI/CD */}
                   <TabPanel value={tab} index={0}>
                     <Box sx={{ px: 2 }}>
                       {latestRun && (
@@ -307,7 +315,6 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                     </Box>
                   </TabPanel>
 
-                  {/* Issues */}
                   <TabPanel value={tab} index={1}>
                     <Box sx={{ px: 2 }}>
                       <List dense>
@@ -320,9 +327,9 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                               secondaryTypographyProps={{ variant: 'caption' }}
                             />
                             <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                              {issue.labels.map((l) => (
-                                <Chip key={l.name} label={l.name} size="small"
-                                  sx={{ bgcolor: `#${l.color}22`, borderColor: `#${l.color}` }} variant="outlined" />
+                              {issue.labels.map((label) => (
+                                <Chip key={label.name} label={label.name} size="small"
+                                  sx={{ bgcolor: `#${label.color}22`, borderColor: `#${label.color}` }} variant="outlined" />
                               ))}
                               <IconButton size="small" href={issue.html_url} target="_blank" rel="noopener noreferrer">
                                 <OpenInNew fontSize="small" />
@@ -337,7 +344,6 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                     </Box>
                   </TabPanel>
 
-                  {/* PRs */}
                   <TabPanel value={tab} index={2}>
                     <Box sx={{ px: 2 }}>
                       <List dense>
@@ -364,26 +370,25 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
                     </Box>
                   </TabPanel>
 
-                  {/* Releases */}
                   <TabPanel value={tab} index={3}>
                     <Box sx={{ px: 2 }}>
                       <Grid container spacing={2}>
-                        {releases.slice(0, 6).map((rel) => (
-                          <Grid item xs={12} sm={6} key={rel.id}>
+                        {releases.slice(0, 6).map((release) => (
+                          <Grid item xs={12} sm={6} key={release.id}>
                             <Card variant="outlined">
                               <CardContent>
-                                <Typography variant="subtitle2" gutterBottom>{rel.tag_name}</Typography>
-                                {rel.name && <Typography variant="body2">{rel.name}</Typography>}
+                                <Typography variant="subtitle2" gutterBottom>{release.tag_name}</Typography>
+                                {release.name && <Typography variant="body2">{release.name}</Typography>}
                                 <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                                  {rel.prerelease && <Chip label="pre-release" size="small" color="warning" />}
-                                  {rel.draft && <Chip label="draft" size="small" />}
+                                  {release.prerelease && <Chip label="pre-release" size="small" color="warning" />}
+                                  {release.draft && <Chip label="draft" size="small" />}
                                 </Box>
                                 <Typography variant="caption" color="text.secondary">
-                                  {rel.published_at ? new Date(rel.published_at).toLocaleDateString() : 'unpublished'}
+                                  {release.published_at ? new Date(release.published_at).toLocaleDateString() : 'unpublished'}
                                 </Typography>
                               </CardContent>
                               <CardActions>
-                                <Button size="small" href={rel.html_url} target="_blank" rel="noopener noreferrer"
+                                <Button size="small" href={release.html_url} target="_blank" rel="noopener noreferrer"
                                   endIcon={<OpenInNew />}>
                                   View
                                 </Button>
@@ -408,5 +413,19 @@ export default function StartupPortalPage({ params }: StartupPortalPageProps) {
         </Grid>
       </Box>
     </Container>
+  );
+}
+
+export default function StartupPortalPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box display="flex" justifyContent="center" mt={8}>
+          <CircularProgress />
+        </Box>
+      }
+    >
+      <StartupPortalContent />
+    </Suspense>
   );
 }

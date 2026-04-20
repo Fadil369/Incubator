@@ -4,8 +4,10 @@
 import { Hono } from 'hono';
 interface Env {
     SESSIONS: any;
+    DB: D1Database;
     JWT_SECRET: string;
     NODE_ENV: string;
+    GITHUB_ORG?: string;
 }
 declare const auth: Hono<{
     Bindings: Env;

@@ -144,8 +144,8 @@ export default function ProjectsPage() {
                         </Typography>
                       </CardContent>
                       <CardActions>
-                        <Button size="small" href={`/startup/${slug}`}>Open Portal</Button>
-                        <Button size="small" href={`/startup/${slug}/automate`} startIcon={<AutoAwesome />}>
+                        <Button size="small" href={`/startup?startupId=${encodeURIComponent(slug)}`}>Open Portal</Button>
+                        <Button size="small" href={`/startup/automate?startupId=${encodeURIComponent(slug)}`} startIcon={<AutoAwesome />}>
                           Automate
                         </Button>
                       </CardActions>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import {
   Box,
   Container,
@@ -25,7 +25,10 @@ import {
   Paper,
   IconButton,
   Tooltip,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
 import {
   Rocket,
   GitHub,
@@ -98,28 +101,40 @@ const RESOURCES: Resource[] = [
   { title: 'Investor Network Access', description: 'Introduction to BrainSAIT partner VCs and angel investors active in MENA healthtech', category: 'Funding', url: 'https://brainsait.org/partners#investors', icon: <TrendingUp /> },
 ];
 
-interface PortalPageProps {
-  params: { startupId: string };
-}
-
-export default function IncubatorPortalPage({ params }: PortalPageProps) {
-  const { startupId } = params;
+function IncubatorPortalContent() {
+  const searchParams = useSearchParams();
+  const startupId = searchParams.get('startupId')?.trim() ?? '';
   const [tab, setTab] = useState(0);
+
+  if (!startupId) {
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ py: 8 }}>
+          <Alert severity="error" sx={{ mb: 3 }}>
+            Startup ID is missing from the portal URL.
+          </Alert>
+          <Button variant="contained" href="/projects">
+            Open Projects
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
   const completedMilestones = MILESTONES.filter((m) => m.status === 'completed').length;
   const progress = Math.round((completedMilestones / MILESTONES.length) * 100);
   const currentPhase = MILESTONES.find((m) => m.status === 'in_progress')?.phase ?? 1;
+  const startupPortalHref = `/startup?startupId=${encodeURIComponent(startupId)}`;
+  const startupAutomateHref = `/startup/automate?startupId=${encodeURIComponent(startupId)}`;
 
   return (
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
-        {/* Breadcrumbs */}
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit" href="/">BrainSAIT</Link>
           <Typography color="text.primary">Incubator Portal</Typography>
         </Breadcrumbs>
 
-        {/* Welcome Header */}
         <Box
           sx={{
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #1e1b4b 100%)',
@@ -131,7 +146,6 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
             overflow: 'hidden',
           }}
         >
-          {/* Decorative blobs */}
           <Box sx={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(139,92,246,0.15)' }} />
           <Box sx={{ position: 'absolute', bottom: -30, right: 100, width: 120, height: 120, borderRadius: '50%', background: 'rgba(14,165,233,0.1)' }} />
 
@@ -142,7 +156,7 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
                 sx={{ bgcolor: 'rgba(139,92,246,0.3)', color: '#a78bfa', mb: 2, fontWeight: 600 }}
               />
               <Typography variant="h4" fontWeight={700} gutterBottom sx={{ color: '#f8fafc' }}>
-                {startupId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                {startupId.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())}
               </Typography>
               <Typography variant="body1" sx={{ color: '#94a3b8', mb: 2 }}>
                 Phase {currentPhase} of 4 · {completedMilestones}/{MILESTONES.length} milestones complete
@@ -170,7 +184,7 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
               <Button
                 variant="contained"
                 startIcon={<GitHub />}
-                href={`/startup/${startupId}`}
+                href={startupPortalHref}
                 sx={{ bgcolor: 'rgba(255,255,255,0.15)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
               >
                 Dev Portal
@@ -178,7 +192,7 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
               <Button
                 variant="contained"
                 startIcon={<AutoAwesome />}
-                href={`/startup/${startupId}/automate`}
+                href={startupAutomateHref}
                 sx={{ bgcolor: 'rgba(139,92,246,0.4)', '&:hover': { bgcolor: 'rgba(139,92,246,0.6)' } }}
               >
                 Automate
@@ -187,7 +201,6 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
           </Box>
         </Box>
 
-        {/* Stats Row */}
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {[
             { icon: <CheckCircle />, label: 'Milestones Done', value: completedMilestones, color: 'success.main' },
@@ -209,23 +222,21 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
           ))}
         </Grid>
 
-        {/* Main tabs */}
         <Paper sx={{ mb: 4 }}>
-          <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }} variant="scrollable" scrollButtons="auto">
+          <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }} variant="scrollable" scrollButtons="auto">
             <Tab icon={<Rocket />} label="Program" />
             <Tab icon={<School />} label="Mentors" />
             <Tab icon={<MenuBook />} label="Resources" />
             <Tab icon={<Analytics />} label="KPIs" />
           </Tabs>
 
-          {/* ── Program Milestones ── */}
           <TabPanel value={tab} index={0}>
             <Box sx={{ px: 2 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 BrainSAIT Incubator Program · 12-week accelerated track for healthcare startups
               </Typography>
               {[1, 2, 3, 4].map((phase) => {
-                const phaseMilestones = MILESTONES.filter((m) => m.phase === phase);
+                const phaseMilestones = MILESTONES.filter((milestone) => milestone.phase === phase);
                 const phaseLabels = ['Phase 1: Foundation', 'Phase 2: Build', 'Phase 3: Validate', 'Phase 4: Launch'];
                 return (
                   <Box key={phase} sx={{ mb: 4 }}>
@@ -234,21 +245,21 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
                       {phaseLabels[phase - 1]}
                     </Typography>
                     <List disablePadding>
-                      {phaseMilestones.map((m) => (
+                      {phaseMilestones.map((milestone) => (
                         <ListItem
-                          key={m.id}
+                          key={milestone.id}
                           sx={{
                             border: '1px solid',
-                            borderColor: m.status === 'in_progress' ? 'primary.main' : 'divider',
+                            borderColor: milestone.status === 'in_progress' ? 'primary.main' : 'divider',
                             borderRadius: 1.5,
                             mb: 1,
-                            bgcolor: m.status === 'completed' ? 'success.light' : m.status === 'in_progress' ? 'primary.light' : 'background.paper',
+                            bgcolor: milestone.status === 'completed' ? 'success.light' : milestone.status === 'in_progress' ? 'primary.light' : 'background.paper',
                           }}
                         >
                           <ListItemIcon sx={{ minWidth: 40 }}>
-                            {m.status === 'completed' ? (
+                            {milestone.status === 'completed' ? (
                               <CheckCircle sx={{ color: 'success.main' }} />
-                            ) : m.status === 'in_progress' ? (
+                            ) : milestone.status === 'in_progress' ? (
                               <Schedule sx={{ color: 'primary.main' }} />
                             ) : (
                               <Schedule sx={{ color: 'text.disabled' }} />
@@ -257,13 +268,13 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
                           <ListItemText
                             primary={
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" fontWeight={600}>{m.title}</Typography>
-                                <Chip label={m.dueDate} size="small" variant="outlined" />
-                                {m.status === 'in_progress' && <Chip label="Active" size="small" color="primary" />}
-                                {m.status === 'completed' && <Chip label="Done" size="small" color="success" />}
+                                <Typography variant="body2" fontWeight={600}>{milestone.title}</Typography>
+                                <Chip label={milestone.dueDate} size="small" variant="outlined" />
+                                {milestone.status === 'in_progress' && <Chip label="Active" size="small" color="primary" />}
+                                {milestone.status === 'completed' && <Chip label="Done" size="small" color="success" />}
                               </Box>
                             }
-                            secondary={m.description}
+                            secondary={milestone.description}
                             secondaryTypographyProps={{ variant: 'caption' }}
                           />
                         </ListItem>
@@ -276,7 +287,6 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
             </Box>
           </TabPanel>
 
-          {/* ── Mentors ── */}
           <TabPanel value={tab} index={1}>
             <Box sx={{ px: 2 }}>
               <Grid container spacing={3}>
@@ -298,8 +308,8 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
                         </Box>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{mentor.bio}</Typography>
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                          {mentor.expertise.split(', ').map((e) => (
-                            <Chip key={e} label={e} size="small" variant="outlined" />
+                          {mentor.expertise.split(', ').map((expertise) => (
+                            <Chip key={expertise} label={expertise} size="small" variant="outlined" />
                           ))}
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -318,7 +328,6 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
             </Box>
           </TabPanel>
 
-          {/* ── Resources ── */}
           <TabPanel value={tab} index={2}>
             <Box sx={{ px: 2 }}>
               <Grid container spacing={2}>
@@ -347,7 +356,6 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
             </Box>
           </TabPanel>
 
-          {/* ── KPIs ── */}
           <TabPanel value={tab} index={3}>
             <Box sx={{ px: 2 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -402,13 +410,12 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
           </TabPanel>
         </Paper>
 
-        {/* Quick links */}
         <Box>
           <Typography variant="h6" gutterBottom>Quick Links</Typography>
           <Grid container spacing={2}>
             {[
-              { label: 'Developer Portal', description: 'Manage repos, CI/CD, PRs', href: `/startup/${startupId}`, icon: <GitHub /> },
-              { label: 'GitHub Automation', description: 'Create repos from templates', href: `/startup/${startupId}/automate`, icon: <AutoAwesome /> },
+              { label: 'Developer Portal', description: 'Manage repos, CI/CD, PRs', href: startupPortalHref, icon: <GitHub /> },
+              { label: 'GitHub Automation', description: 'Create repos from templates', href: startupAutomateHref, icon: <AutoAwesome /> },
               { label: 'Template Gallery', description: 'Browse project templates', href: '/templates', icon: <Code /> },
               { label: 'All Projects', description: 'Org-wide project overview', href: '/projects', icon: <TrendingUp /> },
             ].map((link) => (
@@ -443,5 +450,19 @@ export default function IncubatorPortalPage({ params }: PortalPageProps) {
         </Box>
       </Box>
     </Container>
+  );
+}
+
+export default function IncubatorPortalPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box display="flex" justifyContent="center" mt={8}>
+          <CircularProgress />
+        </Box>
+      }
+    >
+      <IncubatorPortalContent />
+    </Suspense>
   );
 }

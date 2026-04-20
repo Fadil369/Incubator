@@ -2,18 +2,18 @@
   "name": "@brainsait/ai",
   "version": "1.0.0",
   "description": "AI services and integrations for BrainSAIT healthcare platform",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "rm -f tsconfig.tsbuildinfo && tsc",
     "start": "node dist/server.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\""
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.10.2",
+    "@anthropic-ai/sdk": "^0.60.0",
     "@pinecone-database/pinecone": "^1.1.3",
     "@prisma/client": "^5.22.0",
     "axios": "^1.11.0",

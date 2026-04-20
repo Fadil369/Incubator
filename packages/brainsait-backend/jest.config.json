@@ -10,7 +10,7 @@
     "^.+\\.ts$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^@brainsait/shared$": "<rootDir>/../brainsait-shared/dist",
+    "^@brainsait/shared$": "<rootDir>/../brainsait-shared/src",
     "^@/(.*)$": "<rootDir>/src/$1"
   },
   "collectCoverageFrom": [

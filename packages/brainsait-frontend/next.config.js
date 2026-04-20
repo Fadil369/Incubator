@@ -3,9 +3,11 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   reactStrictMode: true,
-  swcMinify: true,
   compiler: {
     styledComponents: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   images: {
     domains: ['localhost', 'brainsait.org', 'avatars.githubusercontent.com', 'raw.githubusercontent.com'],

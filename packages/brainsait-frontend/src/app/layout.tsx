@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
+import type { StylisPlugin } from '@emotion/cache';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ interface RootLayoutProps {
 // Create RTL cache for Arabic support
 const cacheRtl = createCache({
   key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin],
+  stylisPlugins: [prefixer as StylisPlugin, rtlPlugin as unknown as StylisPlugin],
 });
 
 const cacheLtr = createCache({

@@ -59,6 +59,10 @@ function PortalAcceptContent() {
   const [linkedIn, setLinkedIn] = useState('');
   const [githubRepo, setGithubRepo] = useState<string | null>(null);
 
+  function getPortalHref(startupSlug?: string) {
+    return startupSlug ? `/portal?startupId=${encodeURIComponent(startupSlug)}` : '/projects';
+  }
+
   useEffect(() => {
     if (!token || !appId) {
       setError('Invalid invitation link. Please check your email and try again.');
@@ -71,7 +75,7 @@ function PortalAcceptContent() {
         setApplication(app);
         if (app.status === 'ONBOARDED') {
           // Already onboarded — send straight to portal
-          router.replace(`/portal/${app.startupSlug}`);
+          router.replace(getPortalHref(app.startupSlug));
         } else {
           setStep('onboarding');
           if (app.githubRepo) setGithubRepo(app.githubRepo);
@@ -91,7 +95,7 @@ function PortalAcceptContent() {
       setStep('done');
       // Brief celebration pause then redirect
       setTimeout(() => {
-        router.push(`/portal/${result.startupSlug}`);
+        router.push(getPortalHref(result.startupSlug));
       }, 2500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Onboarding failed. Please try again.');
