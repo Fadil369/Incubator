@@ -24,40 +24,24 @@ export declare class AuthService {
      * Register a new user
      */
     static registerUser(userData: RegisterUserData): Promise<{
-        user: {
-            role: import(".prisma/client").$Enums.UserRole;
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            isActive: boolean;
-            isVerified: boolean;
-            createdAt: Date;
-        };
+        user: any;
         verificationToken: string;
     }>;
     /**
      * Verify user email
      */
-    static verifyEmail(token: string): Promise<{
-        role: import(".prisma/client").$Enums.UserRole;
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        isVerified: boolean;
-    }>;
+    static verifyEmail(token: string): Promise<any>;
     /**
      * Authenticate user login
      */
     static loginUser(credentials: LoginCredentials): Promise<{
         user: {
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            role: import(".prisma/client").$Enums.UserRole;
-            isVerified: boolean;
+            id: any;
+            email: any;
+            firstName: any;
+            lastName: any;
+            role: any;
+            isVerified: any;
         };
         tokens: {
             accessToken: string;
@@ -86,42 +70,7 @@ export declare class AuthService {
     /**
      * Get user profile with related data
      */
-    static getUserProfile(userId: string): Promise<{
-        role: import(".prisma/client").$Enums.UserRole;
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        isActive: boolean;
-        isVerified: boolean;
-        avatar: string;
-        phoneNumber: string;
-        createdAt: Date;
-        updatedAt: Date;
-        smeProfile: {
-            id: string;
-            createdAt: Date;
-            companyName: string;
-            companyType: import(".prisma/client").$Enums.SMEType;
-            industryFocus: import(".prisma/client").$Enums.IndustryFocus[];
-            description: string;
-            website: string;
-            foundedYear: number;
-            employeeCount: number;
-            verificationStatus: import(".prisma/client").$Enums.VerificationStatus;
-        };
-        mentorProfile: {
-            id: string;
-            isVerified: boolean;
-            expertise: import(".prisma/client").$Enums.IndustryFocus[];
-            yearsExperience: number;
-            currentRole: string;
-            company: string;
-            bio: string;
-            rating: number;
-            totalSessions: number;
-        };
-    }>;
+    static getUserProfile(userId: string): Promise<any>;
     /**
      * Update user profile
      */
@@ -130,17 +79,7 @@ export declare class AuthService {
         lastName?: string;
         phoneNumber?: string;
         avatar?: string;
-    }): Promise<{
-        role: import(".prisma/client").$Enums.UserRole;
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        isVerified: boolean;
-        avatar: string;
-        phoneNumber: string;
-        updatedAt: Date;
-    }>;
+    }): Promise<any>;
     /**
      * Get user's active sessions
      */

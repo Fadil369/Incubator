@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 declare const uploadDirs: {
-    documents: string;
-    avatars: string;
-    certificates: string;
-    temp: string;
+    documents: any;
+    avatars: any;
+    certificates: any;
+    temp: any;
 };
 /**
  * Middleware for handling single file upload
