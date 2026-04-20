@@ -57,9 +57,25 @@ function TabPanel(props: TabPanelProps) {
 
 const AIDashboardPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState(0);
+  const [smeId, setSmeId] = useState<string>('');
 
-  // Mock SME ID - in production this would come from authentication
-  const smeId = 'sme-123';
+  // Resolve SME ID from auth context / URL params / session on mount
+  React.useEffect(() => {
+    // 1. Check URL search params (e.g. ?smeId=xxx passed from portal)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const paramSmeId = params.get('smeId');
+      if (paramSmeId) { setSmeId(paramSmeId); return; }
+    }
+    // 2. Try resolving from the session via backend /api/sme/my-profile
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+    fetch(`${apiBase}/api/sme/my-profile`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { sme?: { id?: string } } | null) => {
+        if (data?.sme?.id) setSmeId(data.sme.id);
+      })
+      .catch(() => {/* user not authenticated or no SME profile */});
+  }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);

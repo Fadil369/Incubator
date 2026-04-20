@@ -19,6 +19,10 @@ import programRoutes from './routes/programs';
 import documentRoutes from './routes/documents';
 import analyticsRoutes from './routes/analytics';
 import saudiComplianceRoutes from './routes/saudiCompliance';
+import healthcareSMERoutes from './routes/healthcareSME';
+import aiChampionsRoutes from './routes/aiChampions';
+import mentorshipSessionRoutes from './routes/mentorshipSessions';
+import cronRoutes from './routes/cron';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -94,6 +98,10 @@ app.use('/api/programs', programRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/saudi-compliance', saudiComplianceRoutes);
+app.use('/api/healthcare-sme', healthcareSMERoutes);
+app.use('/api/ai-champions', aiChampionsRoutes);
+app.use('/api/mentorship-sessions', mentorshipSessionRoutes);
+app.use('/api/cron', cronRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

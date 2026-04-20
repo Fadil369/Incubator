@@ -107,6 +107,24 @@ function IncubatorPortalContent() {
   const searchParams = useSearchParams();
   const startupId = searchParams.get('startupId')?.trim() ?? '';
   const [tab, setTab] = useState(0);
+  const [milestones, setMilestones] = useState<Milestone[]>(MILESTONES);
+  const [milestonesLoading, setMilestonesLoading] = useState(false);
+
+  // Fetch real milestone progress from API when startupId is available
+  React.useEffect(() => {
+    if (!startupId) return;
+    setMilestonesLoading(true);
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+    fetch(`${apiBase}/api/programs/${encodeURIComponent(startupId)}/milestones`, {
+      credentials: 'include',
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { milestones?: Milestone[] } | null) => {
+        if (data?.milestones?.length) setMilestones(data.milestones);
+      })
+      .catch(() => {/* use hardcoded fallback */})
+      .finally(() => setMilestonesLoading(false));
+  }, [startupId]);
 
   if (!startupId) {
     return (
@@ -173,9 +191,9 @@ function IncubatorPortalContent() {
     );
   }
 
-  const completedMilestones = MILESTONES.filter((m) => m.status === 'completed').length;
-  const progress = Math.round((completedMilestones / MILESTONES.length) * 100);
-  const currentPhase = MILESTONES.find((m) => m.status === 'in_progress')?.phase ?? 1;
+  const completedMilestones = milestones.filter((m) => m.status === 'completed').length;
+  const progress = Math.round((completedMilestones / milestones.length) * 100);
+  const currentPhase = milestones.find((m) => m.status === 'in_progress')?.phase ?? 1;
   const startupPortalHref = `/startup?startupId=${encodeURIComponent(startupId)}`;
   const startupAutomateHref = `/startup/automate?startupId=${encodeURIComponent(startupId)}`;
 
@@ -256,7 +274,7 @@ function IncubatorPortalContent() {
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {[
             { icon: <CheckCircle />, label: 'Milestones Done', value: completedMilestones, color: 'success.main' },
-            { icon: <Schedule />, label: 'In Progress', value: MILESTONES.filter((m) => m.status === 'in_progress').length, color: 'warning.main' },
+            { icon: <Schedule />, label: 'In Progress', value: milestones.filter((m) => m.status === 'in_progress').length, color: 'warning.main' },
             { icon: <People />, label: 'Mentors', value: 2, color: 'primary.main' },
             { icon: <CalendarToday />, label: 'Next Session', value: 'Mon 10am', color: 'secondary.main' },
           ].map((stat) => (
@@ -287,9 +305,10 @@ function IncubatorPortalContent() {
             <Box sx={{ px: 2 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 BrainSAIT Incubator Program · 12-week accelerated track for healthcare startups
+                {milestonesLoading && <CircularProgress size={14} sx={{ ml: 1, verticalAlign: 'middle' }} />}
               </Typography>
               {[1, 2, 3, 4].map((phase) => {
-                const phaseMilestones = MILESTONES.filter((milestone) => milestone.phase === phase);
+                const phaseMilestones = milestones.filter((milestone) => milestone.phase === phase);
                 const phaseLabels = ['Phase 1: Foundation', 'Phase 2: Build', 'Phase 3: Validate', 'Phase 4: Launch'];
                 return (
                   <Box key={phase} sx={{ mb: 4 }}>

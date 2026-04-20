@@ -68,6 +68,19 @@ export default function AdminApplicationsPage() {
   const [submitting, setSubmitting] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' });
 
+  // Restore session-scoped admin key on mount (never persisted to localStorage)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = sessionStorage.getItem('brainsait_admin_session');
+    if (stored) {
+      setAdminKey(stored);
+      // Auto-verify the stored key
+      listApplications(stored)
+        .then((res) => { setApplications(res.applications); setAuthenticated(true); })
+        .catch(() => { sessionStorage.removeItem('brainsait_admin_session'); });
+    }
+  }, []);
+
   function notify(message: string, severity: 'success' | 'error') {
     setFeedback({ open: true, message, severity });
   }
@@ -87,8 +100,11 @@ export default function AdminApplicationsPage() {
 
   async function handleAuthenticate() {
     setLoading(true);
+    setError(null);
     try {
       await listApplications(adminKey);
+      // Store key for the session (tab-scoped, cleared on window close)
+      sessionStorage.setItem('brainsait_admin_session', adminKey);
       setAuthenticated(true);
       await loadApplications();
     } catch (err: unknown) {

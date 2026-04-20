@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticate, authorize, AuthenticatedRequest } from '../middleware/auth';
 import { asyncHandler } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
+import { cache } from '../middleware/cache';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -148,8 +149,8 @@ const updateMentor = asyncHandler(async (req: AuthenticatedRequest, res: Respons
 });
 
 // Routes
-router.get('/',    getMentors);
-router.get('/:id', getMentorById);
+router.get('/',    cache(120, 'mentors'), getMentors);
+router.get('/:id', cache(60,  'mentors'), getMentorById);
 router.post('/',   authenticate, createMentorValidation, createMentor);
 router.put('/:id', authenticate, updateMentor);
 
