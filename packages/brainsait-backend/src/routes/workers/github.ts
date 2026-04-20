@@ -9,7 +9,19 @@
 import { Hono, type Context } from 'hono';
 import { jwtVerify, type JWTPayload } from 'jose';
 
+import {
+  getTokenUserId,
+  isWorkerAdminRole,
+  normalizeOptionalString,
+  normalizeOrganizations,
+  resolveUserBackedClaims,
+  WorkerUserClaimsError,
+} from './userBackedClaims';
+
 interface GithubAuthClaims extends JWTPayload {
+  id?: string;
+  userId?: string;
+  email?: string;
   org?: string;
   startupOrg?: string;
   startupSlug?: string;
@@ -48,7 +60,68 @@ github.use('*', async (c, next) => {
   }
   try {
     const verified = await jwtVerify(token, new TextEncoder().encode(c.env.JWT_SECRET));
-    c.set('authClaims', verified.payload as GithubAuthClaims);
+    let authClaims = verified.payload as GithubAuthClaims;
+    const userId = getTokenUserId(authClaims as Record<string, unknown>);
+    const defaultOrg = normalizeOptionalString(c.env.GITHUB_ORG);
+    const needsClaimEnrichment = Boolean(
+      userId &&
+      (
+        !normalizeOptionalString(authClaims.org) ||
+        !Array.isArray(authClaims.organizations) ||
+        (!isWorkerAdminRole(authClaims.role) && !normalizeStartupSlug(authClaims.startupSlug))
+      )
+    );
+
+    if (userId && needsClaimEnrichment) {
+      try {
+        const resolvedClaims = await resolveUserBackedClaims({
+          db: c.env.DB,
+          defaultOrg,
+          userId,
+        });
+
+        if (resolvedClaims) {
+          authClaims = {
+            ...authClaims,
+            id: resolvedClaims.userId,
+            userId: resolvedClaims.userId,
+            email: resolvedClaims.email,
+            role: resolvedClaims.role,
+            ...(resolvedClaims.org ? { org: resolvedClaims.org } : {}),
+            ...(resolvedClaims.startupOrg ? { startupOrg: resolvedClaims.startupOrg } : {}),
+            ...(resolvedClaims.startupSlug ? { startupSlug: resolvedClaims.startupSlug } : {}),
+            ...(resolvedClaims.organizations ? { organizations: resolvedClaims.organizations } : {}),
+          };
+        } else if (isWorkerAdminRole(authClaims.role)) {
+          const organizations = normalizeOrganizations(authClaims.organizations, defaultOrg);
+          authClaims = {
+            ...authClaims,
+            ...(defaultOrg && !normalizeOptionalString(authClaims.org) ? { org: defaultOrg } : {}),
+            ...(organizations.length > 0 ? { organizations } : {}),
+          };
+        }
+      } catch (error) {
+        if (!isWorkerAdminRole(authClaims.role)) {
+          if (error instanceof WorkerUserClaimsError) {
+            return c.json({ error: error.message }, error.statusCode);
+          }
+          return c.json({ error: 'User claims unavailable' }, 503);
+        }
+
+        const organizations = normalizeOrganizations(authClaims.organizations, defaultOrg);
+        authClaims = {
+          ...authClaims,
+          ...(defaultOrg && !normalizeOptionalString(authClaims.org) ? { org: defaultOrg } : {}),
+          ...(organizations.length > 0 ? { organizations } : {}),
+        };
+      }
+    }
+
+    if (!isWorkerAdminRole(authClaims.role) && authClaims.role === 'SME_OWNER' && !normalizeStartupSlug(authClaims.startupSlug)) {
+      return c.json({ error: 'Startup claims unavailable' }, 403);
+    }
+
+    c.set('authClaims', authClaims);
   } catch {
     return c.json({ error: 'Unauthorized' }, 401);
   }

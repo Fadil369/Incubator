@@ -6,16 +6,20 @@ import { Hono } from 'hono';
 import { sign, verify } from 'hono/jwt';
 import { getCookie, setCookie } from 'hono/cookie';
 
-type WorkerAuthRole = 'SME_OWNER' | 'MENTOR' | 'ADMIN' | 'SUPER_ADMIN';
+import {
+  authenticateUserBackedClaims,
+  coerceWorkerAuthRole,
+  getTokenUserId,
+  isWorkerAdminRole,
+  normalizeOptionalString,
+  normalizeOrganizations,
+  resolveUserBackedClaims,
+  type ResolvedWorkerAuthClaims,
+  type WorkerAuthRole,
+  WorkerUserClaimsError,
+} from './userBackedClaims';
 
-interface WorkerAuthClaims {
-  userId: string;
-  email: string;
-  role: WorkerAuthRole;
-  org?: string;
-  startupOrg?: string;
-  startupSlug?: string;
-  organizations?: string[];
+interface WorkerAuthClaims extends ResolvedWorkerAuthClaims {
   exp?: number;
 }
 
@@ -32,6 +36,7 @@ interface WorkerSessionRecord {
 
 interface Env {
   SESSIONS: any; // KV Namespace
+  DB: D1Database;
   JWT_SECRET: string;
   NODE_ENV: string;
   GITHUB_ORG?: string;
@@ -39,103 +44,95 @@ interface Env {
 
 const auth = new Hono<{ Bindings: Env }>();
 
-const SUPPORTED_ROLES: WorkerAuthRole[] = ['SME_OWNER', 'MENTOR', 'ADMIN', 'SUPER_ADMIN'];
-
-function normalizeOptionalString(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
-
-function normalizeStartupSlug(value: unknown): string | undefined {
-  const slug = normalizeOptionalString(value)?.toLowerCase();
-  if (!slug) return undefined;
-  return /^[a-z0-9-]+$/.test(slug) ? slug : undefined;
-}
-
-function normalizeRole(value: unknown): WorkerAuthRole {
-  return typeof value === 'string' && SUPPORTED_ROLES.includes(value as WorkerAuthRole)
-    ? (value as WorkerAuthRole)
-    : 'SME_OWNER';
-}
-
-function normalizeOrganizations(value: unknown, defaultOrg?: string): string[] {
-  const organizations = Array.isArray(value)
-    ? value.map((item) => normalizeOptionalString(item)).filter((item): item is string => Boolean(item))
-    : [];
-
-  if (defaultOrg && !organizations.includes(defaultOrg)) {
-    organizations.unshift(defaultOrg);
+function readAuthToken(c: { req: { header(name: string): string | undefined } }): string | undefined {
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return undefined;
   }
-
-  return [...new Set(organizations)];
+  const token = authHeader.slice('Bearer '.length).trim();
+  return token.length > 0 ? token : undefined;
 }
 
 // POST /api/v1/auth/login
 auth.post('/login', async (c) => {
   try {
-    const body = await c.req.json<{
+    const body: {
       email?: string;
       password?: string;
-      role?: WorkerAuthRole;
-      org?: string;
-      startupOrg?: string;
-      startupSlug?: string;
-      organizations?: string[];
-    }>();
-    const email = normalizeOptionalString(body.email);
+      token?: string;
+    } = await c.req.json<{
+      email?: string;
+      password?: string;
+      token?: string;
+    }>().catch(() => ({}));
+    const email = normalizeOptionalString(body.email)?.toLowerCase();
     const password = normalizeOptionalString(body.password);
-    
-    // Validate input
-    if (!email || !password) {
-      return c.json({
-        error: 'Missing credentials',
-        message: 'Email and password are required'
-      }, 400);
-    }
-
-    const role = normalizeRole(body.role);
     const defaultOrg = normalizeOptionalString(c.env.GITHUB_ORG);
-    const requestedOrg = normalizeOptionalString(body.org) ?? defaultOrg;
-    const startupSlug = normalizeOptionalString(body.startupSlug)
-      ? normalizeStartupSlug(body.startupSlug)
-      : undefined;
+    const exchangeToken = normalizeOptionalString(body.token) ?? readAuthToken(c);
 
-    if (normalizeOptionalString(body.startupSlug) && !startupSlug) {
-      return c.json({
-        error: 'Invalid startup slug',
-        message: 'startupSlug must contain only lowercase letters, numbers, and hyphens',
-      }, 400);
+    let claims: WorkerAuthClaims | null = null;
+
+    if (exchangeToken) {
+      const verifiedToken = (await verify(exchangeToken, c.env.JWT_SECRET, 'HS256')) as Record<string, unknown>;
+      const userId = getTokenUserId(verifiedToken);
+      const tokenEmail = normalizeOptionalString(verifiedToken.email)?.toLowerCase();
+      const tokenRole = coerceWorkerAuthRole(verifiedToken.role);
+
+      if (!userId || !tokenEmail) {
+        return c.json(
+          {
+            error: 'Unauthorized',
+            message: 'The provided token does not contain a valid user identity',
+          },
+          401
+        );
+      }
+
+      claims = await resolveUserBackedClaims({
+        db: c.env.DB,
+        defaultOrg,
+        userId,
+      });
+
+      if (!claims && tokenRole && isWorkerAdminRole(tokenRole)) {
+        const organizations = normalizeOrganizations([], defaultOrg);
+        claims = {
+          userId,
+          email: tokenEmail,
+          role: tokenRole,
+          ...(defaultOrg ? { org: defaultOrg } : {}),
+          ...(organizations.length > 0 ? { organizations } : {}),
+        };
+      }
+    } else {
+      if (!email || !password) {
+        return c.json(
+          {
+            error: 'Missing credentials',
+            message: 'Email and password are required',
+          },
+          400
+        );
+      }
+
+      claims = await authenticateUserBackedClaims({
+        db: c.env.DB,
+        defaultOrg,
+        email,
+        password,
+      });
     }
 
-    if (defaultOrg && requestedOrg && requestedOrg !== defaultOrg) {
-      return c.json({
-        error: 'Invalid organization',
-        message: `Only the configured org (${defaultOrg}) is supported in this environment`,
-      }, 400);
+    if (!claims) {
+      return c.json(
+        {
+          error: 'Login failed',
+          message: 'Invalid credentials or startup claims could not be resolved',
+        },
+        401
+      );
     }
 
-    const requestedStartupOrg = normalizeOptionalString(body.startupOrg) ?? (startupSlug ? defaultOrg : undefined);
-    if (defaultOrg && requestedStartupOrg && requestedStartupOrg !== defaultOrg) {
-      return c.json({
-        error: 'Invalid startup organization',
-        message: `Only the configured org (${defaultOrg}) is supported in this environment`,
-      }, 400);
-    }
-
-    const organizations = normalizeOrganizations(body.organizations, requestedOrg);
-    const claims: WorkerAuthClaims = {
-      userId: 'mock-user-id',
-      email,
-      role,
-      ...(requestedOrg ? { org: requestedOrg } : {}),
-      ...(requestedStartupOrg ? { startupOrg: requestedStartupOrg } : {}),
-      ...(startupSlug ? { startupSlug } : {}),
-      ...(organizations.length > 0 ? { organizations } : {}),
-    };
-    
-    // Here you would validate against your database
-    // For now, returning a mock response for deployment testing
     const token = await sign({
       ...claims,
       exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 hours
@@ -175,6 +172,15 @@ auth.post('/login', async (c) => {
     
   } catch (error) {
     console.error('Login error:', error);
+    if (error instanceof WorkerUserClaimsError) {
+      return c.json(
+        {
+          error: 'Login unavailable',
+          message: error.message,
+        },
+        error.statusCode
+      );
+    }
     return c.json({
       error: 'Login failed',
       message: 'Invalid credentials'
@@ -291,7 +297,7 @@ auth.post('/refresh', async (c) => {
     const refreshedSession: WorkerSessionRecord = {
       userId: payload.userId,
       email: payload.email,
-      role: normalizeRole(payload.role),
+      role: coerceWorkerAuthRole(payload.role) ?? 'SME_OWNER',
       ...(payload.org ? { org: payload.org } : {}),
       ...(payload.startupOrg ? { startupOrg: payload.startupOrg } : {}),
       ...(payload.startupSlug ? { startupSlug: payload.startupSlug } : {}),
