@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672602798",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/f04f384a53694a42b60b9fff48263d60\",\"title\":\"Welcome to Incubation Program\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/f0ede1f1d8074216a0b696e336812047\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0ugDKewaGKpixLJP_X4cKrGbJCHZDoQrpF_EGi68-qmRneAKRFyM5FyHNXLlooyjTaG-2sbjRBJPvy4e3j2LenzVUKeUwm9bkrCoQeoIZXWKwe89gd-bwYiYj36avvqNrFMjs7D1Y2zKDp1KSazF3vWGfDpiVCbWyJk8n9-65kl_0CwHhRl4z61ASl4hABgWTuI0lTipv_13Q_qcsJtRmReFLH538yR6EXr1AKw49Y75gIQCMHHEqr-YhA4\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/af396c0354d045878d8af9b38b6939e7\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UzOGEyNzJhYzFhNDQ3M2M4ZWNjZTU0MDkxYzc4NWZhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"2464\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "2464",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UzOGEyNzJhYzFhNDQ3M2M4ZWNjZTU0MDkxYzc4NWZhEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/af396c0354d045878d8af9b38b6939e7"
+      },
+      "name": "projects/5561486881429584250/screens/f04f384a53694a42b60b9fff48263d60",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugDKewaGKpixLJP_X4cKrGbJCHZDoQrpF_EGi68-qmRneAKRFyM5FyHNXLlooyjTaG-2sbjRBJPvy4e3j2LenzVUKeUwm9bkrCoQeoIZXWKwe89gd-bwYiYj36avvqNrFMjs7D1Y2zKDp1KSazF3vWGfDpiVCbWyJk8n9-65kl_0CwHhRl4z61ASl4hABgWTuI0lTipv_13Q_qcsJtRmReFLH538yR6EXr1AKw49Y75gIQCMHHEqr-YhA4",
+        "name": "projects/5561486881429584250/files/f0ede1f1d8074216a0b696e336812047"
+      },
+      "title": "Welcome to Incubation Program",
+      "width": "2560"
+    }
+  }
+}

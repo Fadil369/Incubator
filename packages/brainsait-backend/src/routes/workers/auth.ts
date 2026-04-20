@@ -35,7 +35,7 @@ interface WorkerSessionRecord {
 }
 
 interface Env {
-  SESSIONS: any; // KV Namespace
+  SESSIONS: KVNamespace;
   DB: D1Database;
   JWT_SECRET: string;
   NODE_ENV: string;

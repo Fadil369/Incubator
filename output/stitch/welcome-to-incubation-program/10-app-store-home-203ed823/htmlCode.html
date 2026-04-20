@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope:wght@400;500;700;800" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1193d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              display: ["Manrope"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen w-full flex-col">
+<header class="sticky top-0 z-20 w-full border-b border-gray-200/50 dark:border-gray-700/50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-gray-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold">App Incubator</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-primary" href="#">Apps</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Resources</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"> search </span>
+<input class="form-input w-full max-w-xs rounded-full border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-background-dark/50 pl-10 text-sm focus:border-primary focus:ring-primary" placeholder="Search" type="search"/>
+</div>
+<div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDHoS0CgRCyylb8tjn8Jjn5XWWgK-jov-lSFFgC-GBUQLVbZn1Nv2TRQDFwlzj9noWClAxWWhavd__4adoNraYTYkK55hqDFxCzVeos_MpB8e7PT-QgKQKJivURgSC1grRzWqkVcAKIt17-OfI2wWVFivReHr1ut4cSXMW19NK9vERVnZ-MpHp91zTiTqDNPBx7Q7TKkw9Y5r6W70BiPufQm7zPmdVS33YXm_dyOAgYaVyqS7vXcSEO5dKfCeJphLqcWJMLcSRW424");'></div>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="py-12 md:py-16">
+<div class="relative flex min-h-[420px] flex-col items-start justify-end overflow-hidden rounded-xl bg-cover bg-center p-8 md:p-12" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5iYqVyVuxVL9zhX1GlOPZS8c66dZ1dg1P3OwBi_XDPOBgciyB2Fy3fKT2NKjOPj3fLE9YGRsj30tXqoPhpfiSldzYe0lNVg3ekF4-hLRETQo6HIHXo2YDd8u-UKzl7NN0o5et58Y_6rSN8FKJRtgrh4PW20Zrf7cw9EY4ZjJIdzNWsbm6ZUpdRbNy56dhv_JpJOxyHyZR3HpI9XtGIsm6YCDVpWsb9K2Zjc_PPx0H1stYUzQIvGDZzXVawZ9-8rHldhVlDfmrh_k");'>
+<div class="max-w-xl text-white">
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">Discover Apps to Accelerate Your Business</h1>
+<p class="mt-4 text-base md:text-lg text-gray-200">
+                  Explore a curated selection of pre-built applications designed to streamline your operations and boost productivity. Find the perfect solution for your business needs.
+                </p>
+<div class="mt-8 flex w-full max-w-lg items-center">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"> search </span>
+<input class="form-input w-full rounded-l-lg border-0 bg-white/90 py-3 pl-12 pr-4 text-base text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark" placeholder="Search for apps" type="search"/>
+</div>
+<button class="flex items-center justify-center rounded-r-lg bg-primary px-6 py-3 font-bold text-white transition-colors hover:bg-primary/90">
+                    Search
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<div class="py-12">
+<h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">App Categories</h2>
+<div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+<div class="group relative cursor-pointer overflow-hidden rounded-lg">
+<div class="h-48 w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB14eaS0d_jgZ2IfY7_Wb86E4XCNBODMp8xNJ9GqjEHUTwY2Mk61wqLuhJLsoSrS8IAxHbOV7BProQGI8QAT0E9Ocf9eQr2cZz5Ae7bgdkGOfAyGl686P6c4CEtATkFtxdy0_CCaGQ7izGZr2RPC4JpOjTdOFsW3_xhnFSIc-o48OnAQ2JofApEqcm2SREY2WXlYBvAosoQGikIKKcGgWl7nptujjp2MzO8AUqPVhdfe20F53yR7rPaeT_0_1DomwYLruC94veBj58");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 p-4">
+<h3 class="text-lg font-semibold text-white">HEALTHCARE</h3>
+<p class="mt-1 text-sm text-gray-300">Apps for health and wellness.</p>
+</div>
+</div>
+<div class="group relative cursor-pointer overflow-hidden rounded-lg">
+<div class="h-48 w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBuPNJQ1v8OITB2kkA7XstMpaGTg5zIRTXQsqGijRTRhWP18HwgX5WUHA1vnHaJiPlbTECvIt2CYQOckPS9lmjpzFiixsP7owSV79iI3iMGiFZrx-zMwcoR8g63ovDpTXNbNrV1SRjwAk26eOrZ8BykKV_oZ_y2lIWziwg7EtIU3jz5jIss-DTMw-4WuBiJvjLSsU9aODJJLoVrOBaaTgo5K6PPsRJIXt7ymEDO0UBBqt9QhRhyvz0Tx-SKRHL8uJsG1KmezMJMaoE");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 p-4">
+<h3 class="text-lg font-semibold text-white">BUSINESS</h3>
+<p class="mt-1 text-sm text-gray-300">Tools for business operations.</p>
+</div>
+</div>
+<div class="group relative cursor-pointer overflow-hidden rounded-lg">
+<div class="h-48 w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQgmyS3n9L2M2aZ8MlEsKjJ9zGkKyXho6IfsYW8bqvGELRYQRE39n4OJ_d4Rvp_U2RxY0UfqPO_XUkAbPa5W2w90uHTGzLc8hkOebvKs1yTGIVCYVcGyGDn5chW4WkWtgQsBenOxHc4LbLlLIasNRhv9pFf29B7eih_qqyCaJZTAKBDYc2bf1DlHhUXtwTG1Y1pf-pMIH9vw7EG3xD-7ft_-yxVGzkt5ujMJID0jlQH4umUOH6WdMpOvkHGbgCeNx-vMjN0Ia0sj8");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 p-4">
+<h3 class="text-lg font-semibold text-white">TECH &amp; DEV</h3>
+<p class="mt-1 text-sm text-gray-300">Solutions for tech needs.</p>
+</div>
+</div>
+<div class="group relative cursor-pointer overflow-hidden rounded-lg">
+<div class="h-48 w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzHAnshS1PXSHru4Mrx4B5IIbFHYX7DwDVKb__1C6OjucMQwdvZjLP7-Ywt6Q81L3i-3AWF-7zCtNRsF7u7LBzFYRI6WaiXjIueOaDNqO0ZL3WehWF3r2Hg-U-jeveOxu1JCjq6ModwqPPUFI-cNAyQodEBIlVSmjWGXLY8otYMroBUI5_ABN-gokA5HISqrR_GQ1mbjkgNlSQSm5qeqZ2CMbbCr1vRKxUF6zNKDYdVKX2DND-mcTSys9pT6ZxrcprxDOYh1nb9vc");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 p-4">
+<h3 class="text-lg font-semibold text-white">SELF IMPROVEMENT</h3>
+<p class="mt-1 text-sm text-gray-300">Apps for personal growth.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="py-12">
+<h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">Explore All Apps</h2>
+<div class="mt-8 space-y-8">
+<div class="flex flex-col md:flex-row items-stretch gap-6 rounded-xl bg-white dark:bg-background-dark p-4 shadow-sm transition-shadow hover:shadow-lg dark:border dark:border-gray-800">
+<div class="md:w-1/3 flex-shrink-0">
+<div class="h-full w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7V2rtacKk2FUIaWL0yF9xCIfZzMTMJ5UnEtUcW05AZndJJjKrvdVHnwdDM8tzqo1Xyx4e84GEpHt3SiY6wIaieej4u32s2ZwVm2NAZaVBI4caMe12rFux0oPOxcpZOYjsTPirePTRn51P3JvXu_61V7WFrquu5ilobUjEl0FUaEAVO-Rs1n4N6kvb_6u-k05uVrE8EM-aZrWFfC5X-0uwGpBtJKQYa5CDoXG7c_9l2dM4Aqd3dl_vTJW3b2EHYh5THcKeUDfGmws");'></div>
+</div>
+<div class="flex flex-grow flex-col justify-center">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">Health Tracker Pro</h3>
+<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">A comprehensive health tracking app with personalized insights and motivation.</p>
+<div class="mt-4">
+<button class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path>
+</svg>
+<span>GitHub</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-stretch gap-6 rounded-xl bg-white dark:bg-background-dark p-4 shadow-sm transition-shadow hover:shadow-lg dark:border dark:border-gray-800">
+<div class="md:w-1/3 flex-shrink-0">
+<div class="h-full w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC90ETeAfw_y_rslJD6t_qC06Pbk_tv65DU4yec2HNVPypqA5qvdKO5cD7vFKD5HxkMJi3-B8LSOZqW5A_bR4cAENCIhfzINISJ3eoahvOV10hS4OG-XF7xFTBZj-hyFezCMfZ7ZcpkW2Rs2dMXe3KdEm_6LvdOO5nnuWs8L29pPNuOaXBQ_G1HCFxEo4kEXIVJFSenfpWccTIJZzYsMXs0Da9Dsw5ntJRedeNj1dCcFfIQGEhQr0EPYYOK47Gn_3Jfcxdmi18xjqI");'></div>
+</div>
+<div class="flex flex-grow flex-col justify-center">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">TaskMaster</h3>
+<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">An intuitive task management app to help you stay organized and productive.</p>
+<div class="mt-4">
+<button class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path>
+</svg>
+<span>GitHub</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-stretch gap-6 rounded-xl bg-white dark:bg-background-dark p-4 shadow-sm transition-shadow hover:shadow-lg dark:border dark:border-gray-800">
+<div class="md:w-1/3 flex-shrink-0">
+<div class="h-full w-full rounded-lg bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBov9Rqj2ZPLeO89ZD9FsSy2ReHrZ85tR4jcSmxAWhOV8DYbAkN80U_nvXdmLJEKxdTbiFqvgKzHZBTbKe7eXkbFCECvbe8Z9EB4cmASoX6FJIYaInhVSH6kt4FMz2igwqW_JRSMcn_fMGyonrk1SkI97pC683_3mVkoBSoANzHfJNfDgeZchr__X8WiW_uOnz6L8qk-RhiIUG5xKSj3YjgdO7Tuq6c7Jw8-7YMAGS1QzjooSGIVWkuE5drzxIIfw7fdrBv6brOO8");'></div>
+</div>
+<div class="flex flex-grow flex-col justify-center">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white">Mindful Moments</h3>
+<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">A guided meditation app to help you find peace and balance in your daily life.</p>
+<div class="mt-4">
+<button class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30">
+<svg fill="currentColor" height="16" viewBox="0 0 256 256" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path>
+</svg>
+<span>GitHub</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

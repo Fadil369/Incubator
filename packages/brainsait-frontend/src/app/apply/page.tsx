@@ -31,6 +31,7 @@ import {
   People,
   Analytics,
   ArrowForward,
+  School,
   Send,
 } from '@mui/icons-material';
 import { submitPartnerApplication } from '@/services/partnersService';
@@ -52,6 +53,7 @@ const BENEFITS = [
   { icon: <People />, title: 'Dedicated Mentorship', description: 'Weekly 1-on-1 sessions with BrainSAIT domain experts' },
   { icon: <Business />, title: 'GitHub Workspace', description: 'Auto-provisioned repos, CI/CD pipelines, and templates' },
   { icon: <Analytics />, title: 'Analytics Dashboard', description: 'Real-time KPI tracking and growth metrics' },
+  { icon: <School />, title: 'Training and Courses', description: 'Premium learning tracks available directly inside the BrainSAIT platform' },
 ];
 
 interface FormData {
@@ -172,6 +174,10 @@ export default function ApplyPage() {
       <Box sx={{ py: 6 }}>
         {/* Header */}
         <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+            <Chip label="Incubator program" color="primary" />
+            <Chip label="Training module included" variant="outlined" />
+          </Box>
           <Avatar sx={{ width: 72, height: 72, bgcolor: 'primary.main', mx: 'auto', mb: 3 }}>
             🧠
           </Avatar>
@@ -180,7 +186,7 @@ export default function ApplyPage() {
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 560, mx: 'auto' }}>
             Apply to become a partner and unlock access to our healthcare incubation
-            program, mentorship network, and digital transformation tools.
+            program, mentorship network, training courses, and digital transformation tools.
           </Typography>
         </Box>
 
@@ -387,9 +393,14 @@ export default function ApplyPage() {
           <Typography variant="body2" color="text.secondary" gutterBottom>
             Already have an invitation? Access your onboarding link directly.
           </Typography>
-          <Button variant="outlined" href="/portal/accept" endIcon={<ArrowForward />}>
-            Complete Onboarding
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+            <Button variant="outlined" href="/portal/accept" endIcon={<ArrowForward />}>
+              Complete Onboarding
+            </Button>
+            <Button variant="text" href="/training">
+              Preview Training Hub
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Container>

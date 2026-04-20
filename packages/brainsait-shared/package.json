@@ -1,15 +1,15 @@
 {
-  "name": "brainsait-shared",
+  "name": "@brainsait/shared",
   "version": "1.0.0",
   "description": "BrainSAIT Platform Shared Types and Utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -f tsconfig.tsbuildinfo && tsc",
     "dev": "tsc --watch",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {

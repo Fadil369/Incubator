@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672610714",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/2c33b6865c404e9eb3edd0de059ddc9d\",\"title\":\"Application Form\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/cade104ae9c6493d919d6e3803933f14\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0ug5o9pir95HW0SmVHMr_y0Ii9gw6HuFV9KJQ3kcyh327Oix9mp5mxfQCJCOlScCgCfYqUaiLqHSM-lt_9f1j7-dLrPitexk3HoztJYamJXoxmqu9iKpTLAB4aa1Gd806sjy6N9EfLCMdk_6W-HpouwIT-oMTDW07WNC_Gdcb4r_D5s6eOfGzujXpdktYpKs-H356L34pEF6yOtpEk7MDh8Y6TC1q88_vpTcBpXZNHiBhJOQI-Tx7LZDSWs\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/74e07422a43a419e865cfada4b057875\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzFhMmZmM2IwNzRkZjQxN2M5NWRkNWE5Zjk4ODgxMjhiEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"1734\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "1734",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzFhMmZmM2IwNzRkZjQxN2M5NWRkNWE5Zjk4ODgxMjhiEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/74e07422a43a419e865cfada4b057875"
+      },
+      "name": "projects/5561486881429584250/screens/2c33b6865c404e9eb3edd0de059ddc9d",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0ug5o9pir95HW0SmVHMr_y0Ii9gw6HuFV9KJQ3kcyh327Oix9mp5mxfQCJCOlScCgCfYqUaiLqHSM-lt_9f1j7-dLrPitexk3HoztJYamJXoxmqu9iKpTLAB4aa1Gd806sjy6N9EfLCMdk_6W-HpouwIT-oMTDW07WNC_Gdcb4r_D5s6eOfGzujXpdktYpKs-H356L34pEF6yOtpEk7MDh8Y6TC1q88_vpTcBpXZNHiBhJOQI-Tx7LZDSWs",
+        "name": "projects/5561486881429584250/files/cade104ae9c6493d919d6e3803933f14"
+      },
+      "title": "Application Form",
+      "width": "2560"
+    }
+  }
+}

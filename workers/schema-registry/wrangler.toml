@@ -6,7 +6,37 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-schema-registry-prod"
-route = { pattern = "schemas.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "schemas.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
+
+[env.production.vars]
+ALLOWED_FORMATS = "json,yaml,yml"
+MAX_SCHEMA_SIZE_KB = "100"
+REQUIRE_HIPAA_EXTENSION = "true"
+
+[[env.production.kv_namespaces]]
+binding = "SCHEMAS"
+id = "07ea6ec79f2f46ebbc8076a2000fcfa9"
+
+[[env.production.kv_namespaces]]
+binding = "VERSION_HISTORY"
+id = "079016c359c348e180724cdd76f29129"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "brainsait-healthcare-d1"
+database_id = "0def24ea-658c-446a-bb05-61856eb5f3de"
+
+[[env.production.r2_buckets]]
+binding = "SCHEMA_FILES"
+bucket_name = "brainsait-documents"
+
+[[env.production.queues.producers]]
+binding = "NOTIFICATION_QUEUE"
+queue = "brainsait-notifications"
+
+[[env.production.queues.producers]]
+binding = "DATA_SYNC_QUEUE"
+queue = "brainsait-claims"
 
 [env.staging]
 name = "brainsait-schema-registry-staging"

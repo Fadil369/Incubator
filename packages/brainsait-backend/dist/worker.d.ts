@@ -4,22 +4,34 @@
  */
 import { Hono } from 'hono';
 interface Env {
-    SESSIONS: any;
-    AI_CACHE: any;
-    RATE_LIMIT_STORE: any;
-    DOCUMENTS: any;
-    UPLOADS: any;
-    BACKUPS: any;
-    DB: any;
+    SESSIONS: KVNamespace;
+    CACHE: KVNamespace;
+    RATE_LIMIT: KVNamespace;
+    CONFIG: KVNamespace;
+    FEATURE_FLAGS: KVNamespace;
+    STARTUP_REGISTRY: KVNamespace;
+    PARTNER_APPLICATIONS: KVNamespace;
+    DB: D1Database;
+    AUDIT_LOG: D1Database;
+    DOCUMENTS: R2Bucket;
+    UPLOADS: R2Bucket;
+    DATA_CONTRACTS: R2Bucket;
+    AI: Ai;
     NODE_ENV: string;
     JWT_SECRET: string;
-    REDIS_URL: string;
     DATABASE_URL: string;
     FRONTEND_URL: string;
     API_BASE_URL: string;
+    CORS_ORIGINS: string;
+    ADMIN_KEY: string;
     OPENAI_API_KEY: string;
     ANTHROPIC_API_KEY: string;
     SENDGRID_API_KEY: string;
+    GITHUB_TOKEN: string;
+    GITHUB_ORG: string;
+    GITHUB_REPO: string;
+    GITHUB_APP_ID: string;
+    GITHUB_APP_PRIVATE_KEY: string;
 }
 declare const app: Hono<{
     Bindings: Env;

@@ -312,7 +312,7 @@ export default function AdminApplicationsPage() {
                           </>
                         )}
                         {(app.status === 'ACCEPTED' || app.status === 'ONBOARDED') && app.startupSlug && (
-                          <Button size="small" variant="outlined" href={`/portal/${app.startupSlug}`}>
+                          <Button size="small" variant="outlined" href={`/portal?startupId=${encodeURIComponent(app.startupSlug)}`}>
                             Portal
                           </Button>
                         )}
@@ -396,7 +396,7 @@ export default function AdminApplicationsPage() {
                 </>
               )}
               {(selected.status === 'ACCEPTED' || selected.status === 'ONBOARDED') && selected.startupSlug && (
-                <Button variant="contained" href={`/portal/${selected.startupSlug}`}>
+                <Button variant="contained" href={`/portal?startupId=${encodeURIComponent(selected.startupSlug)}`}>
                   Open Portal
                 </Button>
               )}

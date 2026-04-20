@@ -99,6 +99,9 @@ jspm_packages/
 
 # Editor directories and files
 .vscode/
+!.vscode/
+.vscode/*
+!.vscode/mcp.json
 .idea/
 *.suo
 *.ntvs*
@@ -128,6 +131,10 @@ output/
 */output/
 temp/
 */temp/
+!output/
+output/*
+!output/stitch/
+!output/stitch/**
 
 # Docker
 .dockerignore

@@ -4,6 +4,7 @@ name = "brainsait-backend"
 main = "dist/worker.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
+upload_source_maps = true
 
 # Account and route configuration
 account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
@@ -12,11 +13,11 @@ workers_dev = true
 # Custom domains for production
 [env.production]
 name = "brainsait-backend-production"
-route = { pattern = "api.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
 
 [env.staging]
 name = "brainsait-backend-staging"
-route = { pattern = "staging-api.brainsait.org/*", zone_name = "brainsait.org" }
+routes = [{ pattern = "staging-api.brainsait.org", custom_domain = true, zone_name = "brainsait.org" }]
 
 [env.preview]
 name = "brainsait-backend-preview"
@@ -29,7 +30,7 @@ id = "062eab539a7049c0b1e36049441a211d"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "079016c359c348e180724cdd76f29129"
+id = "fcb1821540004213af95b95dbe9cf8b8"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
@@ -41,15 +42,99 @@ id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
 
 [[kv_namespaces]]
 binding = "FEATURE_FLAGS"
-id = "7e559b5bf3f84271b679db018f59e6d9"
+id = "021ea635293a457b8dfaf854f10dbec4"
 
 [[kv_namespaces]]
 binding = "STARTUP_REGISTRY"
-id = "a6ac3b1a6086420e95b14e51e78bc288"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
 
 [[kv_namespaces]]
 binding = "PARTNER_APPLICATIONS"
-id = "b8fd4c2e1097531fae2d56c32a9b77cf"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = "062eab539a7049c0b1e36049441a211d"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "fcb1821540004213af95b95dbe9cf8b8"
+
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "8c0682e8e21b4703b46fd1c1a3487ec0"
+
+[[env.production.kv_namespaces]]
+binding = "CONFIG"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[env.production.kv_namespaces]]
+binding = "FEATURE_FLAGS"
+id = "021ea635293a457b8dfaf854f10dbec4"
+
+[[env.production.kv_namespaces]]
+binding = "STARTUP_REGISTRY"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
+
+[[env.production.kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = "062eab539a7049c0b1e36049441a211d"
+
+[[env.staging.kv_namespaces]]
+binding = "CACHE"
+id = "fcb1821540004213af95b95dbe9cf8b8"
+
+[[env.staging.kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "8c0682e8e21b4703b46fd1c1a3487ec0"
+
+[[env.staging.kv_namespaces]]
+binding = "CONFIG"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[env.staging.kv_namespaces]]
+binding = "FEATURE_FLAGS"
+id = "021ea635293a457b8dfaf854f10dbec4"
+
+[[env.staging.kv_namespaces]]
+binding = "STARTUP_REGISTRY"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
+
+[[env.staging.kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
+
+[[env.preview.kv_namespaces]]
+binding = "SESSIONS"
+id = "062eab539a7049c0b1e36049441a211d"
+
+[[env.preview.kv_namespaces]]
+binding = "CACHE"
+id = "fcb1821540004213af95b95dbe9cf8b8"
+
+[[env.preview.kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "8c0682e8e21b4703b46fd1c1a3487ec0"
+
+[[env.preview.kv_namespaces]]
+binding = "CONFIG"
+id = "9503c6ef49a2447f9f3f65f8d0ce5bbf"
+
+[[env.preview.kv_namespaces]]
+binding = "FEATURE_FLAGS"
+id = "021ea635293a457b8dfaf854f10dbec4"
+
+[[env.preview.kv_namespaces]]
+binding = "STARTUP_REGISTRY"
+id = "d4f74a1ca9a44cc082e2477d800496ab"
+
+[[env.preview.kv_namespaces]]
+binding = "PARTNER_APPLICATIONS"
+id = "0e15d8583edb44cebef9c4f0ff5ba71a"
 
 # ── D1 Databases (reusing existing) ──
 [[d1_databases]]
@@ -58,6 +143,36 @@ database_name = "brainsait-unified-api"
 database_id = "925780db-b119-42f2-a3ca-2aea98712168"
 
 [[d1_databases]]
+binding = "AUDIT_LOG"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "brainsait-unified-api"
+database_id = "925780db-b119-42f2-a3ca-2aea98712168"
+
+[[env.production.d1_databases]]
+binding = "AUDIT_LOG"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "brainsait-unified-api"
+database_id = "925780db-b119-42f2-a3ca-2aea98712168"
+
+[[env.staging.d1_databases]]
+binding = "AUDIT_LOG"
+database_name = "brainsait-metrics"
+database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "brainsait-unified-api"
+database_id = "925780db-b119-42f2-a3ca-2aea98712168"
+
+[[env.preview.d1_databases]]
 binding = "AUDIT_LOG"
 database_name = "brainsait-metrics"
 database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
@@ -75,54 +190,76 @@ bucket_name = "brainsait-files"
 binding = "DATA_CONTRACTS"
 bucket_name = "brainsait-storage"
 
-# ── Queues (reusing existing) ──
-[[queues.producers]]
-binding = "EVENT_QUEUE"
-queue = "brainsait-events"
+[[env.production.r2_buckets]]
+binding = "DOCUMENTS"
+bucket_name = "brainsait-documents"
 
-[[queues.producers]]
-binding = "NOTIFICATION_QUEUE"
-queue = "brainsait-notifications"
+[[env.production.r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "brainsait-files"
 
-[[queues.producers]]
-binding = "CLAIMS_QUEUE"
-queue = "brainsait-claims"
+[[env.production.r2_buckets]]
+binding = "DATA_CONTRACTS"
+bucket_name = "brainsait-storage"
 
-# ── Durable Objects ──
-[[durable_objects.bindings]]
-name = "RATE_LIMITER"
-class_name = "RateLimiter"
+[[env.staging.r2_buckets]]
+binding = "DOCUMENTS"
+bucket_name = "brainsait-documents"
 
-[[durable_objects.bindings]]
-name = "CHAT_ROOMS"
-class_name = "ChatRoom"
+[[env.staging.r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "brainsait-files"
 
-[[durable_objects.bindings]]
-name = "USAGE_TRACKER"
-class_name = "AIUsageTracker"
+[[env.staging.r2_buckets]]
+binding = "DATA_CONTRACTS"
+bucket_name = "brainsait-storage"
 
-[[migrations]]
-tag = "v1"
-new_classes = ["RateLimiter", "ChatRoom", "AIUsageTracker"]
+[[env.preview.r2_buckets]]
+binding = "DOCUMENTS"
+bucket_name = "brainsait-documents"
+
+[[env.preview.r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "brainsait-files"
+
+[[env.preview.r2_buckets]]
+binding = "DATA_CONTRACTS"
+bucket_name = "brainsait-storage"
 
 # ── Analytics Engine ──
 [[analytics_engine_datasets]]
 binding = "API_ANALYTICS"
 dataset = "brainsait_api_usage"
 
-# ── Vectorize ──
-[[vectorize]]
-binding = "KNOWLEDGE_INDEX"
-index_name = "brainsait-knowledge"
+[[env.production.analytics_engine_datasets]]
+binding = "API_ANALYTICS"
+dataset = "brainsait_api_usage"
+
+[[env.staging.analytics_engine_datasets]]
+binding = "API_ANALYTICS"
+dataset = "brainsait_api_usage"
+
+[[env.preview.analytics_engine_datasets]]
+binding = "API_ANALYTICS"
+dataset = "brainsait_api_usage"
 
 # ── AI Gateway ──
 [ai]
 binding = "AI"
 
+[env.production.ai]
+binding = "AI"
+
+[env.staging.ai]
+binding = "AI"
+
+[env.preview.ai]
+binding = "AI"
+
 # ── Build ──
 [build]
 command = "npm run build"
-watch_paths = ["src/**/*.ts"]
+watch_dir = ["src"]
 
 # ── Environment Variables ──
 [vars]
@@ -135,14 +272,30 @@ NODE_ENV = "production"
 LOG_LEVEL = "info"
 CORS_ORIGINS = "https://brainsait.org,https://dashboard.brainsait.org,https://docs.brainsait.org,https://portal.brainsait.org"
 GITHUB_ORG = "brainsait-incubator"
-# GITHUB_REPO: repo that hosts the partner-provision.yml workflow.
-# Must be overridden via a secret or environment-specific var in production
-# (e.g. "brainsait-incubator/incubator"). Do not commit an org-specific value here.
+GITHUB_REPO = "Fadil369/Incubator"
 FRONTEND_URL = "https://brainsait.org"
+SERVICE_NAME = "brainsait-backend"
+DOMAIN = "brainsait.org"
+PLATFORM_VERSION = "2.0.0"
 
 [env.staging.vars]
 NODE_ENV = "staging"
 LOG_LEVEL = "debug"
 CORS_ORIGINS = "https://staging.brainsait.org,http://localhost:3000"
 GITHUB_ORG = "brainsait-incubator"
-FRONTEND_URL = "http://localhost:3000"
+GITHUB_REPO = "Fadil369/Incubator"
+FRONTEND_URL = "https://staging.brainsait.org"
+SERVICE_NAME = "brainsait-backend"
+DOMAIN = "brainsait.org"
+PLATFORM_VERSION = "2.0.0"
+
+[env.preview.vars]
+NODE_ENV = "preview"
+LOG_LEVEL = "debug"
+CORS_ORIGINS = "https://preview.brainsait.org,http://localhost:3000"
+GITHUB_ORG = "brainsait-incubator"
+GITHUB_REPO = "Fadil369/Incubator"
+FRONTEND_URL = "https://preview.brainsait.org"
+SERVICE_NAME = "brainsait-backend"
+DOMAIN = "brainsait.org"
+PLATFORM_VERSION = "2.0.0"

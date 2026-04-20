@@ -7,11 +7,11 @@ account_id = "d7b99530559ab4f2545e9bdc72a7ab9b"
 
 [env.production]
 name = "brainsait-ai-production"
-route = { pattern = "ai.brainsait.org/*", zone_name = "brainsait.org" }
+workers_dev = true
 
 [env.staging]
 name = "brainsait-ai-staging"
-route = { pattern = "staging-ai.brainsait.org/*", zone_name = "brainsait.org" }
+workers_dev = true
 
 [env.preview]
 name = "brainsait-ai-preview"

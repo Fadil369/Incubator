@@ -1,25 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-beforeAll(async () => {
-  // Database setup for tests
-  if (process.env.SKIP_TEST_DB === 'true') {
-    return;
-  }
-
-  await prisma.$connect();
-});
-
-afterAll(async () => {
-  // Database cleanup after tests
-  if (process.env.SKIP_TEST_DB === 'true') {
-    return;
-  }
-
-  await prisma.$disconnect();
-});
-
 // Mock Redis in test environment
 jest.mock('redis', () => ({
   createClient: jest.fn(() => ({

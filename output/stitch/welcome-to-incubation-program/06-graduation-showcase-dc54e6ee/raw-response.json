@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672618252",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/dc54e6eecfac428cad324707292324fc\",\"title\":\"Graduation Showcase\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/15a39e07dfdc4812b485b067326eb045\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0uh8WK_c6vY7J9HL0DNr7VhDGyl9h3Q5DJsqTnH2cH8kHA9bhKwNw6sEJKK-5GZNQVcJ2RvKG5XTjMfP5qBSaA0KVniK0uxLL9SibiRfATgAydJcsuFtHFdI3ZwgyyQsBF4NNljxrqj9jfBGAsTgn_pptXH1dxu39fb6c0jFP5ce7zIPR5GfjqzUqBXM6kYsKdbR1TEHk8StHv0UK2JXA9i-brTmnmXw4jYitAyWL9uPP10uw6uO-E6dIv4\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/3c7fdbba7de148a0a121fd37c0c74773\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzVjMmYwNjZkMzFmMjRlZWZiOGVkOGMwMzM0NzU0NjVkEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"3182\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "3182",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzVjMmYwNjZkMzFmMjRlZWZiOGVkOGMwMzM0NzU0NjVkEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/3c7fdbba7de148a0a121fd37c0c74773"
+      },
+      "name": "projects/5561486881429584250/screens/dc54e6eecfac428cad324707292324fc",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uh8WK_c6vY7J9HL0DNr7VhDGyl9h3Q5DJsqTnH2cH8kHA9bhKwNw6sEJKK-5GZNQVcJ2RvKG5XTjMfP5qBSaA0KVniK0uxLL9SibiRfATgAydJcsuFtHFdI3ZwgyyQsBF4NNljxrqj9jfBGAsTgn_pptXH1dxu39fb6c0jFP5ce7zIPR5GfjqzUqBXM6kYsKdbR1TEHk8StHv0UK2JXA9i-brTmnmXw4jYitAyWL9uPP10uw6uO-E6dIv4",
+        "name": "projects/5561486881429584250/files/15a39e07dfdc4812b485b067326eb045"
+      },
+      "title": "Graduation Showcase",
+      "width": "2560"
+    }
+  }
+}

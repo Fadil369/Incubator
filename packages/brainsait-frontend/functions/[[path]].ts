@@ -2,15 +2,23 @@
 
 interface Env {
   API_BASE_URL?: string;
-  ASSETS: any;
+  ASSETS: {
+    fetch(request: Request): Promise<Response>;
+  };
 }
 
-export const onRequest = async (context: { request: Request; env: Env; params: any }) => {
-  const { request, env, params } = context;
+interface PagesFunctionContext {
+  request: Request;
+  env: Env;
+  params: Record<string, string | undefined>;
+}
+
+export const onRequest = async (context: PagesFunctionContext) => {
+  const { request, env } = context;
   
   // Handle API proxy requests
   if (request.url.includes('/api/')) {
-    const apiUrl = env.API_BASE_URL || 'https://api.brainsait.com';
+    const apiUrl = env.API_BASE_URL || 'https://api.brainsait.org';
     const proxyUrl = request.url.replace(new URL(request.url).origin, apiUrl);
     
     const proxyRequest = new Request(proxyUrl, {

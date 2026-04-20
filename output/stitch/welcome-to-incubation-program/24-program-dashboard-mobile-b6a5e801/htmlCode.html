@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INCUBATOR | Mobile Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb597",
+                        "background": "#f8fafb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadb",
+                        "secondary-container": "#c6d3ff",
+                        "on-secondary-fixed-variant": "#394669",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#822f00",
+                        "secondary-fixed": "#dae2ff",
+                        "on-surface": "#191c1d",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed-dim": "#b8c6f0",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary-container": "#ffa27a",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#002e78",
+                        "primary-container": "#1044a0",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-container": "#4d5b7f",
+                        "on-primary-container": "#9eb8ff",
+                        "surface-container-low": "#f2f4f5",
+                        "tertiary": "#5d1f00",
+                        "on-primary-fixed": "#001847",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2f5ab6",
+                        "on-primary-fixed-variant": "#09419d",
+                        "secondary": "#505d82",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#0b1a3b",
+                        "outline": "#747783",
+                        "surface-bright": "#f8fafb",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8fafb",
+                        "surface-container": "#eceeef",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8e9",
+                        "inverse-on-surface": "#eff1f2",
+                        "outline-variant": "#c3c6d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8fafb]/80 dark:bg-[#191c1d]/80 backdrop-blur-lg flex items-center justify-between px-6 h-16 w-full shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="User Profile" data-alt="professional headshot of a smiling young entrepreneur in a modern office setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1tZlH9zmEgRR4UOaiLbdN5iGAb4yDBmuzPCe8L1rQ3mUeKhp65IhtSzQE0B369TkhWupffJ7fd6XdAy35926YqoF_AJvKj0zl1nPD6BXyZwDRv7RJhk66wJ-sSw_cJ_aqncjdcb8f7O9mGdNz6GJaCA7Ej5kux7hkcZmoVaremDX2ZHOdNg7bdYdQDYyQ0RLwGzULq2FFp7ivIZyW_vv1HkzDlTZ6j9s1zVPIzu-qLhgzdeRqGVmA1in5703vBwewiUVH7_Bic8A"/>
+</div>
+<span class="font-headline font-bold tracking-tight text-lg text-[#002e78] dark:text-[#dae2ff]">INCUBATOR</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[#f2f4f5]/50 dark:hover:bg-[#2e3132]/50 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#002e78] dark:text-[#dae2ff]">translate</span>
+</button>
+</header>
+<main class="pt-20 pb-28 px-6 space-y-8">
+<!-- Welcome Header -->
+<section class="space-y-1">
+<h1 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Hello, Alex</h1>
+<p class="text-on-surface-variant font-medium">Ready to scale your vision today?</p>
+</section>
+<!-- Program Progress - Vertical Milestone Tracker -->
+<section class="bg-surface-container-low p-6 rounded-3xl space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-headline font-bold tracking-tight">Program Progress</h2>
+<span class="text-xs font-label font-semibold text-primary uppercase tracking-widest bg-primary-fixed px-3 py-1 rounded-full">Phase 2 of 4</span>
+</div>
+<div class="relative pl-8 space-y-8">
+<!-- Progress Line -->
+<div class="absolute left-[7px] top-2 bottom-2 w-1 bg-surface-container-highest rounded-full">
+<div class="h-1/2 w-full bg-primary rounded-full"></div>
+</div>
+<!-- Milestone 1 -->
+<div class="relative flex items-center gap-4">
+<div class="absolute -left-10 w-4 h-4 rounded-full border-4 border-surface-container-low bg-primary"></div>
+<div>
+<p class="text-sm font-label font-bold text-on-surface">Foundation &amp; Ideation</p>
+<p class="text-xs text-on-surface-variant">Completed on Oct 12</p>
+</div>
+<span class="material-symbols-outlined text-primary ml-auto" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Milestone 2 - Active -->
+<div class="relative flex items-center gap-4">
+<div class="absolute -left-10 w-4 h-4 rounded-full border-4 border-surface-container-low bg-primary shadow-[0_0_12px_#002e78]"></div>
+<div>
+<p class="text-sm font-label font-bold text-primary">Market Validation</p>
+<p class="text-xs text-on-surface-variant italic">In progress — 65%</p>
+</div>
+</div>
+<!-- Milestone 3 -->
+<div class="relative flex items-center gap-4 opacity-40">
+<div class="absolute -left-10 w-4 h-4 rounded-full border-4 border-surface-container-low bg-surface-container-highest"></div>
+<div>
+<p class="text-sm font-label font-bold text-on-surface">MVP Development</p>
+<p class="text-xs text-on-surface-variant">Unlocks in 3 weeks</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Asymmetric Bento Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Next Meeting Card (Large) -->
+<section class="col-span-2 bg-primary text-on-primary p-6 rounded-3xl flex flex-col justify-between aspect-[16/9] relative overflow-hidden">
+<div class="z-10">
+<span class="text-[10px] font-label font-bold uppercase tracking-widest opacity-80">Next Meeting</span>
+<h3 class="text-2xl font-headline font-extrabold mt-1">Growth Sync with Sarah</h3>
+</div>
+<div class="flex items-center justify-between z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">calendar_today</span>
+<span class="text-sm font-medium">Tomorrow, 10:00 AM</span>
+</div>
+<button class="bg-primary-container text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 transition-transform">
+                        Join Call
+                    </button>
+</div>
+<!-- Abstract Graphic -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+</section>
+<!-- Milestones Card -->
+<section class="bg-surface-container-highest p-5 rounded-3xl aspect-square flex flex-col justify-between">
+<div class="w-10 h-10 rounded-2xl bg-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">emoji_events</span>
+</div>
+<div>
+<h4 class="text-sm font-headline font-bold">Milestones</h4>
+<p class="text-[11px] text-on-surface-variant mt-1">12 tasks remaining</p>
+</div>
+</section>
+<!-- Resources Card -->
+<section class="bg-surface-container-highest p-5 rounded-3xl aspect-square flex flex-col justify-between">
+<div class="w-10 h-10 rounded-2xl bg-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">folder_open</span>
+</div>
+<div>
+<h4 class="text-sm font-headline font-bold">Resources</h4>
+<p class="text-[11px] text-on-surface-variant mt-1">New strategy template</p>
+</div>
+</section>
+</div>
+<!-- Recent Resources Section (Horizontal Scroll) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-headline font-bold tracking-tight">Recent Resources</h2>
+<button class="text-sm font-bold text-primary">View All</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-6 px-6">
+<!-- Resource 1 -->
+<div class="flex-shrink-0 w-64 bg-surface-container-lowest p-4 rounded-3xl shadow-sm space-y-3">
+<div class="h-32 rounded-2xl bg-surface-container overflow-hidden">
+<img alt="Pitch Deck" data-alt="vibrant abstract 3d shapes and gradients representing innovation and creativity in a professional context" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdmZoRtnhx4ddmiRI91qhmXizzTH2fbTbkwPhY6fBAZPvEjaEWu8aH63KgjpnHIuKdZUsMmQluBmcU9mAweLAS0tvLUoZntXLfiH-IH_YipSWXGhbo8wH3j_JgTf5CXgOkym7aGojdRAqe65VK0uvH2Yf82DNsERxn5EgmoTnXSM_z3S09Vo_hGbQSdqXc3HlgWLHrBR8M2Hbxml7E_6xFCv6iJAksDmUGn0z8TaF34Pae84Nnx4bgzgUPRoFEJACg0e4WioAtFxI"/>
+</div>
+<div>
+<span class="text-[10px] font-label font-bold text-primary uppercase">Guide</span>
+<h5 class="text-sm font-bold mt-1">Perfecting the Pitch Deck</h5>
+</div>
+</div>
+<!-- Resource 2 -->
+<div class="flex-shrink-0 w-64 bg-surface-container-lowest p-4 rounded-3xl shadow-sm space-y-3">
+<div class="h-32 rounded-2xl bg-surface-container overflow-hidden">
+<img alt="Market Analysis" data-alt="clean minimal data visualization dashboard with blue and white tones and soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0FlRN-9lTIuFauqzUfO7P3KNP5BfDe1rHj-g1WkutSgLAdLGnqezP2ab2xNyL3jTLqCISehuXZ9B0fjPuBtU_xzvfeLzbzF3vHfKpSjyAdPxtXorR1w-ArBsXtEGsJTAIdh9Vz5hLPou2Pug0dyG0-lvkPKkYANhv_0uVh2scbMcrelW0_9AyiXWQSj-n6J7mHuPQbEmd9uOcGXPe_yt9tdQQCXcQV1giL6H9HVBNz6ogLrcXLYxpRdJispMOBova7iAUwkM3BNA"/>
+</div>
+<div>
+<span class="text-[10px] font-label font-bold text-primary uppercase">Template</span>
+<h5 class="text-sm font-bold mt-1">Market Sizing Calculator</h5>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 rounded-t-3xl bg-[#f8fafb]/90 dark:bg-[#191c1d]/90 backdrop-blur-2xl flex justify-around items-center px-4 h-20 shadow-[0_-8px_40px_rgba(0,0,0,0.06)] pb-safe">
+<!-- Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-1">Home</span>
+</a>
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center text-[#002e78] dark:text-[#dae2ff] bg-[#dae2ff]/50 dark:bg-[#004494]/30 rounded-2xl px-4 py-1.5 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-1">Dashboard</span>
+</a>
+<!-- Apps (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-1">Apps</span>
+</a>
+<!-- Mentors (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-1">Mentors</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 hover:text-[#1044a0] dark:hover:text-[#ffffff]" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

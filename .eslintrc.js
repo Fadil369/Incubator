@@ -2,11 +2,10 @@ module.exports = {
   root: true,
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
-    'prettier',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint'],
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
@@ -16,7 +15,6 @@ module.exports = {
     es2022: true,
   },
   rules: {
-    'prettier/prettier': 'error',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -32,8 +30,7 @@ module.exports = {
       files: ['packages/brainsait-frontend/**/*'],
       extends: [
         'next/core-web-vitals',
-        '@typescript-eslint/recommended',
-        'prettier',
+        'plugin:@typescript-eslint/recommended',
       ],
       env: {
         browser: true,

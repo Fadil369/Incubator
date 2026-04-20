@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Incubator - Mentorship Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb597",
+                        "background": "#f8fafb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadb",
+                        "secondary-container": "#c6d3ff",
+                        "on-secondary-fixed-variant": "#394669",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#822f00",
+                        "secondary-fixed": "#dae2ff",
+                        "on-surface": "#191c1d",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed-dim": "#b8c6f0",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary-container": "#ffa27a",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#002e78",
+                        "primary-container": "#1044a0",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-container": "#4d5b7f",
+                        "on-primary-container": "#9eb8ff",
+                        "surface-container-low": "#f2f4f5",
+                        "tertiary": "#5d1f00",
+                        "on-primary-fixed": "#001847",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2f5ab6",
+                        "on-primary-fixed-variant": "#09419d",
+                        "secondary": "#505d82",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#0b1a3b",
+                        "outline": "#747783",
+                        "surface-bright": "#f8fafb",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8fafb",
+                        "surface-container": "#eceeef",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8e9",
+                        "inverse-on-surface": "#eff1f2",
+                        "outline-variant": "#c3c6d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8fafb]/80 dark:bg-[#191c1d]/80 backdrop-blur-lg flex items-center justify-between px-6 h-16 w-full shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male smiling, soft natural lighting, high-end business photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy86DuG0-kHYAGvDg6QvBCYrJj32EQ9zsWk6Ioi85-FAJVXrk2y3bi0jSVPJKWGjOGW63A4vVd8XlQb2421e-k1JIXHJGiPMj7ojvgr-IG2dJHU6zUyN5VZaIMFZLcszds5gxqEH1eDMOTFnSBUc0luA7AIzNaYT6aWDwaCNDp5PnXxvY9raXUNJJSsqKB3R2vM_g5zRddoe6jqgacZFXZgb2hj4wNkYgNqecbvf3GZ0wI0tSbA5_CiAa1NrB52mXBvMVmvC2OuvQ"/>
+</div>
+<span class="font-headline font-extrabold tracking-tighter text-lg text-[#002e78] dark:text-[#dae2ff]">INCUBATOR</span>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#f2f4f5]/50 dark:hover:bg-[#2e3132]/50 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#002e78] dark:text-[#dae2ff]">translate</span>
+</button>
+</header>
+<main class="pt-20 pb-28 px-4 max-w-lg mx-auto">
+<!-- Hero: Featured Mentors Carousel -->
+<section class="mb-10">
+<div class="flex justify-between items-end mb-6 px-2">
+<div>
+<span class="text-primary font-headline font-bold text-sm tracking-widest uppercase mb-1 block">Featured Expertise</span>
+<h2 class="text-3xl font-headline font-extrabold text-on-surface leading-tight">Master Classes</h2>
+</div>
+<div class="flex gap-2 mb-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></div>
+</div>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory">
+<!-- Carousel Item 1 -->
+<div class="snap-start flex-shrink-0 w-72 h-96 relative rounded-full overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="Professional woman in a blazer looking confidently at the camera, modern office background with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG4SrdzNdDoMUQL7himjovpRMMt9lRezbXmNoGL53kHCZhN_oTkS6EWMLu0uehAnN0Ey6efDbrAsfQZYc-1_GHZJazTgcUi0atU47rwPtucGkJUQAIduanqpAbyYV7PyONAf8qhB8UX9cr_W4BV7cS5bZ2QVUGkL-CPTfkbJDOjb7cILpH3a-z3Yu4SkwSViALiWdWndxjlj90VSeSvqt8QFw2wchJU8ujc4BkZ6R39oOqf5o0A8CDdSpSsqJsvzn6-1z53lq6IQE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 text-on-primary">
+<p class="font-label text-[10px] uppercase tracking-widest mb-1 opacity-80">FinTech Growth</p>
+<h3 class="font-headline font-bold text-xl">Elena Richardson</h3>
+<p class="text-sm opacity-90 mt-2">Scale your startup's financial infrastructure with 15 years of wall street expertise.</p>
+</div>
+</div>
+<!-- Carousel Item 2 -->
+<div class="snap-start flex-shrink-0 w-72 h-96 relative rounded-full overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="Mature businessman with silver hair wearing glasses, thoughtful expression, soft architectural light background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAETvNb2D3cu-fB7qsPgAsbS8BTkpN5Pe7Avy5IP61lY5ezFKbCD90wmzsNlEhIZeVAGevacuF8r8RXiE2MvloC0FX8n2TK2D0NAbGrd6gCeIuQ_Jd3LZSyu4y9lLESRiTXem27fJK3mjbWxm0xHKUs5Qk-KxDxKjamL97b5fUnZbIwCIM2gkd_W99mikI17tIfzciO_4xBf_gexb-RqPcc0ULeOAOdWi2Jh-6pOvHbf21Sf5LoG5MAmcpqqWeeOLetlrrVmydwEn4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 text-on-primary">
+<p class="font-label text-[10px] uppercase tracking-widest mb-1 opacity-80">Venture Capital</p>
+<h3 class="font-headline font-bold text-xl">Marcus Thorne</h3>
+<p class="text-sm opacity-90 mt-2">Understand the psychology of the pitch and secure your Series A funding.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Filter Area (Tonal Depth separation) -->
+<div class="bg-surface-container-low rounded-full p-2 flex items-center mb-10 shadow-sm">
+<div class="flex-1 px-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant font-label text-sm w-full" placeholder="Search specialties..." type="text"/>
+</div>
+<button class="bg-surface-container-lowest p-3 rounded-full shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">tune</span>
+</button>
+</div>
+<!-- Chat Interface Preview (Glassmorphism) -->
+<section class="mb-12">
+<h3 class="font-headline font-bold text-lg mb-4 px-2">Active Sessions</h3>
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl rounded-full p-4 shadow-[0_8px_40px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Young female professional portrait with bright friendly eyes, studio lighting on soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSTyhLPoopC_ikZWATvWlDLfBNx46XqK2XLCA1ZIXM47LWTVUpzBoVV_1OCtLIQk1LKvxR38VsMBnvDWkpplSW6KHCUXlU23TdrnF3jlcBERVQlRhW9nJCao6qkMTXqLVkNNTWoFsj0FdNLsyFantq7k6i--QJtMUUiSqfE3AHIdNSxxdM5_BdqjNJT0477-7_uFXCgfr-YfqT6WVyBHxCQxHycj-hWfQSc3M8Emaxo71UiLOf6YXzk1exkunUORic4qSfwdud7W4"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-headline font-bold text-sm">Dr. Sarah Jenkins</h4>
+<span class="text-[10px] font-bold text-primary bg-primary-fixed px-2 py-0.5 rounded-full uppercase">Live</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">"The product-market fit looks promising, let's discuss the..."</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">send</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Mentor List -->
+<section class="space-y-6">
+<div class="flex justify-between items-center px-2">
+<h3 class="font-headline font-bold text-lg">Available Mentors</h3>
+<button class="text-primary font-label text-xs font-bold uppercase tracking-widest">See All</button>
+</div>
+<div class="space-y-3">
+<!-- Mentor Card 1 -->
+<div class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-5 rounded-full flex items-center gap-4 group">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" data-alt="Close-up of a stylish man with a beard, neutral expression, professional portrait in soft overcast outdoor light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBYHoVr6quliMyGaiOCcoPOttBXDZxX9NDhmLuWJ-NFS5llixNh7v7ibOKJ8BN_VClnqqiXqWbxi8T8RHKMoHeij4d5oTDUZ7dSl-UKDrE1azpOoPWp9BEdGzUL5p5MP5B31_pFsTizsDIEGTTCJIaidBN4bHwUugUkrrGeqlwipydlq6BYU8cnJvefQSCC1jWCJ_lcj-ANfa7qNHypej3q3yzDVFFWch7gy33NWsXV5DrChZYFYwp76Ymn3FodCK9qGIJBpMTlao"/>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Jameson Blake</h4>
+<p class="text-xs text-on-surface-variant font-medium">B2B SaaS Strategy</p>
+</div>
+<button class="bg-primary px-5 py-2 rounded-full text-on-primary font-label text-xs font-bold active:scale-95 transition-all">
+                        Message
+                    </button>
+</div>
+<!-- Mentor Card 2 -->
+<div class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-5 rounded-full flex items-center gap-4 group">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" data-alt="Smiling woman with curly hair, natural light, joyful professional presentation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpTPl9atF7p5UoN8nOtz_aNDQPYLu2mh_5giVm-gxdxn0rA_iKupCHZOzrwHMDCcix4ZcCEkGKGzjG_bJF0Hig-4nGOXihmbCKUynyR6daKH3jIZOPxTL5P1GaLgdgQucG85M5sCT6kkcq07utljaWAv3zPPmRW3rqTg3sTgz2tx_ld3AIH79KBRV6TWTNzbiqSMQUXGyPL5FBr3UTc1lkCTrMvUNEfqHTsB5opPJxswdNKKQydZ8AyGGVLcnXju9U8YCFfKUm_cU"/>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Amina Koulibaly</h4>
+<p class="text-xs text-on-surface-variant font-medium">Sustainable Tech Hubs</p>
+</div>
+<button class="bg-primary px-5 py-2 rounded-full text-on-primary font-label text-xs font-bold active:scale-95 transition-all">
+                        Message
+                    </button>
+</div>
+<!-- Mentor Card 3 -->
+<div class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-5 rounded-full flex items-center gap-4 group">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" data-alt="Young male architect in a minimal workspace, professional and modern look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaMu0Tb1uuNVh1LqI52GnB1tSYg91azN1c1opkdJr2lbu9p27a4i81kUiN0fJ55Sv_wMN-JVsBXWE4aWb84BYzkvm_W4BFe55bbTi1PYp7AvxZWvEjcBCPjrsNa5gB7JSI0OXpPIJ1LDwHQdMWRwjLRZ-4ZUf9Fzy4WhD7uJhfQJnQWWDsqzLIiNXtiE2M7gi26UkQobAiVTO9HiLB6HoqiseybGq4zX4INUqM4yovGF5k0faLo96S_iRCSizZELl18uKH-GtLeeo"/>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">David Chen</h4>
+<p class="text-xs text-on-surface-variant font-medium">UI/UX System Design</p>
+</div>
+<button class="bg-primary px-5 py-2 rounded-full text-on-primary font-label text-xs font-bold active:scale-95 transition-all">
+                        Message
+                    </button>
+</div>
+<!-- Mentor Card 4 -->
+<div class="bg-surface-container-low hover:bg-surface-container-high transition-colors p-5 rounded-full flex items-center gap-4 group">
+<img class="w-14 h-14 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform" data-alt="Sophisticated woman with glasses in a bright library setting, scholarly and business focused" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXlleaENGWFek3QIU-V08OQO-UDVJPY62vUeREi_vg_ziYA8mNcvnNhPecvwWdrLpYUGh5hVdBXyx2ETrV6bnja7vGDXryL-0IGX2La6mJEe2gNvZYe7XA6SUXE-hs_6sLzEDETOi3gyBNNz7D3lP0URj-BzkHdhurgS6AYJMP7HcDD4HSqRYBWg-ZjIxCo_R7fIXmjFXfBcWhY-VuCptdIZAeOYc5lShq_7dcDEAt3tZ4sJxE-RUeW9WzLI7TJjx3Kqjgk8WMZ_k"/>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Victoria Grant</h4>
+<p class="text-xs text-on-surface-variant font-medium">Patent Law &amp; IP</p>
+</div>
+<button class="bg-primary px-5 py-2 rounded-full text-on-primary font-label text-xs font-bold active:scale-95 transition-all">
+                        Message
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 rounded-t-3xl bg-[#f8fafb]/90 dark:bg-[#191c1d]/90 backdrop-blur-2xl flex justify-around items-center px-4 h-20 shadow-[0_-8px_40px_rgba(0,0,0,0.06)] pb-safe">
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined mb-1">grid_view</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined mb-1">store</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Apps</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#002e78] dark:text-[#dae2ff] bg-[#dae2ff]/50 dark:bg-[#004494]/30 rounded-2xl px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Mentors</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Profile</span>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672651185",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/d3c5cf943a704170bafb0ae3b4769488\",\"title\":\"Mentorship Hub\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/2c354a9b107645928d868b004b1b6b1c\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0uhqYIDt5oKvw1oqaHqpShJP8KDHQnZNiLJwrEfeH53W0H11TYLoM2cdp6JbD1Osp55WLBX8Nz6nqh4n_rQmzhaD39_Nujx8zLMQmxlpXstoS9GCDom60zOngdB3Iw2DqzK-55_uVLjc0xUBWPgRgDtETTJc-N40HuvQQalKQNmvI2ljJVaoL7X0HPqIXVJ-tAu68uN6wCMGUiQ8TbWXcy--kQCzMfo5BDxBQb1GteOz-Y913jeIzH6CAQ\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/1528fa8496b84e7194d08e84498587c1\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzE5YmQ2ZmI0NTM4YjQ1YTdhMjFjNTQzMmVmNWQwZjZlEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086\"},\"width\":\"2560\",\"height\":\"1600\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "1600",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzE5YmQ2ZmI0NTM4YjQ1YTdhMjFjNTQzMmVmNWQwZjZlEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=89354086",
+        "name": "projects/5561486881429584250/files/1528fa8496b84e7194d08e84498587c1"
+      },
+      "name": "projects/5561486881429584250/screens/d3c5cf943a704170bafb0ae3b4769488",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhqYIDt5oKvw1oqaHqpShJP8KDHQnZNiLJwrEfeH53W0H11TYLoM2cdp6JbD1Osp55WLBX8Nz6nqh4n_rQmzhaD39_Nujx8zLMQmxlpXstoS9GCDom60zOngdB3Iw2DqzK-55_uVLjc0xUBWPgRgDtETTJc-N40HuvQQalKQNmvI2ljJVaoL7X0HPqIXVJ-tAu68uN6wCMGUiQ8TbWXcy--kQCzMfo5BDxBQb1GteOz-Y913jeIzH6CAQ",
+        "name": "projects/5561486881429584250/files/2c354a9b107645928d868b004b1b6b1c"
+      },
+      "title": "Mentorship Hub",
+      "width": "2560"
+    }
+  }
+}

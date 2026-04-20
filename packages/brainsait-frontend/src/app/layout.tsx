@@ -2,12 +2,14 @@
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { Box, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import { prefixer } from 'stylis';
 import rtlPlugin from 'stylis-plugin-rtl';
+import type { StylisPlugin } from '@emotion/cache';
+import SiteChrome from '@/components/common/SiteChrome';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -16,7 +18,7 @@ interface RootLayoutProps {
 // Create RTL cache for Arabic support
 const cacheRtl = createCache({
   key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin],
+  stylisPlugins: [prefixer as StylisPlugin, rtlPlugin as unknown as StylisPlugin],
 });
 
 const cacheLtr = createCache({
@@ -290,9 +292,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <CacheProvider value={isArabic ? cacheRtl : cacheLtr}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box sx={{ minHeight: '100vh' }}>
+            <SiteChrome>
               {children}
-            </Box>
+            </SiteChrome>
           </ThemeProvider>
         </CacheProvider>
       </body>

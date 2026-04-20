@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb597",
+                        "background": "#f8fafb",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadb",
+                        "secondary-container": "#c6d3ff",
+                        "on-secondary-fixed-variant": "#394669",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#822f00",
+                        "secondary-fixed": "#dae2ff",
+                        "on-surface": "#191c1d",
+                        "inverse-primary": "#b2c5ff",
+                        "secondary-fixed-dim": "#b8c6f0",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary-container": "#ffa27a",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#002e78",
+                        "primary-container": "#1044a0",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-container": "#4d5b7f",
+                        "on-primary-container": "#9eb8ff",
+                        "surface-container-low": "#f2f4f5",
+                        "tertiary": "#5d1f00",
+                        "on-primary-fixed": "#001847",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2f5ab6",
+                        "on-primary-fixed-variant": "#09419d",
+                        "secondary": "#505d82",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-secondary-fixed": "#0b1a3b",
+                        "outline": "#747783",
+                        "surface-bright": "#f8fafb",
+                        "on-background": "#191c1d",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8fafb",
+                        "surface-container": "#eceeef",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8e9",
+                        "inverse-on-surface": "#eff1f2",
+                        "outline-variant": "#c3c6d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8fafb]/80 dark:bg-[#191c1d]/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.03)] flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3 active:scale-95 duration-200 ease-in-out transition-colors hover:bg-[#f2f4f5]/50 p-1 rounded-full">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover" data-alt="Close up portrait of a professional male smiling confidently, soft office lighting in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpWMowAxMnrXNUmvGRjgg9XFppViVwOPjJcQRe6KEg0hnssVtnhBEKPG9eRcJ5ySwsef_lOhSnLlDCcSidbQRN86d8HfrA2pL0UAx9eql97znFBwET15qwAjMGEoU-Mn4yGLtpXM9c4HEBpI9_FA2sYr_9d6UgEiH-Um84xMgaVNqwZ34tKj3saSrGRaUA31dOd9CbWvbXRkfdQvFmk5oIx7em9MIXRSx_7FDj4lSW0y80psvMOyHG4fK1szh-8daMsyKeapyl3Ck"/>
+</div>
+<h1 class="text-xl font-extrabold tracking-tighter text-[#002e78] dark:text-[#dae2ff] font-['Manrope']">INCUBATOR</h1>
+<button class="material-symbols-outlined text-[#002e78] dark:text-[#dae2ff] active:scale-95 duration-200 ease-in-out hover:bg-[#f2f4f5]/50 p-2 rounded-full">
+            translate
+        </button>
+</header>
+<main class="pt-20 pb-24 min-h-screen px-5 flex flex-col gap-8">
+<!-- Hero Section & Search -->
+<section class="mt-4">
+<div class="mb-6">
+<h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface mb-2">Resource Library</h2>
+<p class="text-on-surface-variant font-body leading-relaxed max-w-[85%]">Accelerate your startup with curated insights and legal frameworks.</p>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full bg-surface-container-low h-14 pl-12 pr-4 rounded-xl border-none focus:ring-0 text-on-surface placeholder:text-outline transition-all duration-300 focus:bg-surface-container-lowest" placeholder="Find guides, templates..." type="text"/>
+<div class="absolute bottom-0 left-0 h-0.5 w-0 bg-primary group-focus-within:w-full transition-all duration-500 rounded-full"></div>
+</div>
+</section>
+<!-- Horizontal Category Chips -->
+<section>
+<div class="flex overflow-x-auto gap-3 hide-scrollbar -mx-5 px-5">
+<button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-primary text-on-primary font-label text-sm font-semibold tracking-wide shadow-lg shadow-primary/10">All Resources</button>
+<button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface-variant font-label text-sm font-semibold hover:bg-surface-container-highest transition-colors">Marketing</button>
+<button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface-variant font-label text-sm font-semibold hover:bg-surface-container-highest transition-colors">Legal</button>
+<button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface-variant font-label text-sm font-semibold hover:bg-surface-container-highest transition-colors">Finance</button>
+<button class="flex-shrink-0 px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface-variant font-label text-sm font-semibold hover:bg-surface-container-highest transition-colors">Tech</button>
+</div>
+</section>
+<!-- Featured Resource Bento Card -->
+<section>
+<div class="relative overflow-hidden rounded-full bg-primary-container p-8 text-on-primary-container flex flex-col gap-4">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-surface-tint opacity-20 rounded-full blur-3xl"></div>
+<span class="bg-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest w-fit">Featured</span>
+<div>
+<h3 class="text-2xl font-headline font-bold leading-tight mb-2">Fundraising Strategy 2024</h3>
+<p class="text-sm opacity-80 leading-relaxed">The ultimate guide to securing Series A funding in the current economic climate.</p>
+</div>
+<button class="mt-2 bg-primary-fixed text-on-primary-fixed-variant py-3 px-6 rounded-lg font-bold text-sm flex items-center justify-between group active:scale-95 transition-transform">
+                    Start Learning
+                    <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Resource List -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-bold text-lg text-on-surface">Recent Additions</h4>
+<button class="text-primary text-xs font-bold uppercase tracking-wider">View All</button>
+</div>
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-full p-4 flex items-center gap-5 transition-all hover:bg-surface-container-low group">
+<div class="w-16 h-16 rounded-xl bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">gavel</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-tertiary uppercase tracking-widest mb-1">Legal</p>
+<h5 class="text-base font-bold text-on-surface leading-tight mb-1">Shareholder Agreement Template</h5>
+<p class="text-xs text-on-surface-variant">4 min read • Essential</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-full p-4 flex items-center gap-5 transition-all hover:bg-surface-container-low group">
+<div class="w-16 h-16 rounded-xl bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">show_chart</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Marketing</p>
+<h5 class="text-base font-bold text-on-surface leading-tight mb-1">B2B Growth Hacking Playbook</h5>
+<p class="text-xs text-on-surface-variant">12 min read • Advanced</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-full p-4 flex items-center gap-5 transition-all hover:bg-surface-container-low group">
+<div class="w-16 h-16 rounded-xl bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Finance</p>
+<h5 class="text-base font-bold text-on-surface leading-tight mb-1">Cap Table Management 101</h5>
+<p class="text-xs text-on-surface-variant">8 min read • Critical</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-full p-4 flex items-center gap-5 transition-all hover:bg-surface-container-low group">
+<div class="w-16 h-16 rounded-xl bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Ops</p>
+<h5 class="text-base font-bold text-on-surface leading-tight mb-1">Hiring Your First 5 Employees</h5>
+<p class="text-xs text-on-surface-variant">15 min read • Growth</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Newsletter / Bottom CTA Section -->
+<section class="mt-4 mb-8">
+<div class="bg-surface-container-low rounded-full p-6 text-center">
+<h4 class="font-headline font-bold text-on-surface mb-2">Stay Updated</h4>
+<p class="text-sm text-on-surface-variant mb-4">Get the latest resources delivered weekly.</p>
+<div class="flex gap-2">
+<input class="flex-1 bg-surface-container-lowest border-none rounded-lg text-sm px-4 focus:ring-1 focus:ring-primary" placeholder="Email address" type="email"/>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-sm">Join</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 bg-[#f8fafb]/90 dark:bg-[#191c1d]/90 backdrop-blur-2xl shadow-[0_-8px_40px_rgba(0,0,0,0.06)] rounded-t-3xl flex justify-around items-center px-4 h-20 w-full pb-safe">
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 hover:text-[#1044a0] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 hover:text-[#1044a0] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1">grid_view</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Dashboard</span>
+</a>
+<!-- Active Tab: Apps (Library) -->
+<a class="flex flex-col items-center justify-center text-[#002e78] dark:text-[#dae2ff] bg-[#dae2ff]/50 dark:bg-[#004494]/30 rounded-2xl px-4 py-1.5 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">store</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Apps</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 hover:text-[#1044a0] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1">psychology</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Mentors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#434652] dark:text-[#c3c6d4] px-4 py-1.5 hover:text-[#1044a0] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Inter'] text-[11px] font-semibold tracking-wide uppercase">Profile</span>
+</a>
+</nav>
+</body></html>

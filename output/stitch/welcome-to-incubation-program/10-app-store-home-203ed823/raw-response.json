@@ -1,0 +1,27 @@
+{
+  "id": "get_screen-1776672629502",
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "{\"name\":\"projects/5561486881429584250/screens/203ed82336294001b003fc54b4acfe20\",\"title\":\"App Store Home\",\"screenshot\":{\"name\":\"projects/5561486881429584250/files/3a3dcc336efa4f1ab142c46fd04c1200\",\"downloadUrl\":\"https://lh3.googleusercontent.com/aida/ADBb0uhfEFD1YdP2TCMib-x4SaMWLGufkW4BCLtlopGcwD9o_6o4UAphmBajjFM_ZuK50XTFC5zRPnLEqSa12sUCCvn52G3jmK1vlKJ-FwcyY25RfORf9TvD3MTMHFzttT8mCbMysCHuXOu66a-OA9QRrHvNkftb48vf8jMqmmThR6Jv2Sw64UchC-aWqxgrnJr8B-2A8Jcybu53EgF66E0udhkFexyie8E5-tZVbqck5FBbnTlDmJzZXsjn15U\"},\"htmlCode\":{\"name\":\"projects/5561486881429584250/files/87157b097f7b4aef9718c16df8d32f63\",\"downloadUrl\":\"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Q2ODQyYjBhZTYyYjQ2MWE5YmViMDc4YWRjM2NhZjMyEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242\"},\"width\":\"2560\",\"height\":\"3234\",\"deviceType\":\"DESKTOP\"}",
+        "type": "text"
+      }
+    ],
+    "structuredContent": {
+      "deviceType": "DESKTOP",
+      "height": "3234",
+      "htmlCode": {
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Q2ODQyYjBhZTYyYjQ2MWE5YmViMDc4YWRjM2NhZjMyEgsSBxCbmvHT6goYAZIBIwoKcHJvamVjdF9pZBIVQhM1NTYxNDg2ODgxNDI5NTg0MjUw&filename=&opi=96797242",
+        "name": "projects/5561486881429584250/files/87157b097f7b4aef9718c16df8d32f63"
+      },
+      "name": "projects/5561486881429584250/screens/203ed82336294001b003fc54b4acfe20",
+      "screenshot": {
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhfEFD1YdP2TCMib-x4SaMWLGufkW4BCLtlopGcwD9o_6o4UAphmBajjFM_ZuK50XTFC5zRPnLEqSa12sUCCvn52G3jmK1vlKJ-FwcyY25RfORf9TvD3MTMHFzttT8mCbMysCHuXOu66a-OA9QRrHvNkftb48vf8jMqmmThR6Jv2Sw64UchC-aWqxgrnJr8B-2A8Jcybu53EgF66E0udhkFexyie8E5-tZVbqck5FBbnTlDmJzZXsjn15U",
+        "name": "projects/5561486881429584250/files/3a3dcc336efa4f1ab142c46fd04c1200"
+      },
+      "title": "App Store Home",
+      "width": "2560"
+    }
+  }
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope:wght@400;500;700;800" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>Growth Hub Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1193d4",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Manrope"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen">
+<header class="bg-background-light dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4 text-neutral-800 dark:text-white">
+<div class="text-primary">
+<svg class="h-8 w-8" fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold text-neutral-800 dark:text-white">Growth Hub</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Resources</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Mentorship</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Community</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDqH6cToCjAP9M1XKqwHYMzY8FMkCR1w-HUev2cs2X_L42ci4W8iPoFKKB1k0JxcntkykTl7MLzXV1SZlC2t7aXV9uRmtckWXK1mvMMRiqn5RD_D0ABtLJW1hn1SNM-r12molzqVeYRTYkUZY8tps9ks38LT6EEUU7h1IZ-cNpVRdprWjmta9D_rAD8fcooChUhb7GeypdPiwOMTrdRi4a6fdDIsvuiiqHj8R0YdxVTiEzDr9gODKjkp1Y7mezlj972U9aR1SHn0SY");'></div>
+<button class="md:hidden text-neutral-600 dark:text-neutral-300">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto">
+<div class="mb-8">
+<h2 class="text-3xl font-bold text-neutral-800 dark:text-white">Welcome back, Sarah!</h2>
+<p class="text-neutral-500 dark:text-neutral-400 mt-1">Here's a snapshot of your progress in the incubation program.</p>
+</div>
+<div class="bg-white dark:bg-neutral-800/50 p-6 rounded-lg shadow-sm mb-8">
+<div class="flex items-center justify-between mb-4">
+<p class="text-base font-medium text-neutral-800 dark:text-white">Current Stage: Market Validation</p>
+<p class="text-sm font-medium text-primary">40% Complete</p>
+</div>
+<div class="w-full bg-background-light dark:bg-background-dark rounded-full h-2.5">
+<div class="bg-primary h-2.5 rounded-full" style="width: 40%"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<div class="xl:col-span-2">
+<div class="bg-white dark:bg-neutral-800/50 p-6 rounded-lg shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-neutral-800 dark:text-white">Program Calendar</h3>
+<div class="flex items-center gap-2">
+<button class="text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<p class="text-base font-semibold text-neutral-700 dark:text-neutral-200">October 2024</p>
+<button class="text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center text-sm text-neutral-500 dark:text-neutral-400 mb-2">
+<div class="font-medium">Sun</div>
+<div class="font-medium">Mon</div>
+<div class="font-medium">Tue</div>
+<div class="font-medium">Wed</div>
+<div class="font-medium">Thu</div>
+<div class="font-medium">Fri</div>
+<div class="font-medium">Sat</div>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<div class="text-neutral-400 dark:text-neutral-500 py-2">29</div>
+<div class="text-neutral-400 dark:text-neutral-500 py-2">30</div>
+<div class="py-2">1</div>
+<div class="py-2">2</div>
+<div class="py-2">3</div>
+<div class="py-2">4</div>
+<div class="py-2">5</div>
+<div class="py-2">6</div>
+<div class="py-2">7</div>
+<div class="py-2">8</div>
+<div class="py-2">9</div>
+<div class="py-2">10</div>
+<div class="py-2">11</div>
+<div class="py-2">12</div>
+<div class="py-2">13</div>
+<div class="py-2">14</div>
+<div class="py-2">15</div>
+<div class="py-2">16</div>
+<div class="py-2">17</div>
+<div class="py-2">18</div>
+<div class="py-2">19</div>
+<div class="relative cursor-pointer group py-2">
+<span class="relative z-10">20</span>
+<span class="absolute inset-x-2 bottom-1 h-1 bg-primary/50 rounded-full"></span>
+<div class="absolute hidden group-hover:block top-full left-1/2 -translate-x-1/2 mt-2 w-60 bg-white dark:bg-neutral-900 p-3 rounded-lg shadow-lg z-20 text-left">
+<p class="font-semibold text-sm text-neutral-800 dark:text-white">Complete Customer Interviews</p>
+<p class="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Due: October 20, 2024</p>
+<button class="text-xs text-primary hover:underline">Add Reminder</button>
+</div>
+</div>
+<div class="py-2">21</div>
+<div class="py-2">22</div>
+<div class="py-2">23</div>
+<div class="py-2">24</div>
+<div class="py-2">25</div>
+<div class="py-2">26</div>
+<div class="py-2">27</div>
+<div class="py-2">28</div>
+<div class="py-2">29</div>
+<div class="py-2">30</div>
+<div class="py-2">31</div>
+<div class="text-neutral-400 dark:text-neutral-500 py-2">1</div>
+<div class="text-neutral-400 dark:text-neutral-500 py-2">2</div>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="text-xl font-bold text-neutral-800 dark:text-white mb-4">Upcoming Milestones</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4 bg-white dark:bg-neutral-800/50 p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">event_note</span>
+</div>
+<div>
+<p class="font-semibold text-neutral-800 dark:text-white">Finalize Business Plan</p>
+<p class="text-sm text-neutral-500 dark:text-neutral-400">Due: November 15, 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-neutral-800/50 p-4 rounded-lg shadow-sm">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">event_note</span>
+</div>
+<div>
+<p class="font-semibold text-neutral-800 dark:text-white">Pitch Presentation Practice</p>
+<p class="text-sm text-neutral-500 dark:text-neutral-400">Due: December 1, 2024</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-neutral-800 dark:text-white mb-4">Key Resources</h3>
+<div class="space-y-4">
+<a class="flex items-center gap-4 bg-white dark:bg-neutral-800/50 p-4 rounded-lg shadow-sm hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors" href="#">
+<div class="text-primary">
+<span class="material-symbols-outlined">bar_chart</span>
+</div>
+<h4 class="font-semibold text-neutral-800 dark:text-white">Market Research Guide</h4>
+</a>
+<a class="flex items-center gap-4 bg-white dark:bg-neutral-800/50 p-4 rounded-lg shadow-sm hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors" href="#">
+<div class="text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<h4 class="font-semibold text-neutral-800 dark:text-white">Customer Segmentation</h4>
+</a>
+<a class="flex items-center gap-4 bg-white dark:bg-neutral-800/50 p-4 rounded-lg shadow-sm hover:bg-primary/5 dark:hover:bg-primary/20 transition-colors" href="#">
+<div class="text-primary">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<h4 class="font-semibold text-neutral-800 dark:text-white">Business Plan Template</h4>
+</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

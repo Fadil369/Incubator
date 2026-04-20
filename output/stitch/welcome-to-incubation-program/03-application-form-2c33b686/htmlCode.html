@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<title>InnovateHub Application</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1193d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              "display": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="flex flex-col min-h-screen">
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10 border-b border-black/10 dark:border-white/10">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary size-7">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold text-black/80 dark:text-white/80">InnovateHub</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary" href="#">Home</a>
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary" href="#">About</a>
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary" href="#">Programs</a>
+<a class="text-sm font-medium text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-primary" href="#">Contact</a>
+</nav>
+<button class="hidden md:flex min-w-[100px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors">
+<span>Apply Now</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="mx-auto max-w-2xl">
+<div class="bg-background-light dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-xl shadow-sm p-6 sm:p-8">
+<div class="mb-8">
+<p class="text-sm font-medium text-black/60 dark:text-white/60">Step 1 of 3</p>
+<div class="mt-2 h-2 w-full rounded-full bg-black/10 dark:bg-white/10">
+<div class="h-2 rounded-full bg-primary" style="width: 33%;"></div>
+</div>
+</div>
+<div class="text-center mb-8">
+<h1 class="text-3xl font-bold tracking-tight text-black/90 dark:text-white/90 sm:text-4xl">Incubation Program Application</h1>
+<p class="mt-2 text-lg text-black/60 dark:text-white/60">Personal Information</p>
+</div>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-black/80 dark:text-white/80 pb-2" for="full-name">Full Name</label>
+<input class="form-input block w-full rounded-lg border-black/10 dark:border-white/10 bg-background-light dark:bg-background-dark h-12 px-4 text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40 focus:border-primary focus:ring-primary" id="full-name" placeholder="e.g., Jane Doe" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-black/80 dark:text-white/80 pb-2" for="email">Email Address</label>
+<input class="form-input block w-full rounded-lg border-black/10 dark:border-white/10 bg-background-light dark:bg-background-dark h-12 px-4 text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40 focus:border-primary focus:ring-primary" id="email" placeholder="e.g., jane.doe@example.com" type="email"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-black/80 dark:text-white/80 pb-2" for="phone">Phone Number</label>
+<input class="form-input block w-full rounded-lg border-black/10 dark:border-white/10 bg-background-light dark:bg-background-dark h-12 px-4 text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40 focus:border-primary focus:ring-primary" id="phone" placeholder="e.g., (123) 456-7890" type="tel"/>
+</div>
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+<div>
+<label class="block text-sm font-medium text-black/80 dark:text-white/80 pb-2" for="country">Country</label>
+<select class="form-select block w-full rounded-lg border-black/10 dark:border-white/10 bg-background-light dark:bg-background-dark h-12 px-4 text-black/80 dark:text-white/80 focus:border-primary focus:ring-primary" id="country">
+<option>Select your country</option>
+<option>United States</option>
+<option>Canada</option>
+<option>Mexico</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-black/80 dark:text-white/80 pb-2" for="city">City</label>
+<input class="form-input block w-full rounded-lg border-black/10 dark:border-white/10 bg-background-light dark:bg-background-dark h-12 px-4 text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40 focus:border-primary focus:ring-primary" id="city" placeholder="e.g., San Francisco" type="text"/>
+</div>
+</div>
+<div class="flex justify-end pt-4">
+<button class="flex w-full sm:w-auto items-center justify-center rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-sm hover:bg-primary/90 transition-colors" type="button">
+<span>Next: Business Details</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -2,9 +2,27 @@ name: Deploy to Cloudflare
 
 on:
   push:
-    branches: [main, production]
   pull_request:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Cloudflare environment for manual deployments'
+        required: true
+        type: choice
+        default: staging
+        options:
+          - staging
+          - production
+      deploy_frontend:
+        description: 'Deploy the frontend Pages project'
+        required: false
+        type: boolean
+        default: true
+      deploy_backend:
+        description: 'Deploy the backend worker'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   lint-and-test:
@@ -19,22 +37,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint:cf
 
       - name: Test
-        run: npm run test --if-present
+        run: npm run test:cf
 
   deploy-frontend:
     runs-on: ubuntu-latest
     name: Deploy Frontend to Cloudflare Pages
     needs: [lint-and-test]
-    if: github.event_name != 'pull_request'
+    if: (github.event_name == 'workflow_dispatch' && inputs.deploy_frontend) || (github.event_name == 'push' && (github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'))
+    outputs:
+      deploy_environment: ${{ steps.resolve-environment.outputs.deploy_environment }}
 
     steps:
       - name: Checkout code
@@ -44,10 +63,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
+
+      - name: Resolve deploy environment
+        id: resolve-environment
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "deploy_environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/production" ]; then
+            echo "deploy_environment=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_environment=staging" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build frontend
         run: npm run build:frontend
@@ -64,13 +93,16 @@ jobs:
           projectName: brainsait-frontend
           directory: packages/brainsait-frontend/out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+          branch: ${{ steps.resolve-environment.outputs.deploy_environment == 'production' && github.event.repository.default_branch || github.ref_name }}
 
   deploy-backend:
     runs-on: ubuntu-latest
     name: Deploy Backend to Cloudflare Workers
     needs: [lint-and-test]
-    if: github.event_name != 'pull_request'
+    if: (github.event_name == 'workflow_dispatch' && inputs.deploy_backend) || (github.event_name == 'push' && (github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'))
+    outputs:
+      deploy_environment: ${{ steps.resolve-environment.outputs.deploy_environment }}
+      deployment_url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
       - name: Checkout code
@@ -80,21 +112,32 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
+
+      - name: Resolve deploy environment
+        id: resolve-environment
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "deploy_environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/production" ]; then
+            echo "deploy_environment=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_environment=staging" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build backend
         run: npm run build:backend
 
       - name: Deploy to Cloudflare Workers
+        id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: packages/brainsait-backend
-          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          environment: ${{ steps.resolve-environment.outputs.deploy_environment }}
           secrets: |
             JWT_SECRET
             SENDGRID_API_KEY
@@ -118,101 +161,28 @@ jobs:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-  deploy-ai-service:
-    runs-on: ubuntu-latest
-    name: Deploy AI Service to Cloudflare Workers
-    needs: [lint-and-test]
-    if: github.event_name != 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build AI service
-        run: npm run build:ai
-
-      - name: Deploy AI Service
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: packages/brainsait-ai
-          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-          secrets: |
-            OPENAI_API_KEY
-            CLAUDE_API_KEY
-            VECTOR_DB_URL
-            VECTOR_DB_API_KEY
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-          VECTOR_DB_URL: ${{ secrets.VECTOR_DB_URL }}
-          VECTOR_DB_API_KEY: ${{ secrets.VECTOR_DB_API_KEY }}
-
-  deploy-docs-service:
-    runs-on: ubuntu-latest
-    name: Deploy Docs Service to Cloudflare Workers
-    needs: [lint-and-test]
-    if: github.event_name != 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build docs service
-        run: npm run build:docs
-
-      - name: Deploy Docs Service
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: packages/brainsait-docs
-          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-
   health-check:
     runs-on: ubuntu-latest
     name: Health Check
-    needs: [deploy-frontend, deploy-backend, deploy-ai-service, deploy-docs-service]
+    needs: [deploy-frontend, deploy-backend]
+    if: always() && !cancelled() && (needs.deploy-frontend.result == 'success' || needs.deploy-backend.result == 'success')
 
     steps:
       - name: Check Frontend Health
+        if: needs.deploy-frontend.result == 'success' && needs.deploy-frontend.outputs.deploy_environment == 'production'
         run: |
           curl --retry 3 --retry-delay 5 --retry-connrefused -f https://brainsait.org || exit 1
 
       - name: Check Backend Health
+        if: needs.deploy-backend.result == 'success'
+        env:
+          BACKEND_HEALTH_URL: ${{ needs.deploy-backend.outputs.deployment_url && format('{0}/api/v1/health', needs.deploy-backend.outputs.deployment_url) || (needs.deploy-backend.outputs.deploy_environment == 'production' && 'https://api.brainsait.org/api/v1/health' || 'https://staging-api.brainsait.org/api/v1/health') }}
         run: |
-          curl --retry 3 --retry-delay 5 --retry-connrefused -f https://api.brainsait.org/health || exit 1
-
-      - name: Check AI Service Health
-        run: |
-          curl --retry 3 --retry-delay 5 --retry-connrefused -f https://ai.brainsait.org/health || exit 1
-
-      - name: Check Docs Service Health
-        run: |
-          curl --retry 3 --retry-delay 5 --retry-connrefused -f https://docs.brainsait.org/health || exit 1
+          curl --retry 3 --retry-delay 5 --retry-connrefused -f "$BACKEND_HEALTH_URL" || exit 1
 
       - name: Notify Success
         if: success()
-        run: echo "All services deployed successfully!"
+        run: echo "Selected Cloudflare services deployed successfully!"
 
       - name: Notify Failure
         if: failure()

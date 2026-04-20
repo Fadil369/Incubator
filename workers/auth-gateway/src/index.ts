@@ -7,7 +7,6 @@ export interface Env {
   SESSION_STORE: KVNamespace;
   STARTUP_ROLES: KVNamespace;
   DB: D1Database;
-  SESSION_MANAGER: DurableObjectNamespace;
   AUTH_ANALYTICS: AnalyticsEngineDataset;
   KEYCLOAK_URL: string;
   REALM: string;
