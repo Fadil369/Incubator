@@ -23,6 +23,15 @@ on:
         required: false
         type: boolean
         default: true
+      deploy_workers:
+        description: 'Deploy Cloudflare Workers (event-bridge, notification-router, etc.)'
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-test:
@@ -164,7 +173,7 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     name: Health Check
-    needs: [deploy-frontend, deploy-backend]
+    needs: [deploy-frontend, deploy-backend, deploy-cf-workers]
     if: always() && !cancelled() && (needs.deploy-frontend.result == 'success' || needs.deploy-backend.result == 'success')
 
     steps:
@@ -186,4 +195,67 @@ jobs:
 
       - name: Notify Failure
         if: failure()
+
+  deploy-cf-workers:
+    runs-on: ubuntu-latest
+    name: Deploy CF Worker — ${{ matrix.worker }}
+    needs: [lint-and-test]
+    if: (github.event_name == 'workflow_dispatch' && inputs.deploy_workers != false) || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'))
+    strategy:
+      fail-fast: false
+      matrix:
+        worker:
+          - auth-gateway
+          - data-hub-proxy
+          - event-bridge
+          - ml-inference
+          - notification-router
+          - queue-consumers
+          - schema-registry
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install worker dependencies
+        working-directory: workers/${{ matrix.worker }}
+        run: npm install --legacy-peer-deps 2>/dev/null || true
+
+      - name: Resolve deploy environment
+        id: resolve-environment
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "deploy_environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/production" ]; then
+            echo "deploy_environment=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_environment=staging" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy ${{ matrix.worker }} worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/${{ matrix.worker }}
+          environment: ${{ steps.resolve-environment.outputs.deploy_environment }}
+          secrets: |
+            WEBHOOK_SECRET
+            SLACK_WEBHOOK_URL
+            DISCORD_WEBHOOK_URL
+            SENDGRID_API_KEY
+            JWT_SECRET
+            GITHUB_TOKEN
+        env:
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: echo "Deployment health check failed!"

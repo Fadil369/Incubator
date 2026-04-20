@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block admin routes from indexing
+Disallow: /admin/
+Disallow: /portal/accept
+Disallow: /api/
+
+# Crawl delay for responsible crawling
+Crawl-delay: 5
+
+Sitemap: https://brainsait.org/sitemap.xml

@@ -25,9 +25,12 @@ binding = "DB"
 database_name = "brainsait-metrics"
 database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
 
-[[env.production.queues.producers]]
-binding = "RETRY_QUEUE"
+[[env.production.queues.consumers]]
 queue = "brainsait-notifications"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+dead_letter_queue = "brainsait-notifications-dlq"
 
 [[env.production.durable_objects.bindings]]
 name = "WS_SESSIONS"
@@ -54,9 +57,11 @@ binding = "DB"
 database_name = "brainsait-metrics"
 database_id = "7b66d89d-7846-4c75-b7f5-5ffd2ea62629"
 
-[[queues.producers]]
-binding = "RETRY_QUEUE"
+[[queues.consumers]]
 queue = "brainsait-notifications"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
 
 [[durable_objects.bindings]]
 name = "WS_SESSIONS"

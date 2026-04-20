@@ -15,7 +15,6 @@ export interface Env {
   CHANNEL_CONFIG: KVNamespace;
   NOTIFICATION_LOG: KVNamespace;
   DB: D1Database;
-  RETRY_QUEUE: Queue;
   WS_SESSIONS: DurableObjectNamespace;
 }
 
@@ -181,10 +180,14 @@ export default {
         await routeNotification(msg.body, env);
         msg.ack();
       } catch {
-        if (msg.attempts < 3) {
-          await env.RETRY_QUEUE.send(msg.body);
+        if (msg.attempts >= 3) {
+          // Exhausted retries — acknowledge to prevent infinite loop.
+          // Caller already logged the error inside routeNotification.
+          msg.ack();
+        } else {
+          // Native CF Queue retry with exponential backoff.
+          msg.retry({ delaySeconds: Math.pow(2, msg.attempts) * 30 });
         }
-        msg.retry();
       }
     }
   },

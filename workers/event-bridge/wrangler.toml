@@ -36,6 +36,8 @@ queue = "brainsait-notifications"
 [[env.production.queues.producers]]
 binding = "NOTIFICATION_QUEUE"
 queue = "brainsait-notifications"
+# Note: PIPELINE_EVENTS and NOTIFICATION_QUEUE both target brainsait-notifications intentionally
+# PIPELINE_EVENTS = CI/CD pipeline events; NOTIFICATION_QUEUE = user-facing alert events
 
 [[env.production.analytics_engine_datasets]]
 binding = "EVENT_ANALYTICS"

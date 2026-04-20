@@ -18,6 +18,10 @@ on:
         type: choice
         options: [staging, production, sandbox]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 env:
   REGISTRY: ghcr.io
   ORG: ${{ github.repository_owner }}
@@ -254,10 +258,15 @@ jobs:
             kubectl apply -k k8s/
           fi
 
-          # Rolling update
+          # Rolling update (--record removed: deprecated in k8s 1.28+, use annotations instead)
           kubectl set image deployment/${STARTUP} \
             ${STARTUP}=${{ env.REGISTRY }}/${{ env.ORG }}/${STARTUP}:${IMAGE_TAG} \
-            --record -n brainsait-${ENVIRONMENT}
+            -n brainsait-${ENVIRONMENT}
+
+          # Annotate with commit SHA for change tracking (replaces --record)
+          kubectl annotate deployment/${STARTUP} \
+            kubernetes.io/change-cause="${{ github.sha }}" \
+            -n brainsait-${ENVIRONMENT} --overwrite
 
           kubectl rollout status deployment/${STARTUP} \
             -n brainsait-${ENVIRONMENT} --timeout=300s

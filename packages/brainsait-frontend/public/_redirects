@@ -7,3 +7,10 @@ http://www.brainsait.org/* https://brainsait.org/:splat 301
 
 # Redirect www to apex
 https://www.brainsait.org/* https://brainsait.org/:splat 301
+
+# SPA fallback — let Next.js handle all unmatched paths
+# (Cloudflare Pages static exports include their own HTML for each route)
+/apply https://brainsait.org/apply/ 301
+/portal https://brainsait.org/portal/ 301
+/mentors https://brainsait.org/mentors/ 301
+/programs https://brainsait.org/programs/ 301
