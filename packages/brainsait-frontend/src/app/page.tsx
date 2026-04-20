@@ -24,6 +24,8 @@ import {
   Star,
 } from '@mui/icons-material';
 
+const COURSE_URL = 'https://classroom.google.com/c/ODYwNTAyNzAzMTky?cjc=4oc22gvm';
+
 export default function HomePage() {
   const features = [
     {
@@ -248,7 +250,7 @@ export default function HomePage() {
                     variant="contained"
                     size="large"
                     endIcon={<OpenInNew />}
-                    href="https://classroom.google.com/c/ODYwNTAyNzAzMTky?cjc=4oc22gvm"
+                    href={COURSE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
@@ -269,7 +271,7 @@ export default function HomePage() {
                   <Button
                     variant="outlined"
                     size="large"
-                    href="https://classroom.google.com/c/ODYwNTAyNzAzMTky?cjc=4oc22gvm"
+                    href={COURSE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
@@ -305,8 +307,8 @@ export default function HomePage() {
                     { en: 'SME Incubation Strategies', ar: 'استراتيجيات احتضان الشركات الصغيرة' },
                     { en: 'Regulatory Compliance (SFDA, CBAHI)', ar: 'الامتثال التنظيمي (هيئة الغذاء والدواء، CBAHI)' },
                     { en: 'Pitch & Fundraising Skills', ar: 'مهارات العرض وجمع التمويل' },
-                  ].map((item, i) => (
-                    <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}>
+                  ].map((item) => (
+                    <Box key={item.en} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}>
                       <Box
                         sx={{
                           mt: 0.4,
