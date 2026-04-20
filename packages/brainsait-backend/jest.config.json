@@ -9,6 +9,7 @@
   "transform": {
     "^.+\\.ts$": "ts-jest"
   },
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
   "moduleNameMapper": {
     "^@brainsait/shared$": "<rootDir>/../brainsait-shared/src",
     "^@/(.*)$": "<rootDir>/src/$1"

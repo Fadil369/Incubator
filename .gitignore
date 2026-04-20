@@ -79,6 +79,14 @@ jspm_packages/
 # next.js build output
 .next
 
+# Worker source should remain TypeScript-only (avoid checked-in build artifacts)
+workers/*/src/*.js
+workers/*/src/*.js.map
+
+# Shared package source should remain TypeScript-only
+packages/brainsait-shared/src/**/*.js
+packages/brainsait-shared/src/**/*.js.map
+
 # nuxt.js build output
 .nuxt
 

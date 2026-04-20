@@ -1,5 +1,5 @@
-import dataHubProxy from '../../../../workers/data-hub-proxy/src/index';
-import notificationRouter from '../../../../workers/notification-router/src/index';
+import dataHubProxy from '../../../../workers/data-hub-proxy/src/index.ts';
+import notificationRouter from '../../../../workers/notification-router/src/index.ts';
 
 type StoredRow = Record<string, unknown>;
 
@@ -286,7 +286,9 @@ describe('notification router integration', () => {
     );
 
     expect(optionsResponse.status).toBe(204);
-    expect(optionsResponse.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(['https://notifications.brainsait.org', 'https://brainsait.org']).toContain(
+      optionsResponse.headers.get('Access-Control-Allow-Origin'),
+    );
     expect(optionsResponse.headers.get('Access-Control-Allow-Methods')).toContain('POST');
 
     const postResponse = await notificationRouter.fetch(
@@ -303,7 +305,9 @@ describe('notification router integration', () => {
     );
 
     expect(postResponse.status).toBe(201);
-    expect(postResponse.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(['https://notifications.brainsait.org', 'https://brainsait.org']).toContain(
+      postResponse.headers.get('Access-Control-Allow-Origin'),
+    );
 
     const created = await postResponse.json<Record<string, unknown>>();
     expect(created.roomId).toBe('mentor-circle');
@@ -347,7 +351,9 @@ describe('notification router integration', () => {
     );
 
     expect(triggerResponse.status).toBe(200);
-    expect(triggerResponse.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(['https://notifications.brainsait.org', 'https://brainsait.org']).toContain(
+      triggerResponse.headers.get('Access-Control-Allow-Origin'),
+    );
 
     const triggerPayload = await triggerResponse.json<Record<string, unknown>>();
     expect(triggerPayload.status).toBe('queued');
@@ -395,7 +401,9 @@ describe('data hub integration', () => {
     );
 
     expect(optionsResponse.status).toBe(204);
-    expect(optionsResponse.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(['https://data-hub.brainsait.org', 'https://brainsait.org']).toContain(
+      optionsResponse.headers.get('Access-Control-Allow-Origin'),
+    );
     expect(optionsResponse.headers.get('Access-Control-Allow-Methods')).toContain('POST');
 
     const createResponse = await dataHubProxy.fetch(
@@ -413,7 +421,9 @@ describe('data hub integration', () => {
     );
 
     expect(createResponse.status).toBe(200);
-    expect(createResponse.headers.get('Access-Control-Allow-Origin')).toBe('*');
+    expect(['https://data-hub.brainsait.org', 'https://brainsait.org']).toContain(
+      createResponse.headers.get('Access-Control-Allow-Origin'),
+    );
 
     const created = await createResponse.json<Record<string, unknown>>();
     expect(created).toMatchObject({
