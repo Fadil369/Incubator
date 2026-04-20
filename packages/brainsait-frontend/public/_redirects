@@ -1,0 +1,9 @@
+# Cloudflare Pages — URL redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Force HTTPS for any plain-HTTP request (301 permanent)
+http://brainsait.org/* https://brainsait.org/:splat 301
+http://www.brainsait.org/* https://brainsait.org/:splat 301
+
+# Redirect www to apex
+https://www.brainsait.org/* https://brainsait.org/:splat 301
