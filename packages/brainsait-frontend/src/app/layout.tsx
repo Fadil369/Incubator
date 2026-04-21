@@ -31,6 +31,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const locale = Array.isArray(params?.locale) ? params.locale[0] : params?.locale;
   const isArabic = locale === 'ar';
   const useSiteChrome = true;
+  const appOrigin = (process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org').replace(/\/$/, '');
+  const canonicalPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  const canonicalUrl = `${appOrigin}${canonicalPath}`;
 
   // Create theme with RTL support and Arabic typography
   const theme = createTheme({
@@ -290,7 +293,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta property="og:locale" content={isArabic ? 'ar_SA' : 'en_US'} />
         <title>BrainSAIT — Healthcare SME Incubator</title>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://brainsait.org" />
+        <link rel="canonical" href={canonicalUrl} />
         {isArabic && (
           <link
             href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"

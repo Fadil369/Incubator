@@ -141,7 +141,7 @@ function IncubatorPortalContent() {
   React.useEffect(() => {
     if (!startupId) return;
     setMilestonesLoading(true);
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
     fetch(`${apiBase}/api/programs/${encodeURIComponent(startupId)}/milestones`, {
       credentials: 'include',
     })

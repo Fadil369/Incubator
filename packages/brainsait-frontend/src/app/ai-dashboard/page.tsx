@@ -68,8 +68,8 @@ const AIDashboardPage: React.FC = () => {
       if (paramSmeId) { setSmeId(paramSmeId); return; }
     }
     // 2. Try resolving from the session via backend /api/sme/my-profile
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
-    fetch(`${apiBase}/api/sme/my-profile`, { credentials: 'include' })
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || '/api';
+    fetch(`${apiBase}/sme/my-profile`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: { sme?: { id?: string } } | null) => {
         if (data?.sme?.id) setSmeId(data.sme.id);
