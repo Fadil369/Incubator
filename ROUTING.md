@@ -142,9 +142,11 @@ Set the following in each Pages project under **Settings → Environment variabl
 | Variable | Value |
 |---|---|
 | `NEXT_PUBLIC_APP_ORIGIN` | `https://app.brainsait.org` |
-| `NEXT_PUBLIC_API_URL` | `/api` |
+| `NEXT_PUBLIC_API_URL` | `https://app.brainsait.org` |
 
-For preview deployments you can use the Pages project's own domain (e.g., `https://incubator.pages.dev`) as `NEXT_PUBLIC_APP_ORIGIN` and the full backend URL as `NEXT_PUBLIC_API_URL`.
+For preview deployments you can use the Pages project's own domain (e.g., `https://incubator.pages.dev`) as `NEXT_PUBLIC_APP_ORIGIN` and the API/backend origin (for example, `https://api-gateway.brainsait.org`) as `NEXT_PUBLIC_API_URL`.
+
+Use an origin-only value for `NEXT_PUBLIC_API_URL`; do not append `/api`, because frontend requests already include `/api/...` or `/api/v1/...` in their paths.
 
 ---
 
