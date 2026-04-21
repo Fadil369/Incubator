@@ -4,7 +4,7 @@
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
-const PARTNER_APPLY_URL = process.env.NEXT_PUBLIC_PARTNER_APPLY_URL || `${API_BASE_URL}/api/v1/partners/application`;
+const PARTNER_APPLY_URL = process.env.NEXT_PUBLIC_PARTNER_APPLY_URL || `${API_BASE_URL}/v1/partners/application`;
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -88,7 +88,7 @@ export async function validateInviteToken(
   appId: string
 ): Promise<{ valid: boolean; application: PartnerApplication }> {
   const params = new URLSearchParams({ token, app: appId });
-  return apiFetch(`/api/v1/partners/validate?${params}`);
+  return apiFetch(`/v1/partners/validate?${params}`);
 }
 
 export async function completeOnboarding(data: {
