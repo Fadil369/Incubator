@@ -35,6 +35,8 @@ import {
   Verified,
 } from '@mui/icons-material';
 
+const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org';
+
 export const metadata: Metadata = {
   title: 'Partner With BrainSAIT | Healthcare Innovation Ecosystem',
   description:
@@ -50,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Partner With BrainSAIT',
     description: 'Join the leading healthcare innovation ecosystem in the Arab world.',
-    url: 'https://brainsait.org/partners',
+    url: `${APP_ORIGIN}/incubator/partners`,
     siteName: 'BrainSAIT',
     locale: 'en_US',
     type: 'website',
@@ -60,7 +62,7 @@ export const metadata: Metadata = {
     title: 'Partner With BrainSAIT',
     description: 'Join the leading healthcare innovation ecosystem in the Arab world.',
   },
-  alternates: { canonical: 'https://brainsait.org/partners' },
+  alternates: { canonical: `${APP_ORIGIN}/incubator/partners` },
 };
 
 const PARTNER_TYPES = [

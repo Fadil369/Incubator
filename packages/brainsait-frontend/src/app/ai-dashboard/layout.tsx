@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org';
+
 export const metadata: Metadata = {
   title: 'AI Dashboard | BrainSAIT Incubator',
   description:
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Dashboard | BrainSAIT Incubator',
     description: 'Intelligent analytics and insights for healthcare SMEs.',
-    url: 'https://brainsait.org/ai-dashboard',
+    url: `${APP_ORIGIN}/incubator/ai-dashboard`,
     siteName: 'BrainSAIT',
     locale: 'en_US',
     type: 'website',
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
     description: 'Intelligent analytics and insights for healthcare SMEs.',
   },
   alternates: {
-    canonical: 'https://brainsait.org/ai-dashboard',
+    canonical: `${APP_ORIGIN}/incubator/ai-dashboard`,
   },
   robots: { index: false, follow: false }, // dashboard pages should not be indexed
 };

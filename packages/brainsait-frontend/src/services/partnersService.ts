@@ -3,7 +3,7 @@
  * Communicates with /api/v1/partners on the backend Worker.
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 const PARTNER_APPLY_URL = process.env.NEXT_PUBLIC_PARTNER_APPLY_URL || `${API_BASE_URL}/api/v1/partners/application`;
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {

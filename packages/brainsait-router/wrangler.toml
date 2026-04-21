@@ -1,0 +1,31 @@
+# BrainSAIT App Router — Cloudflare Worker
+
+# Worker name and entrypoint
+name = "brainsait-app-router"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Route all traffic for app.brainsait.org through this worker.
+# Bind a custom domain in the Cloudflare dashboard or via the routes below.
+# See ROUTING.md for step-by-step deployment instructions.
+
+[env.production]
+name = "brainsait-app-router-production"
+
+[[env.production.routes]]
+pattern = "app.brainsait.org/*"
+custom_domain = false
+zone_name = "brainsait.org"
+
+[env.staging]
+name = "brainsait-app-router-staging"
+
+[[env.staging.routes]]
+pattern = "staging.brainsait.org/*"
+custom_domain = false
+zone_name = "brainsait.org"
+
+[build]
+command = "npm run build"
+watch_dir = ["src"]

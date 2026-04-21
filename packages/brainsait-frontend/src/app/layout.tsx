@@ -290,7 +290,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta property="og:locale" content={isArabic ? 'ar_SA' : 'en_US'} />
         <title>BrainSAIT — Healthcare SME Incubator</title>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://brainsait.org" />
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org'}/incubator`} />
         {isArabic && (
           <link
             href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"

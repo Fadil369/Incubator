@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Serve the app under /incubator when hosted on app.brainsait.org
+  basePath: '/incubator',
   output: 'export',
   trailingSlash: true,
   reactStrictMode: true,
@@ -14,7 +16,9 @@ const nextConfig = {
     unoptimized: true, // Required for static export
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org',
+    // Use a relative /api path so all API requests go through the unified app.brainsait.org gateway.
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '/api',
+    NEXT_PUBLIC_APP_ORIGIN: process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org',
     NEXT_PUBLIC_DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.brainsait.org',
     NEXT_PUBLIC_GITHUB_ORG: process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator',
     NEXT_PUBLIC_DATA_HUB_URL: process.env.NEXT_PUBLIC_DATA_HUB_URL || 'https://data-hub.brainsait.org',

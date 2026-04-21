@@ -24,6 +24,8 @@ import {
   ArrowForward,
 } from '@mui/icons-material';
 
+const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org';
+
 export const metadata: Metadata = {
   title: 'BrainSAIT | Healthcare SME Incubator — Saudi Arabia & MENA',
   description: 'BrainSAIT accelerates healthcare startups in Saudi Arabia and MENA with AI-powered mentorship, NPHIES compliance tools, FHIR R4 SDKs, and incubation programs.',
@@ -31,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'BrainSAIT Healthcare SME Incubator',
     description: 'AI-native incubation for healthcare SMEs in Saudi Arabia & MENA',
-    url: 'https://brainsait.org',
+    url: `${APP_ORIGIN}/incubator`,
     siteName: 'BrainSAIT',
     locale: 'en_US',
     type: 'website',
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
     title: 'BrainSAIT Healthcare SME Incubator',
     description: 'AI-native incubation for healthcare SMEs in Saudi Arabia & MENA',
   },
-  alternates: { canonical: 'https://brainsait.org' },
+  alternates: { canonical: `${APP_ORIGIN}/incubator` },
 };
 
 const stats = [

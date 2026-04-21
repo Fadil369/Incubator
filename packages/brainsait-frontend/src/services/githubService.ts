@@ -6,7 +6,7 @@
 
 import { clearWorkerToken, getWorkerAuthHeaders } from '@/services/workerAuthService';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 const EVENT_BRIDGE_URL = process.env.NEXT_PUBLIC_EVENT_BRIDGE_URL || 'https://events.brainsait.org';
 const GITHUB_ORG = process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator';
 

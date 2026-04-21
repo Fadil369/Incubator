@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.brainsait.org';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 const WORKER_TOKEN_STORAGE_KEY = 'brainsait-worker-token';
 
 interface WorkerLoginResponse {

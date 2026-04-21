@@ -1,0 +1,19 @@
+{
+  "name": "@brainsait/router",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker edge router for app.brainsait.org — routes path-prefixed requests to the correct Cloudflare Pages origin.",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "deploy:staging": "wrangler deploy --env staging",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.91.0"
+  }
+}
