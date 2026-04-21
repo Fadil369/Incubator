@@ -16,8 +16,8 @@ const nextConfig = {
     unoptimized: true, // Required for static export
   },
   env: {
-    // Use a relative /api path so all API requests go through the unified app.brainsait.org gateway.
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '/api',
+    // Leave the API base empty by default so existing /api/... call sites stay relative without becoming /api/api/...
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? '',
     NEXT_PUBLIC_APP_ORIGIN: process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.brainsait.org',
     NEXT_PUBLIC_DOCS_URL: process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.brainsait.org',
     NEXT_PUBLIC_GITHUB_ORG: process.env.NEXT_PUBLIC_GITHUB_ORG || 'brainsait-incubator',
